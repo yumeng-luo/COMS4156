@@ -21,8 +21,8 @@ public class ControllerTest {
 	private MockMvc mvc;
 
 	@Test
-	public void getHello() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.APPLICATION_JSON))
+	public void getFrontend() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/frontend").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(content().string(equalTo("Placeholder for frontend")));
 	}
