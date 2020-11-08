@@ -8,7 +8,7 @@ import java.io.IOException;
 public class SendGridEmailer {
   public static void main(String[] args) throws IOException {
     try {
-      SendGrid sg = new SendGrid("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");
+      SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
       Email from = new Email("ASE.email.api@gmail.com");
       Email to = new Email("<demo>@gmail.com"); // use your own email address here
   
