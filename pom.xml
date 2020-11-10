@@ -68,6 +68,17 @@
 			<artifactId>js-cookie</artifactId>
 			<version>2.1.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.sendgrid</groupId>
+			<artifactId>sendgrid-java</artifactId>
+			<version>4.4.8</version>
+		</dependency>
+		<dependency>
+	       <groupId>org.xerial</groupId>
+	       <artifactId>sqlite-jdbc</artifactId>
+	       <version>3.32.3.2</version>
+   		</dependency>
 
 	</dependencies>
 

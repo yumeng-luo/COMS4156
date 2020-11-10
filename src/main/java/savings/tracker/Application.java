@@ -12,10 +12,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import savings.tracker.util.DatabaseJdbc;
 
 @SpringBootApplication
 public class Application extends WebSecurityConfigurerAdapter {
-
+  
+  private static DatabaseJdbc database;
+  
   public static void main(String[] args) {
     SpringApplication.run(Application.class, args);
   }
