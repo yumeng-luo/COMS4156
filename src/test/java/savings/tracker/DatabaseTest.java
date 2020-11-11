@@ -46,7 +46,7 @@ public class DatabaseTest {
   @Order(2)
   public void testCreateTable() throws SQLException {
     System.out.println("========TESTING CREATE TABLE ========");
-    DatabaseJdbc.createLoginTable(jdbc,"User");
+    DatabaseJdbc.createLoginTable(jdbc,"UserTest");
 
   }
 
@@ -59,8 +59,8 @@ public class DatabaseTest {
   public void testCleanTable() {
     System.out.println("========TESTING CLEAN TABLE ========");
     try {
-      DatabaseJdbc.createLoginTable(jdbc,"User");
-      DatabaseJdbc.deleteLoginTable(jdbc,"User");
+      DatabaseJdbc.createLoginTable(jdbc,"UserTest");
+      DatabaseJdbc.deleteLoginTable(jdbc,"UserTest");
     } catch (SQLException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -93,9 +93,9 @@ public class DatabaseTest {
     System.out.println("========TESTING INSERT User ========");
     User user = new User(123,"123@123.com","ABC DEF",145.6,1.361, 51.3267);
     try {
-      DatabaseJdbc.deleteLoginTable(jdbc,"User");
-      DatabaseJdbc.createLoginTable(jdbc,"User");
-      DatabaseJdbc.addLoginData(jdbc, "User", user);
+      DatabaseJdbc.deleteLoginTable(jdbc,"UserTest");
+      DatabaseJdbc.createLoginTable(jdbc,"UserTest");
+      DatabaseJdbc.addLoginData(jdbc, "UserTest", user);
     } catch (SQLException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -153,11 +153,11 @@ public class DatabaseTest {
     User user2 = new User(789,"789@123.com","hij kl",5,-0.4632, 51.3552);
     List<User> users;
     try {
-      DatabaseJdbc.deleteLoginTable(jdbc,"User");
-      DatabaseJdbc.createLoginTable(jdbc,"User");
-      DatabaseJdbc.addLoginData(jdbc, "User", user1);
-      DatabaseJdbc.addLoginData(jdbc, "User", user2);
-      users = DatabaseJdbc.getLoginData(jdbc,"User");
+      DatabaseJdbc.deleteLoginTable(jdbc,"UserTest");
+      DatabaseJdbc.createLoginTable(jdbc,"UserTest");
+      DatabaseJdbc.addLoginData(jdbc, "UserTest", user1);
+      DatabaseJdbc.addLoginData(jdbc, "UserTest", user2);
+      users = DatabaseJdbc.getLoginData(jdbc,"UserTest");
       assertEquals(users.size(), 2);
       assertEquals(users.get(0).getEmail(), user1.getEmail());
       assertEquals(users.get(0).getUser_id(), user1.getUser_id());

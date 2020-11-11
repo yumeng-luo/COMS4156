@@ -141,7 +141,6 @@ public class DatabaseJdbc {
      
       while (rs.next()) { 
         int id = rs.getInt("user_id");
-        System.out.println("got user "+ id);
         String email = rs.getString("email");
         String name = rs.getString("name");
         double savings = rs.getDouble("savings");

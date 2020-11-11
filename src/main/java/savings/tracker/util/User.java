@@ -9,6 +9,10 @@ public class User {
   private double lat;
   private double lon;
   
+  public User() {
+    
+  }
+  
   public User(int id, String email2, String name2, double savings2, double lat2, double lon2) {
     user_id = id;
     email = email2;
