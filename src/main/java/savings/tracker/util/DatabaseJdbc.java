@@ -43,13 +43,13 @@ public class DatabaseJdbc {
    * @return returns boolean 
    * @throws SQLException Exception
    */
-  public boolean createLoginTable(DatabaseJdbc jdbc, String tableName) throws SQLException {
+  public static boolean createLoginTable(DatabaseJdbc jdbc, String tableName) throws SQLException {
     PreparedStatement stmt = null;
     Connection c = jdbc.createConnection();
     
     try {
-      String sql = String.format("CREATE TABLE IF NOT EXISTS %s (%s, %s)", tableName, 
-                                  "USER_ID TEXT", "USER_PASS TEXT");
+      String sql = String.format("CREATE TABLE IF NOT EXISTS %s (%s, %s, %s, %s, %s, %s)", tableName, 
+                                  "USER_ID INT PRIMARY KEY", "EMAIL TEXT","NAME TEXT","SAVINGS FLOAT", "LOCATION POINT", "ONLINE BOOLEAN DEFAULT FALSE");
       stmt = c.prepareStatement(sql);
       
       stmt.executeUpdate();
@@ -81,7 +81,7 @@ public class DatabaseJdbc {
    * @return returns boolean
    * @throws SQLException exception
    */
-  public boolean addLoginData(DatabaseJdbc jdbc, String tableName, Player player) //****************************************update
+  public static boolean addLoginData(DatabaseJdbc jdbc, String tableName, User user) //****************************************update
                                 throws SQLException {
     PreparedStatement stmt = null;
     Connection c = jdbc.createConnection();
@@ -90,10 +90,14 @@ public class DatabaseJdbc {
       c.setAutoCommit(false);
       System.out.println("Opened database successfully for addPlayerData");
       
-      stmt = c.prepareStatement("INSERT INTO " + tableName + " values(?,?)");
-      stmt.setString(1, player.getId());  
-      stmt.setString(2, String.valueOf(player.getType())); 
-
+      stmt = c.prepareStatement("INSERT INTO " + tableName + " values(?,?,?,?,?,?)");
+      stmt.setString(1, String.valueOf(user.getUser_id()));  
+      stmt.setString(2, user.getEmail()); 
+      stmt.setString(3, user.getName()); 
+      stmt.setString(4, String.valueOf(user.getSavings())); 
+      stmt.setString(5, "(" + String.valueOf(user.getLat())+","+String.valueOf(user.getLon())+")"); 
+      stmt.setString(6, "1");
+      
       stmt.executeUpdate();      
       stmt.close();
       c.commit();
@@ -122,27 +126,36 @@ public class DatabaseJdbc {
    * @return returns the arraylist
    * @throws SQLException exception
    */
-  public List<Player> getLoginData(DatabaseJdbc jdbc, String tableName) throws SQLException { //****************************************update
+  public static List<User> getLoginData(DatabaseJdbc jdbc, String tableName) throws SQLException { //****************************************update
     Statement stmt = null;
     ResultSet rs = null;
     Connection c = jdbc.createConnection();
-    List<Player> moveList = new ArrayList<Player>();
+    List<User> loggedInList = new ArrayList<User>();
     
     try {
       c.setAutoCommit(false);
       System.out.println("Opened database successfully for getPlayerData");
 
       stmt = c.createStatement();
-      rs = stmt.executeQuery("SELECT * FROM " + tableName + ";");
+      rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE ONLINE = 1;");
      
       while (rs.next()) { 
-        int id = rs.getInt("player_id");
-        char type = rs.getString("player_type").charAt(0);
+        int id = rs.getInt("user_id");
+        System.out.println("got user "+ id);
+        String email = rs.getString("email");
+        String name = rs.getString("name");
+        double savings = rs.getDouble("savings");
+        String location = rs.getString("location");
+        
+        String delims = "[ (),]+";
+        String[] tokens = location.split(delims);
+        double lat = Double.parseDouble(tokens[1]);
+        double lon = Double.parseDouble(tokens[2]);
 
         
-        Player newPlayer = new Player(type, id);
+        User newUser = new User(id, email,name,savings,lat,lon);
         
-        moveList.add(newPlayer);
+        loggedInList.add(newUser);
       }
       
       rs.close();
@@ -165,8 +178,8 @@ public class DatabaseJdbc {
       e.printStackTrace();
     }
     
-    System.out.println("Got move data successfully");
-    return moveList;
+    System.out.println("Got logged in user successfully");
+    return loggedInList;
   }
   
   /**
@@ -176,7 +189,7 @@ public class DatabaseJdbc {
    * @return returns boolean
    * @throws SQLException Exception
    */
-  public boolean deleteLoginTable(DatabaseJdbc jdbc, String tableName) throws SQLException {
+  public static boolean deleteLoginTable(DatabaseJdbc jdbc, String tableName) throws SQLException {
     Statement stmt = null;
     Connection c = jdbc.createConnection();
     
