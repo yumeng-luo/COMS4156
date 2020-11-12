@@ -37,7 +37,7 @@ public class Controller {
       
       if( DatabaseJdbc.AlreadyExists(database, "User", newUser.getUser_id())) {
         System.out.print(name+" Already exists");
-        DatabaseJdbc.updatesLoginData(database,"User", newUser);
+        DatabaseJdbc.updatesLoginData(database,"User", id);
       }else {
         System.out.print("Adding "+ name);
         DatabaseJdbc.addLoginData(database, "User", newUser);
@@ -52,4 +52,5 @@ public class Controller {
     
     return Collections.singletonMap("name", principal.getAttribute("name"));
   }
+  
 }

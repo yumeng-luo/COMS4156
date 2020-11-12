@@ -127,7 +127,7 @@ public class DatabaseJdbc {
    * @return returns boolean
    * @throws SQLException exception
    */
-  public static boolean updatesLoginData(DatabaseJdbc jdbc, String tableName, User user) //****************************************update
+  public static boolean updatesLoginData(DatabaseJdbc jdbc, String tableName, String id) //****************************************update
                                 throws SQLException {
     PreparedStatement stmt = null;
     Connection c = jdbc.createConnection();
@@ -137,7 +137,7 @@ public class DatabaseJdbc {
       System.out.println("Opened database successfully for User");
       
       stmt = c.prepareStatement("UPDATE " + tableName + " SET ONLINE=1 WHERE USER_ID=?");
-      stmt.setString(1, user.getUser_id());  
+      stmt.setString(1, id);  
       
       stmt.executeUpdate();      
       stmt.close();
@@ -159,7 +159,45 @@ public class DatabaseJdbc {
     System.out.println("Record created successfully");
     return true;
   }
-  
+  /**
+   * updates logout user to data table.
+   * @param jdbc the database
+   * @param tableName the table name
+   * @param player the player object
+   * @return returns boolean
+   * @throws SQLException exception
+   */
+  public static boolean LogoutUser(DatabaseJdbc jdbc, String tableName, String id) //****************************************update
+                                throws SQLException {
+    PreparedStatement stmt = null;
+    Connection c = jdbc.createConnection();
+    
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully for User");
+      
+      stmt = c.prepareStatement("UPDATE " + tableName + " SET ONLINE=0 WHERE USER_ID=?");
+      stmt.setString(1, id);  
+      
+      stmt.executeUpdate();      
+      stmt.close();
+      c.commit();
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
+    }
+    
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    
+    return true;
+  }
   /**
    * Creates an arraylist of player objects.
    * @param jdbc the database

@@ -221,7 +221,8 @@ public class DatabaseTest {
       DatabaseJdbc.deleteLoginTable(jdbc,"UserTest");
       DatabaseJdbc.createLoginTable(jdbc,"UserTest");
       DatabaseJdbc.addLoginData(jdbc, "UserTest", user1);
-      DatabaseJdbc.updatesLoginData(jdbc, "UserTest", user1);
+      DatabaseJdbc.LogoutUser(jdbc, "UserTest", user1.getUser_id());
+      DatabaseJdbc.updatesLoginData(jdbc, "UserTest", user1.getUser_id());
       
       
     } catch (SQLException e) {
@@ -230,6 +231,65 @@ public class DatabaseTest {
     }
 
   }
+  /*
+   * Test Update logout data
+   * 
+   */
+  @Test
+  @Order(8)
+  public void TestLogoutUser() {
+    System.out.println("========TESTING logout user ========");
+    User user1 = new User("34535667","345@123.com","qwe FKH",1000,79.3803, 51.3267);
+    try {
+      DatabaseJdbc.deleteLoginTable(jdbc,"UserTest");
+      DatabaseJdbc.createLoginTable(jdbc,"UserTest");
+      DatabaseJdbc.addLoginData(jdbc, "UserTest", user1);
+      DatabaseJdbc.LogoutUser(jdbc, "UserTest", user1.getUser_id());
+      
+      Statement stmt = null;
+      Connection c = jdbc.createConnection();
+
+      try {
+        c.setAutoCommit(false);
+        stmt = c.createStatement();
+        String sql = "SELECT * FROM User WHERE USER_ID = " + user1.getUser_id() +";";
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+          String user_id = rs.getString("USER_ID");
+          assertEquals(user_id, "34535667");
+          
+          String email = rs.getString("email");
+          assertEquals(email, "345@123.com");
+          
+          String name = rs.getString("name");
+          assertEquals(name, "qwe FKH");
+          
+          double savings = rs.getDouble("savings");
+          assertEquals(savings,1000);
+          
+          String location = rs.getString("location");
+          assertEquals(location, "(79.3803,51.3267)");
+
+          boolean online = rs.getBoolean("ONLINE");
+          assertEquals(online, false);
+          
+        }
+
+        stmt.close();
+        c.commit();
+        c.close();
+      } catch (Exception e) {
+        System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        assertEquals(1, 0);
+      }
+      
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+  
 }
 
 
