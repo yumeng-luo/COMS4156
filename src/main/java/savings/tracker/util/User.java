@@ -1,7 +1,7 @@
 package savings.tracker.util;
 
 public class User {
-  private int user_id;
+  private String user_id;
   private String email;
   private String name;
   private double savings = 0;
@@ -13,7 +13,7 @@ public class User {
     
   }
   
-  public User(int id, String email2, String name2, double savings2, double lat2, double lon2) {
+  public User(String id, String email2, String name2, double savings2, double lat2, double lon2) {
     user_id = id;
     email = email2;
     name = name2;
@@ -21,10 +21,10 @@ public class User {
     lat = lat2;
     lon = lon2;
   }
-  public int getUser_id() {
+  public String getUser_id() {
     return user_id;
   }
-  public void setUser_id(int user_id) {
+  public void setUser_id(String user_id) {
     this.user_id = user_id;
   }
   public String getEmail() {

@@ -49,7 +49,7 @@ public class DatabaseJdbc {
     
     try {
       String sql = String.format("CREATE TABLE IF NOT EXISTS %s (%s, %s, %s, %s, %s, %s)", tableName, 
-                                  "USER_ID INT PRIMARY KEY", "EMAIL TEXT","NAME TEXT","SAVINGS FLOAT", "LOCATION POINT", "ONLINE BOOLEAN DEFAULT FALSE");
+                                  "USER_ID text PRIMARY KEY", "EMAIL TEXT","NAME TEXT","SAVINGS FLOAT", "LOCATION POINT", "ONLINE BOOLEAN DEFAULT FALSE");
       stmt = c.prepareStatement(sql);
       
       stmt.executeUpdate();
@@ -91,12 +91,53 @@ public class DatabaseJdbc {
       System.out.println("Opened database successfully for addPlayerData");
       
       stmt = c.prepareStatement("INSERT INTO " + tableName + " values(?,?,?,?,?,?)");
-      stmt.setString(1, String.valueOf(user.getUser_id()));  
+      stmt.setString(1, user.getUser_id());  
       stmt.setString(2, user.getEmail()); 
       stmt.setString(3, user.getName()); 
       stmt.setString(4, String.valueOf(user.getSavings())); 
       stmt.setString(5, "(" + String.valueOf(user.getLat())+","+String.valueOf(user.getLon())+")"); 
       stmt.setString(6, "1");
+      
+      stmt.executeUpdate();      
+      stmt.close();
+      c.commit();
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
+    }
+    
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    
+    System.out.println("Record created successfully");
+    return true;
+  }
+  
+  /**
+   * updates login data to data table.
+   * @param jdbc the database
+   * @param tableName the table name
+   * @param player the player object
+   * @return returns boolean
+   * @throws SQLException exception
+   */
+  public static boolean updatesLoginData(DatabaseJdbc jdbc, String tableName, User user) //****************************************update
+                                throws SQLException {
+    PreparedStatement stmt = null;
+    Connection c = jdbc.createConnection();
+    
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully for User");
+      
+      stmt = c.prepareStatement("UPDATE " + tableName + " SET ONLINE=1 WHERE USER_ID=?");
+      stmt.setString(1, user.getUser_id());  
       
       stmt.executeUpdate();      
       stmt.close();
@@ -140,7 +181,7 @@ public class DatabaseJdbc {
       rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE ONLINE = 1;");
      
       while (rs.next()) { 
-        int id = rs.getInt("user_id");
+        String id = rs.getString("user_id");
         String email = rs.getString("email");
         String name = rs.getString("name");
         double savings = rs.getDouble("savings");
@@ -179,6 +220,52 @@ public class DatabaseJdbc {
     
     System.out.println("Got logged in user successfully");
     return loggedInList;
+  }
+  
+  /**
+   * Check if a user already exists
+   * @param jdbc the database
+   * @param tableName the table name
+   * @param user id
+   * @return True or False
+   * @throws SQLException exception
+   */
+  public static boolean AlreadyExists(DatabaseJdbc jdbc, String tableName, String user_id) throws SQLException { //****************************************update
+    Statement stmt = null;
+    ResultSet rs = null;
+    Connection c = jdbc.createConnection();
+    boolean result =false;
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully for User");
+
+      stmt = c.createStatement();
+      rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE USER_ID = \""+ user_id +"\";");
+     
+      if (rs.next()) { 
+        result = true;
+      }
+      
+      rs.close();
+      stmt.close();
+    
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      if (rs != null) {
+        rs.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
+    }
+    
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return result;
   }
   
   /**

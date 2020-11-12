@@ -71,7 +71,7 @@ public class DatabaseTest {
     try {
       c.setAutoCommit(false);
       stmt = c.createStatement();
-      String sql = "CREATE TABLE User (USER_ID INT PRIMARY KEY, EMAIL TEXT, NAME TEXT,SAVINGS FLOAT,LOCATION POINT,ONLINE BOOLEAN DEFAULT FALSE)";
+      String sql = "CREATE TABLE User (USER_ID text PRIMARY KEY, EMAIL TEXT, NAME TEXT,SAVINGS FLOAT,LOCATION POINT,ONLINE BOOLEAN DEFAULT FALSE)";
       stmt.executeUpdate(sql);
       stmt.close();
       c.commit();
@@ -91,7 +91,7 @@ public class DatabaseTest {
   @Order(4)
   public void testInsertUser() {
     System.out.println("========TESTING INSERT User ========");
-    User user = new User(123,"123@123.com","ABC DEF",145.6,1.361, 51.3267);
+    User user = new User("123","123@123.com","ABC DEF",145.6,1.361, 51.3267);
     try {
       DatabaseJdbc.deleteLoginTable(jdbc,"UserTest");
       DatabaseJdbc.createLoginTable(jdbc,"UserTest");
@@ -149,8 +149,8 @@ public class DatabaseTest {
   @Order(5)
   public void testgetLoginData() {
     System.out.println("========TESTING RETREIVING TABLE ========");
-    User user1 = new User(345,"345@123.com","qwe FKH",1000,79.3803, 51.3267);
-    User user2 = new User(789,"789@123.com","hij kl",5,-0.4632, 51.3552);
+    User user1 = new User("345","345@123.com","qwe FKH",1000,79.3803, 51.3267);
+    User user2 = new User("789","789@123.com","hij kl",5,-0.4632, 51.3552);
     List<User> users;
     try {
       DatabaseJdbc.deleteLoginTable(jdbc,"UserTest");
@@ -178,6 +178,56 @@ public class DatabaseTest {
     }
 
     
+
+  }
+  
+  /*
+   * Test AlreadyExists
+   * 
+   */
+  @Test
+  @Order(6)
+  public void TestAlreadyExists() {
+    System.out.println("========TESTING AlreadyExists ========");
+    User user1 = new User("56789","345@123.com","qwe FKH",1000,79.3803, 51.3267);
+    try {
+      DatabaseJdbc.deleteLoginTable(jdbc,"UserTest");
+      DatabaseJdbc.createLoginTable(jdbc,"UserTest");
+      boolean result = DatabaseJdbc.AlreadyExists(jdbc, "UserTest", "56789");
+      assertEquals(result, false);
+      
+      DatabaseJdbc.addLoginData(jdbc, "UserTest", user1);
+      result = DatabaseJdbc.AlreadyExists(jdbc, "UserTest", "56789");
+      assertEquals(result, true);
+      
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+  
+  
+  /*
+   * Test Update login data
+   * 
+   */
+  @Test
+  @Order(7)
+  public void TestUpdateLogin() {
+    System.out.println("========TESTING Update login ========");
+    User user1 = new User("56789","345@123.com","qwe FKH",1000,79.3803, 51.3267);
+    try {
+      DatabaseJdbc.deleteLoginTable(jdbc,"UserTest");
+      DatabaseJdbc.createLoginTable(jdbc,"UserTest");
+      DatabaseJdbc.addLoginData(jdbc, "UserTest", user1);
+      DatabaseJdbc.updatesLoginData(jdbc, "UserTest", user1);
+      
+      
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
   }
 }

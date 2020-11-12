@@ -20,6 +20,7 @@ public class Application extends WebSecurityConfigurerAdapter {
   private static DatabaseJdbc database;
   
   public static void main(String[] args) {
+    
     SpringApplication.run(Application.class, args);
   }
 
@@ -51,10 +52,13 @@ public class Application extends WebSecurityConfigurerAdapter {
         .logout(l -> l
             .logoutSuccessUrl("/").permitAll()
         )
-        .oauth2Login();
-    // @formatter:on
-  }
-  
+        .oauth2Login(o -> o
+            .failureHandler((request, response, exception) -> {
+                request.getSession().setAttribute("error.message", exception.getMessage());
+                //handler.onAuthenticationFailure(request, response, exception);
+            })
+        );
+}
   
 
 }
