@@ -1,7 +1,7 @@
 package savings.tracker;
 
+//import java.sql.SQLException;
 import java.util.Arrays;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,18 +12,29 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import savings.tracker.util.DatabaseJdbc;
+//import savings.tracker.util.DatabaseJdbc;
 
 @SpringBootApplication
 public class Application extends WebSecurityConfigurerAdapter {
-  
-  private static DatabaseJdbc database;
-  
+
+  // private static DatabaseJdbc database;
+
+  /**
+   * Main function to run the application.
+   * 
+   * @param args args
+   * @throws SQLException Exception
+   */
   public static void main(String[] args) {
-    
+
     SpringApplication.run(Application.class, args);
   }
 
+  /**
+   * System log of all beans provided by Spring Boot.
+   * 
+   * @return CommandLineRunner log
+   */
   @Bean
   public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
     return args -> {
@@ -42,23 +53,19 @@ public class Application extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     // @formatter:off
-    http.authorizeRequests(a -> a.antMatchers("/frontend", "/", "/error", "/webjars/**").permitAll()
-        .anyRequest().authenticated())
-        .exceptionHandling(
-            e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+    http.authorizeRequests(
+        a -> a.antMatchers("/frontend", "/", "/error", "/webjars/**")
+            .permitAll().anyRequest().authenticated())
+        .exceptionHandling(e -> e.authenticationEntryPoint(
+            new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
         .csrf(c -> c
-            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-        )
-        .logout(l -> l
-            .logoutSuccessUrl("/").permitAll()
-        )
-        .oauth2Login(o -> o
-            .failureHandler((request, response, exception) -> {
-                request.getSession().setAttribute("error.message", exception.getMessage());
-                //handler.onAuthenticationFailure(request, response, exception);
-            })
-        );
-}
-  
+            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+        .logout(l -> l.logoutSuccessUrl("/").permitAll())
+        .oauth2Login(o -> o.failureHandler((request, response, exception) -> {
+          request.getSession().setAttribute("error.message",
+              exception.getMessage());
+          // handler.onAuthenticationFailure(request, response, exception);
+        }));
+  }
 
 }
