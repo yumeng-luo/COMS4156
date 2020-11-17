@@ -56,8 +56,10 @@ public class SendGridEmailer {
 
     Personalization personalization = new Personalization();
     personalization.addTo(new Email("jch2169@columbia.edu"));
-    personalization.addDynamicTemplateData("weekly-total","This week you saved $5.00."); 
-    personalization.addDynamicTemplateData("cumul-total","In total, you saved $15.00!"); 
+    personalization.addDynamicTemplateData("weekly-total",
+        "This week you saved $5.00."); 
+    personalization.addDynamicTemplateData("cumul-total",
+        "In total, you saved $15.00!"); 
     mail.addPersonalization(personalization);
 
     return mail;
