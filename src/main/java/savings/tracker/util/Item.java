@@ -2,17 +2,23 @@ package savings.tracker.util;
 
 public class Item {
   private String name;
+  private String barcode;
+  private double price;
+  private String store;
+  private double lat;
+  private double lon;
+  private String sku;
   private String tcin;
 
   /**
    * Construct from input.
    * 
    */
-  public Item(String name, String tcin, double price, String store,
+  public Item(String name, String barcode, double price, String store,
       double lat, double lon) {
     super();
     this.name = name;
-    this.tcin = tcin;
+    this.barcode = barcode;
     this.price = price;
     this.store = store;
     this.lat = lat;
@@ -32,11 +38,11 @@ public class Item {
   }
 
   public String getTcin() {
-    return tcin;
+    return barcode;
   }
 
   public void setTcin(String tcin) {
-    this.tcin = tcin;
+    this.barcode = tcin;
   }
 
   public double getPrice() {
@@ -71,8 +77,19 @@ public class Item {
     this.lon = lon;
   }
 
-  private double price;
-  private String store;
-  private double lat;
-  private double lon;
+  public String getBarcode() {
+    return barcode;
+  }
+
+  public void setBarcode(String barcode) {
+    this.barcode = barcode;
+  }
+
+  public String getSku() {
+    return sku;
+  }
+
+  public void setSku(String sku) {
+    this.sku = sku;
+  }
 }
