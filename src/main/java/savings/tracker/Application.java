@@ -62,11 +62,6 @@ public class Application extends WebSecurityConfigurerAdapter {
 
     SpringApplication.run(Application.class, args);
 
-    // String tcin = "54191097";
-    // String zipcode = "10025";
-    // String locationId = target_getStoreId(zipcode);
-    // tring price = target_getPrice(tcin, locationId);
-    // List<Item> items = wegman_getItems("Milk");
 
   }
 
@@ -126,53 +121,6 @@ public class Application extends WebSecurityConfigurerAdapter {
     return source;
   }
 
-  /**
-   * returns the first store ID according to a zipcode.
-   * 
-   * @param zipcode zipcode
-   * @return location id
-   */
-  public static String target_getStoreId(String zipcode) {
-    String response = Unirest
-        .get("https://target1.p.rapidapi.com/stores/list?zipcode=" + zipcode)
-        .header("x-rapidapi-key",
-            "d742520193mshd93d24a0e93b9adp152d18jsncdffefd389e9")
-        .header("x-rapidapi-host", "target1.p.rapidapi.com").asString()
-        .getBody();
-
-    JSONArray firstArray = new JSONArray(response);
-    JSONObject firstObject = firstArray.getJSONObject(0);
-    JSONArray secondArray = firstObject.getJSONArray("locations");
-    JSONObject location = secondArray.getJSONObject(0);
-    String locationId = location.get("location_id").toString();
-
-    System.out.println("\n" + locationId + "\n");
-    return locationId;
-  }
-
-  /**
-   * gets price of an object.
-   * 
-   * @param tcin    product id
-   * @param storeID store id
-   * @return list of items
-   */
-  public static String target_getPrice(String tcin, String storeID) {
-    HttpResponse<JsonNode> response = Unirest
-        .get("https://target1.p.rapidapi.com/products/get-details?tcin=" + tcin
-            + "&store_id=" + storeID)
-        .header("x-rapidapi-key",
-            "d742520193mshd93d24a0e93b9adp152d18jsncdffefd389e9")
-        .header("x-rapidapi-host", "target1.p.rapidapi.com").asJson();
-
-    JsonNode body = response.getBody();
-    JSONObject data = body.getObject();
-    String test = data.getJSONObject("data").getJSONObject("product")
-        .getJSONObject("price").get("current_retail").toString();
-
-    System.out.println(test);
-    return test;
-  }
 
   /**
    * gets products by name.
