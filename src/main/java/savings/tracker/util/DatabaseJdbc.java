@@ -372,8 +372,8 @@ public class DatabaseJdbc {
   }
 
   /**
-   * Adds task data to task table. If already exist, update task.
-   * must add search first
+   * Adds task data to task table. If already exist, update task. must add
+   * search first
    * 
    * @param jdbc      the database
    * @param tableName the table name
@@ -405,10 +405,10 @@ public class DatabaseJdbc {
         stmt.setString(7, task.getFinalItem().getTcin());
 
       } else {
-        stmt = c.prepareStatement("UPDATE " + tableName
-            + " SET SEARCHSTRING=?, STARTTIME=?,"
-            + "SEARCH_ID=?,INITIAL=?,ALTERNATIVE_SEARCH=?, "
-            + "FINAL=? where USER_ID =\"" + task.getUserId() + "\"");
+        stmt = c.prepareStatement(
+            "UPDATE " + tableName + " SET SEARCHSTRING=?, STARTTIME=?,"
+                + "SEARCH_ID=?,INITIAL=?,ALTERNATIVE_SEARCH=?, "
+                + "FINAL=? where USER_ID =\"" + task.getUserId() + "\"");
         stmt.setString(1, task.getSearchString());
         stmt.setString(2, String.valueOf(task.getTaskStartTime()));
         stmt.setString(3, task.getUserId() + "1");
@@ -454,15 +454,14 @@ public class DatabaseJdbc {
     Statement stmt = null;
     ResultSet rs = null;
     Connection c = jdbc.createConnection();
-    List<String> items = new ArrayList<String>();
     OngoingTask result = new OngoingTask();
     try {
       c.setAutoCommit(false);
       System.out.println("Opened database successfully for get");
 
       stmt = c.createStatement();
-      rs = stmt.executeQuery(
-          "SELECT * FROM " + tableName + " WHERE USER_ID " + " = \"" + userId + "\";");
+      rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE USER_ID "
+          + " = \"" + userId + "\";");
 
       if (rs.next()) {
         result.setUserId(rs.getString("USER_ID"));
@@ -470,10 +469,12 @@ public class DatabaseJdbc {
         result.setTaskStartTime(rs.getTimestamp("STARTTIME"));
         result.setSearchItems(DatabaseJdbc.getSearch(jdbc, searchTable,
             itemTable, rs.getString("SEARCH_ID")));
-        result.setInitialItem(DatabaseJdbc.getItem(jdbc, itemTable, rs.getString("INITIAL")));
+        result.setInitialItem(
+            DatabaseJdbc.getItem(jdbc, itemTable, rs.getString("INITIAL")));
         result.setAlternativeItem(DatabaseJdbc.getSearch(jdbc, searchTable,
             itemTable, rs.getString("ALTERNATIVE_SEARCH")));
-        result.setFinalItem(DatabaseJdbc.getItem(jdbc, itemTable, rs.getString("FINAL")));
+        result.setFinalItem(
+            DatabaseJdbc.getItem(jdbc, itemTable, rs.getString("FINAL")));
       }
 
       rs.close();
@@ -539,6 +540,83 @@ public class DatabaseJdbc {
       } catch (SQLException e) {
         e.printStackTrace();
       }
+    }
+
+    System.out.println("Record created successfully");
+    return true;
+  }
+
+  /**
+   * Remove search results data in search table.
+   * 
+   * @param jdbc      the database
+   * @param tableName the table name
+   * @param searchId  user id +1 for search +2 for alternative
+   * @return returns boolean
+   * @throws SQLException exception
+   */
+  public static boolean removeSearch(DatabaseJdbc jdbc, String tableName,
+      String searchId) throws SQLException {
+
+    PreparedStatement stmt = null;
+    Connection c = jdbc.createConnection();
+
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully");
+      stmt = c.prepareStatement("PRAGMA foreign_keys = OFF;");
+
+      stmt.executeUpdate();
+      stmt.close();
+      c.commit();
+      c.close();
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      c.close();
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
+    }
+
+    stmt = null;
+    c = jdbc.createConnection();
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully");
+      stmt = c.prepareStatement("DELETE FROM " + tableName
+              + " WHERE ID = \"" + searchId + "\";");
+
+      stmt.executeUpdate();
+      stmt.close();
+      c.commit();
+      c.close();
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      c.close();
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
+    }
+    stmt = null;
+    c = jdbc.createConnection();
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully");
+      stmt = c.prepareStatement("PRAGMA foreign_keys = ON;");
+
+      stmt.executeUpdate();
+      stmt.close();
+      c.commit();
+      c.close();
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      c.close();
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
     }
 
     System.out.println("Record created successfully");
