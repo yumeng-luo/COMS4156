@@ -4,11 +4,11 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Demo</title>
-    <meta name="description" content="Savings Tracker"/>
+    <meta name="description" content="Savers"/>
     <meta name="viewport" content="width=device-width"/>
-    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
     <script type="text/javascript">
 	    $.get("/user", function(data) {
 	        $("#user").html(data.name);
@@ -56,7 +56,7 @@
   </style>
 </head>
 <body>
-	<h1>Demo</h1>
+	<h1>Savings Tracker</h1>
 	<div class="container"></div>
 	<div class="container unauthenticated">
 	  <div>
@@ -70,6 +70,12 @@
 	  </div>
 	</div>
 	<div class="container text-danger error"></div>
+
+	<!--item search page-->
+
+	<div id='search'></div>
+	<script src="js/search.js"></script>
+
 	
 	<!-- Based on the following Google Maps API tutorial: https://codelabs.developers.google.com/codelabs/google-maps-nearby-search-js#4-->
 
