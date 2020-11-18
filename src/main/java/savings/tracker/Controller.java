@@ -10,7 +10,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -89,6 +88,8 @@ public class Controller {
         emptyList, emptyItem);
     try {
       DatabaseJdbc.addTask(database, "Task", task);
+      DatabaseJdbc.removeSearch(database, "Search", id + "1");
+      DatabaseJdbc.removeSearch(database, "Search", id + "2");
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -156,6 +157,8 @@ public class Controller {
     // save to ongoing task
     currentTask.setSearchItems(list);
     try {
+      DatabaseJdbc.removeSearch(database, "Search", id + "1");
+      DatabaseJdbc.removeSearch(database, "Search", id + "2");
       DatabaseJdbc.addSearch(database, "Search", "Item", list, id + "1");
       DatabaseJdbc.addTask(database, "Task", currentTask);
     } catch (SQLException e) {
@@ -172,7 +175,7 @@ public class Controller {
    * @param itemNumber number of item chosen
    * @throws SQLException Exception
    */
-  @PostMapping("/select")
+  @PostMapping("/select_item")
   @ResponseBody
   public Message selectItem(
       @RequestParam(value = "item_number", defaultValue = "0") int itemNumber,
@@ -199,12 +202,59 @@ public class Controller {
 
     // save to ongoing task
     try {
+      DatabaseJdbc.removeSearch(database, "Search", id + "2");
       DatabaseJdbc.addTask(database, "Task", task);
     } catch (SQLException e) {
       e.printStackTrace();
     }
 
     return new Message(200, task.getInitialItem().getName());
+  }
+
+
+  /**
+   * Select Final Item.
+   * 
+   * @param tcin unique tcin of item chosen
+   * @throws SQLException Exception
+   */
+  @PostMapping("/select_purchase")
+  @ResponseBody
+  public Message selectPurchase(
+      @RequestParam(value = "tcin", defaultValue = "0") String tcin,
+      @AuthenticationPrincipal OAuth2User principal) {
+    String id;
+    if (principal != null) {
+      id = principal.getAttribute("sub");
+    } else {
+      id = "105222900313734280075";
+    }
+    System.out.print(id);
+    OngoingTask task = new OngoingTask();
+    Item finalItem = new Item();
+    try {
+      task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
+      finalItem = DatabaseJdbc.getItem(database, "Item", tcin);
+    } catch (SQLException e1) {
+      e1.printStackTrace();
+    }
+    
+    // ongoing task
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    task.setTaskStartTime(timestamp);
+    // in case we use row number to access items
+    //List<Item> itemList = task.getSearchItems();
+    //List<Item> itemList2 = task.getAlternativeItem();
+    task.setFinalItem(finalItem);
+
+    // save to ongoing task
+    try {
+      DatabaseJdbc.addTask(database, "Task", task);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    return new Message(200, task.getFinalItem().getName());
   }
 
 }

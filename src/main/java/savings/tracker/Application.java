@@ -84,7 +84,7 @@ public class Application extends WebSecurityConfigurerAdapter {
         // oauth login quota
         a -> a
             .antMatchers("/frontend", "/", "/error", "/webjars/**", "/search",
-                "/select", "/no_alternative")
+                "/select_item","/select_purchase", "/no_alternative")
             .permitAll().anyRequest().authenticated())
         .exceptionHandling(e -> e.authenticationEntryPoint(
             new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
@@ -139,8 +139,8 @@ public class Application extends WebSecurityConfigurerAdapter {
    * @return price as string
    */
   public static String target_getPrice(String tcin, String storeID) {
-    HttpResponse<JsonNode> response = Unirest.get
-        ("https://target1.p.rapidapi.com/products/get-details?tcin="
+    HttpResponse<JsonNode> response = Unirest.get(
+        "https://target1.p.rapidapi.com/products/get-details?tcin="
         + tcin + "&store_id=" + storeID)
         .header("x-rapidapi-key", System.getenv("RAPID_API_KEY"))
         .header("x-rapidapi-host", "target1.p.rapidapi.com")

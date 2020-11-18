@@ -41,10 +41,18 @@ public class ControllerTest {
 
   @Test
   public void postSelect() throws Exception {
-    mvc.perform(MockMvcRequestBuilders.post("/select")
+    mvc.perform(MockMvcRequestBuilders.post("/select_item")
         .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
         .andExpect(content()
             .string(equalTo("{\"code\":200,\"message\":\"Good Coffee\"}")));
+  }
+  
+  @Test
+  public void postSelectFinal() throws Exception {
+    mvc.perform(MockMvcRequestBuilders.post("/select_purchase?tcin=111111111")
+        .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+        .andExpect(content()
+            .string(equalTo("{\"code\":200,\"message\":\"Okay Coffee\"}")));
   }
   
   @Test
