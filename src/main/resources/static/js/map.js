@@ -5,7 +5,6 @@ let infoWindow;
 let currentInfoWindow;
 let service;
 let infoPane;
-
 function initMap() {
     bounds = new google.maps.LatLngBounds();
     infoWindow = new google.maps.InfoWindow;
