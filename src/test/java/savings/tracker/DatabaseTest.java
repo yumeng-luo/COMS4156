@@ -7,10 +7,14 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import savings.tracker.util.DatabaseJdbc;
+import savings.tracker.util.Item;
+import savings.tracker.util.OngoingTask;
 import savings.tracker.util.User;
 
 public class DatabaseTest {
@@ -45,6 +49,9 @@ public class DatabaseTest {
   public void testCreateTable() throws SQLException {
     System.out.println("========TESTING CREATE TABLE ========");
     DatabaseJdbc.createLoginTable(jdbc, "UserTest");
+    DatabaseJdbc.createItemTable(jdbc, "ItemTest");
+    DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
+    DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest", "ItemTest");
 
   }
 
@@ -58,7 +65,14 @@ public class DatabaseTest {
     System.out.println("========TESTING CLEAN TABLE ========");
     try {
       DatabaseJdbc.createLoginTable(jdbc, "UserTest");
-      DatabaseJdbc.deleteLoginTable(jdbc, "UserTest");
+      DatabaseJdbc.createItemTable(jdbc, "ItemTest");
+      DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
+      DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest", "ItemTest");
+      
+      DatabaseJdbc.deleteTable(jdbc, "TaskTest");
+      DatabaseJdbc.deleteTable(jdbc, "SearchTest");
+      DatabaseJdbc.deleteTable(jdbc, "ItemTest");
+      DatabaseJdbc.deleteTable(jdbc, "UserTest");
     } catch (SQLException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -69,7 +83,7 @@ public class DatabaseTest {
     try {
       c.setAutoCommit(false);
       stmt = c.createStatement();
-      String sql = "CREATE TABLE User (USER_ID text PRIMARY KEY, EMAIL"
+      String sql = "CREATE TABLE UserTest (USER_ID text PRIMARY KEY, EMAIL"
           + " TEXT, NAME TEXT,SAVINGS FLOAT,LOCATION POINT,ONLINE BOOLEAN DEFAULT FALSE)";
       stmt.executeUpdate(sql);
       stmt.close();
@@ -93,7 +107,7 @@ public class DatabaseTest {
     User user = new User("123", "123@123.com", "ABC DEF", 145.6, 1.361,
         51.3267);
     try {
-      DatabaseJdbc.deleteLoginTable(jdbc, "UserTest");
+      DatabaseJdbc.deleteTable(jdbc, "UserTest");
       DatabaseJdbc.createLoginTable(jdbc, "UserTest");
       DatabaseJdbc.addLoginData(jdbc, "UserTest", user);
     } catch (SQLException e1) {
@@ -106,7 +120,7 @@ public class DatabaseTest {
     try {
       c.setAutoCommit(false);
       stmt = c.createStatement();
-      String sql = "SELECT * FROM User WHERE USER_ID = 123;";
+      String sql = "SELECT * FROM UserTest WHERE USER_ID = 123;";
       ResultSet rs = stmt.executeQuery(sql);
       while (rs.next()) {
         String userId = rs.getString("USER_ID");
@@ -152,7 +166,7 @@ public class DatabaseTest {
     User user2 = new User("789", "789@123.com", "hij kl", 5, -0.4632, 51.3552);
     List<User> users;
     try {
-      DatabaseJdbc.deleteLoginTable(jdbc, "UserTest");
+      DatabaseJdbc.deleteTable(jdbc, "UserTest");
       DatabaseJdbc.createLoginTable(jdbc, "UserTest");
       DatabaseJdbc.addLoginData(jdbc, "UserTest", user1);
       DatabaseJdbc.addLoginData(jdbc, "UserTest", user2);
@@ -189,13 +203,13 @@ public class DatabaseTest {
     User user1 = new User("56789", "345@123.com", "qwe FKH", 1000, 79.3803,
         51.3267);
     try {
-      DatabaseJdbc.deleteLoginTable(jdbc, "UserTest");
+      DatabaseJdbc.deleteTable(jdbc, "UserTest");
       DatabaseJdbc.createLoginTable(jdbc, "UserTest");
-      boolean result = DatabaseJdbc.alreadyExists(jdbc, "UserTest", "56789");
+      boolean result = DatabaseJdbc.alreadyExists(jdbc, "UserTest", "56789", "user_id");
       assertEquals(result, false);
 
       DatabaseJdbc.addLoginData(jdbc, "UserTest", user1);
-      result = DatabaseJdbc.alreadyExists(jdbc, "UserTest", "56789");
+      result = DatabaseJdbc.alreadyExists(jdbc, "UserTest", "56789", "user_id");
       assertEquals(result, true);
 
     } catch (SQLException e) {
@@ -216,7 +230,7 @@ public class DatabaseTest {
     User user1 = new User("56789", "345@123.com", "qwe FKH", 1000, 79.3803,
         51.3267);
     try {
-      DatabaseJdbc.deleteLoginTable(jdbc, "UserTest");
+      DatabaseJdbc.deleteTable(jdbc, "UserTest");
       DatabaseJdbc.createLoginTable(jdbc, "UserTest");
       DatabaseJdbc.addLoginData(jdbc, "UserTest", user1);
       DatabaseJdbc.logoutUser(jdbc, "UserTest", user1.getUserId());
@@ -240,7 +254,7 @@ public class DatabaseTest {
     User user1 = new User("34535667", "345@123.com", "qwe FKH", 1000, 79.3803,
         51.3267);
     try {
-      DatabaseJdbc.deleteLoginTable(jdbc, "UserTest");
+      DatabaseJdbc.deleteTable(jdbc, "UserTest");
       DatabaseJdbc.createLoginTable(jdbc, "UserTest");
       DatabaseJdbc.addLoginData(jdbc, "UserTest", user1);
       DatabaseJdbc.logoutUser(jdbc, "UserTest", user1.getUserId());
@@ -251,7 +265,7 @@ public class DatabaseTest {
       try {
         c.setAutoCommit(false);
         stmt = c.createStatement();
-        String sql = "SELECT * FROM User WHERE USER_ID = " + user1.getUserId()
+        String sql = "SELECT * FROM UserTest WHERE USER_ID = " + user1.getUserId()
             + ";";
         ResultSet rs = stmt.executeQuery(sql);
         while (rs.next()) {
@@ -289,5 +303,426 @@ public class DatabaseTest {
     }
 
   }
+  
+  /*
+   * Test insert Item
+   * 
+   */
+  @Test
+  @Order(9)
+  public void testInsertItem() {
+    System.out.println("========TESTING INSERT ITEM ========");
+    Item item = new Item("FUJI APPLE", "001", 7.1, "COSTCO", 41.5, 34.1);
+    try {
+      DatabaseJdbc.deleteTable(jdbc, "ItemTest");
+      DatabaseJdbc.createItemTable(jdbc, "ItemTest");
+      DatabaseJdbc.addItem(jdbc, "ItemTest", item);
+    } catch (SQLException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+    Statement stmt = null;
+    Connection c = jdbc.createConnection();
+
+    try {
+      c.setAutoCommit(false);
+      stmt = c.createStatement();
+      String sql = "SELECT * FROM ItemTest WHERE ID = \"001\";";
+      ResultSet rs = stmt.executeQuery(sql);
+      while (rs.next()) {
+        String id = rs.getString("ID");
+        assertEquals(id, "001");
+
+        String name = rs.getString("name");
+        assertEquals(name, "FUJI APPLE");
+
+        double price = rs.getDouble("price");
+        assertEquals(price, 7.1);
+
+        String store = rs.getString("store");
+        assertEquals(store, "COSTCO");
+
+        double lat = rs.getDouble("lat");
+        assertEquals(lat, 41.5);
+
+        double lon = rs.getDouble("lon");
+        assertEquals(lon, 34.1);
+
+      }
+
+      stmt.close();
+      c.commit();
+      c.close();
+    } catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      assertEquals(1, 0);
+    }
+
+  }
+  
+  /*
+   * Test insert Item that already exist
+   * 
+   */
+  @Test
+  @Order(10)
+  public void testInsertItem2() {
+    System.out.println("========TESTING INSERT ITEM 2 ========");
+    Item item1 = new Item("FUJI APPLE", "001", 7.1, "COSTCO", 41.5, 34.1);
+    Item item2 = new Item("FUJI APPLE", "001", 8.9, "COSTCO", 14.5, 13.4);
+    try {
+      DatabaseJdbc.deleteTable(jdbc, "ItemTest");
+      DatabaseJdbc.createItemTable(jdbc, "ItemTest");
+      DatabaseJdbc.addItem(jdbc, "ItemTest", item1);
+      DatabaseJdbc.addItem(jdbc, "ItemTest", item2);
+    } catch (SQLException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+    Statement stmt = null;
+    Connection c = jdbc.createConnection();
+
+    try {
+      c.setAutoCommit(false);
+      stmt = c.createStatement();
+      String sql = "SELECT * FROM ItemTest WHERE ID = \"001\";";
+      ResultSet rs = stmt.executeQuery(sql);
+      while (rs.next()) {
+        String id = rs.getString("ID");
+        assertEquals(id, "001");
+
+        String name = rs.getString("name");
+        assertEquals(name, "FUJI APPLE");
+
+        double price = rs.getDouble("price");
+        assertEquals(price, 8.9);
+
+        String store = rs.getString("store");
+        assertEquals(store, "COSTCO");
+
+        double lat = rs.getDouble("lat");
+        assertEquals(lat, 14.5);
+
+        double lon = rs.getDouble("lon");
+        assertEquals(lon, 13.4);
+
+      }
+
+      stmt.close();
+      c.commit();
+      c.close();
+    } catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      assertEquals(1, 0);
+    }
+
+  }
+  
+  /*
+   * Test insert search record
+   * 
+   */
+  @Test
+  @Order(11)
+  public void testInsertSearch() {
+    System.out.println("========TESTING INSERT SEARCH ========");
+    Item item1 = new Item("HONEYCRISP APPLE", "002", 9.3, "COSTCO", 41.5, 34.1);
+    Item item2 = new Item("AVACADO", "003", 6, "COSTCO", 41.5, 34.1);
+    Item item3 = new Item("PEAR", "004", 5, "COSTCO", 41.5, 34.1);
+    
+    List<Item> list = new ArrayList<Item>();
+    list.add(item1);
+    list.add(item2);
+    list.add(item3);
+    
+    try {
+      DatabaseJdbc.deleteTable(jdbc, "SearchTest");
+      DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
+      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list, "123" + "1");
+      
+    } catch (SQLException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+    Statement stmt = null;
+    Connection c = jdbc.createConnection();
+
+    try {
+      c.setAutoCommit(false);
+      stmt = c.createStatement();
+      String sql = "SELECT * FROM ItemTest WHERE ID = \"001\";";
+      ResultSet rs = stmt.executeQuery(sql);
+      while (rs.next()) {
+        String id = rs.getString("ID");
+        assertEquals(id, "001");
+
+        String name = rs.getString("name");
+        assertEquals(name, "FUJI APPLE");
+
+        double price = rs.getDouble("price");
+        assertEquals(price, 7.1);
+
+        String store = rs.getString("store");
+        assertEquals(store, "COSTCO");
+
+        double lat = rs.getDouble("lat");
+        assertEquals(lat, 41.5);
+
+        double lon = rs.getDouble("lon");
+        assertEquals(lon, 34.1);
+
+      }
+
+      stmt.close();
+      c.commit();
+      c.close();
+    } catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      assertEquals(1, 0);
+    }
+
+  }
+  
+  
+  /*
+   * Test insert task record
+   * 
+   */
+  @Test
+  @Order(15)
+  public void testInsertTask() {
+    System.out.println("========TESTING INSERT TASK ========");
+    User user = new User("34535667", "345@123.com", "qwe FKH", 1000, 79.3803,
+        51.3267);
+    Item item1 = new Item("HONEYCRISP APPLE", "002", 9.3, "COSTCO", 41.5, 34.1);
+    Item item2 = new Item("AVACADO", "003", 6, "COSTCO", 41.5, 34.1);
+    Item item3 = new Item("PEAR", "004", 5, "COSTCO", 41.5, 34.1);
+    
+    List<Item> list = new ArrayList<Item>();
+    list.add(item1);
+    list.add(item2);
+    list.add(item3);
+    
+    OngoingTask task = new OngoingTask();
+    task.setUserId("34535667");
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    task.setTaskStartTime(timestamp);
+    task.setSearchString("FRUIT");
+    task.setSearchItems(list);
+    task.setInitialItem(item3);
+    task.setAlternativeItem(new ArrayList<Item>());
+    task.setFinalItem(new Item());
+    
+    try {
+      DatabaseJdbc.deleteTable(jdbc, "TaskTest");
+      DatabaseJdbc.deleteTable(jdbc, "SearchTest");
+      DatabaseJdbc.deleteTable(jdbc, "ItemTest");
+      DatabaseJdbc.deleteTable(jdbc, "UserTest");
+      DatabaseJdbc.createLoginTable(jdbc, "UserTest");
+      DatabaseJdbc.createItemTable(jdbc, "ItemTest");
+      DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
+      DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest", "ItemTest");
+      
+      DatabaseJdbc.addLoginData(jdbc, "UserTest", user);
+      DatabaseJdbc.addTask(jdbc, "TaskTest", task);
+      
+    } catch (SQLException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+    Statement stmt = null;
+    Connection c = jdbc.createConnection();
+
+    try {
+      c.setAutoCommit(false);
+      stmt = c.createStatement();
+      String sql = "SELECT * FROM TaskTest WHERE USER_ID = \"34535667\";";
+      ResultSet rs = stmt.executeQuery(sql);
+      if (rs.next()) {
+        String id = rs.getString("USER_ID");
+        assertEquals(id, "34535667");
+
+        Timestamp time = rs.getTimestamp("STARTTIME");
+        assertEquals(time, timestamp);
+
+        String searchString = rs.getString("SEARCHSTRING");
+        assertEquals(searchString, "FRUIT");
+
+        String searchId = rs.getString("SEARCH_ID");
+        assertEquals(id + "1", searchId);
+
+        String initial = rs.getString("INITIAL");
+        assertEquals("004", initial);
+
+      }
+
+      stmt.close();
+      c.commit();
+      c.close();
+    } catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      assertEquals(1, 0);
+    }
+
+  }
+  
+  /*
+   * Test AlreadyExists on item table
+   * 
+   */
+  @Test
+  @Order(12)
+  public void testAlreadyExists2() {
+    System.out.println("========TESTING AlreadyExists ========");
+    Item item = new Item("FUJI APPLE", "001", 7.1, "COSTCO", 41.5, 34.1);
+    try {
+      DatabaseJdbc.deleteTable(jdbc, "ItemTest");
+      DatabaseJdbc.createItemTable(jdbc, "ItemTest");
+      boolean result = DatabaseJdbc.alreadyExists(jdbc, "ItemTest", "001", "id");
+      assertEquals(result, false);
+
+      DatabaseJdbc.addItem(jdbc, "ItemTest", item);
+      result = DatabaseJdbc.alreadyExists(jdbc, "ItemTest", "001", "id");
+      assertEquals(result, true);
+
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+  
+  /*
+   * Test get item
+   * 
+   */
+  @Test
+  @Order(13)
+  public void testGetItem() {
+    System.out.println("========TESTING get item ========");
+    Item item1 = new Item("HONEYCRISP APPLE", "002", 9.3, "COSTCO", 41.5, 34.1);
+    Item item2 = new Item("AVACADO", "003", 6, "COSTCO", 41.5, 34.1);
+    Item item3 = new Item("PEAR", "004", 5, "COSTCO", 17.9, 15.8);
+    
+    List<Item> list = new ArrayList<Item>();
+    list.add(item1);
+    list.add(item2);
+    list.add(item3);
+    
+    try {
+      DatabaseJdbc.deleteTable(jdbc, "SearchTest");
+      DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
+      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list, "123" + "1");
+      Item item4 = DatabaseJdbc.getItem(jdbc, "ItemTest", "004");
+      assertEquals(item4.getTcin(), "004");
+      assertEquals(item4.getName(), "PEAR");
+      assertEquals(item4.getPrice(), 5);
+      assertEquals(item4.getStore(), "COSTCO");
+      assertEquals(item4.getLat(), 17.9);
+      assertEquals(item4.getLon(), 15.8);
+      
+    } catch (SQLException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+
+  }
+  
+  
+  /*
+   * Test get search record
+   * 
+   */
+  @Test
+  @Order(14)
+  public void testGetSearch() {
+    System.out.println("========TESTING GET SEARCH ========");
+    Item item1 = new Item("HONEYCRISP APPLE", "002", 9.3, "COSTCO", 41.5, 34.1);
+    Item item2 = new Item("AVACADO", "003", 6, "COSTCO", 41.5, 34.1);
+    Item item3 = new Item("PEAR", "004", 5, "COSTCO", 41.5, 34.1);
+    
+    List<Item> list1 = new ArrayList<Item>();
+    list1.add(item1);
+    list1.add(item2);
+    list1.add(item3);
+    
+    Item item4 = new Item("MILK", "005", 3, "7-11", 41.5, 34.1);
+    Item item5 = new Item("TEA", "006", 4.5, "TARGET", 41.5, 34.1);
+    List<Item> list2 = new ArrayList<Item>();
+    list2.add(item4);
+    list2.add(item5);
+    
+    try {
+      DatabaseJdbc.deleteTable(jdbc, "SearchTest");
+      DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
+      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list1, "123" + "2");
+      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list2, "123" + "1");
+      List<Item> result = DatabaseJdbc.getSearch(jdbc, "SearchTest", "ItemTest", "1232");
+      assertEquals(3, result.size());
+      
+    } catch (SQLException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+
+  }
+  
+  /*
+   * Test get task
+   * 
+   */
+  @Test
+  @Order(16)
+  public void testGetTask() {
+    System.out.println("========TESTING GET TASK ========");
+    User user = new User("34535667", "345@123.com", "qwe FKH", 1000, 79.3803,
+        51.3267);
+    Item item1 = new Item("HONEYCRISP APPLE", "002", 9.3, "COSTCO", 41.5, 34.1);
+    Item item2 = new Item("AVACADO", "003", 6, "COSTCO", 41.5, 34.1);
+    Item item3 = new Item("PEAR", "004", 5, "COSTCO", 41.5, 34.1);
+    
+    List<Item> list = new ArrayList<Item>();
+    list.add(item1);
+    list.add(item2);
+    list.add(item3);
+    
+    OngoingTask task = new OngoingTask();
+    task.setUserId("34535667");
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    task.setTaskStartTime(timestamp);
+    task.setSearchString("FRUIT");
+    task.setSearchItems(list);
+    task.setInitialItem(item3);
+    task.setAlternativeItem(new ArrayList<Item>());
+    task.setFinalItem(new Item());
+    
+    OngoingTask result = new OngoingTask();
+    
+    try {
+      DatabaseJdbc.deleteTable(jdbc, "TaskTest");
+      DatabaseJdbc.deleteTable(jdbc, "SearchTest");
+      DatabaseJdbc.deleteTable(jdbc, "ItemTest");
+      DatabaseJdbc.deleteTable(jdbc, "UserTest");
+      DatabaseJdbc.createLoginTable(jdbc, "UserTest");
+      DatabaseJdbc.createItemTable(jdbc, "ItemTest");
+      DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
+      DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest", "ItemTest");
+      
+      DatabaseJdbc.addLoginData(jdbc, "UserTest", user);
+      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list, "34535667" + "1");
+      DatabaseJdbc.addTask(jdbc, "TaskTest", task);
+      result = DatabaseJdbc.getTask(jdbc, "TaskTest", "SearchTest", "ItemTest", "34535667");
+      assertEquals("34535667", result.getUserId());
+      assertEquals(timestamp, result.getTaskStartTime());
+      assertEquals("FRUIT", result.getSearchString());
+      assertEquals(3, result.getSearchItems().size());
+      assertEquals("004", result.getInitialItem().getTcin());
+      
+    } catch (SQLException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+  }
+  
 
 }

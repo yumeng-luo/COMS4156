@@ -1,6 +1,6 @@
 package savings.tracker;
 
-//import java.sql.SQLException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -12,12 +12,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-//import savings.tracker.util.DatabaseJdbc;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import savings.tracker.util.DatabaseJdbc;
 
 @SpringBootApplication
 public class Application extends WebSecurityConfigurerAdapter {
 
-  // private static DatabaseJdbc database;
+  private static DatabaseJdbc database = new DatabaseJdbc();
 
   /**
    * Main function to run the application.
@@ -26,6 +29,16 @@ public class Application extends WebSecurityConfigurerAdapter {
    * @throws SQLException Exception
    */
   public static void main(String[] args) {
+
+    try {
+      DatabaseJdbc.createLoginTable(database, "User");
+      DatabaseJdbc.createItemTable(database, "Item");
+      DatabaseJdbc.createSearchTable(database, "Search", "Item");
+      DatabaseJdbc.createTaskTable(database, "Task", "User", "Search", "Item");
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
     SpringApplication.run(Application.class, args);
   }
@@ -54,7 +67,12 @@ public class Application extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     // @formatter:off
     http.authorizeRequests(
-        a -> a.antMatchers("/frontend", "/", "/error", "/webjars/**")
+        // this is very dangerous, i only did this so i can test without using
+        // too many google
+        // oauth login quota
+        a -> a
+            .antMatchers("/frontend", "/", "/error", "/webjars/**", "/search",
+                "/select", "/no_alternative")
             .permitAll().anyRequest().authenticated())
         .exceptionHandling(e -> e.authenticationEntryPoint(
             new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
@@ -66,6 +84,19 @@ public class Application extends WebSecurityConfigurerAdapter {
               exception.getMessage());
           // handler.onAuthenticationFailure(request, response, exception);
         }));
+    http.cors().and().csrf().disable();
+  }
+
+  @Bean
+  CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Arrays.asList("*"));
+    configuration.setAllowedMethods(Arrays.asList("*"));
+    configuration.setAllowedHeaders(Arrays.asList("*"));
+    configuration.setAllowCredentials(true);
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
   }
 
 }

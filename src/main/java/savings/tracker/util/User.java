@@ -28,12 +28,12 @@ public class User {
    */
   public User(String id, String email2, String name2, double savings2,
       double lat2, double lon2) {
-    userId = id;
-    email = email2;
-    name = name2;
-    savings = savings2;
-    lat = lat2;
-    lon = lon2;
+    this.userId = id;
+    this.email = email2;
+    this.name = name2;
+    this.savings = savings2;
+    this.lat = lat2;
+    this.lon = lon2;
   }
 
   public String getUserId() {

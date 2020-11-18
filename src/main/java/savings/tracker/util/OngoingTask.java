@@ -1,42 +1,105 @@
 package savings.tracker.util;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
 public class OngoingTask {
 
-  private int userId;
-  private String taskStartTime;
-  private String initialItem;
-  private String alternativeItem;
+  private String userId;
+  private String searchString;
+  private Timestamp taskStartTime;
+  private List<Item> searchItems;
+  private Item initialItem;
+  private List<Item> alternativeItem;
+  private Item finalItem;
 
-  public int getUser_id() {
+  /**
+   * Construct from input.
+   * 
+   */
+  public OngoingTask(String userId, String searchString,
+      Timestamp taskStartTime, List<Item> searchItems, Item initialItem,
+      List<Item> alternativeItem, Item finalItem) {
+    super();
+    this.userId = userId;
+    this.searchString = searchString;
+    this.taskStartTime = taskStartTime;
+    this.searchItems = searchItems;
+    this.initialItem = initialItem;
+    this.alternativeItem = alternativeItem;
+    this.finalItem = finalItem;
+  }
+
+  /**
+   * Construct from blank.
+   * 
+   */
+  public OngoingTask() {
+    this.userId = "";
+    this.searchString = "";
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    this.taskStartTime = timestamp;
+    this.searchItems = new ArrayList<Item>();
+    this.initialItem = new Item();
+    this.alternativeItem = new ArrayList<Item>();
+    this.finalItem = new Item();
+  }
+
+  public String getUserId() {
     return userId;
   }
 
-  public void setUser_id(int userId) {
+  public void setUserId(String userId) {
     this.userId = userId;
   }
 
-  public String getTask_start_time() {
+  public Timestamp getTaskStartTime() {
     return taskStartTime;
   }
 
-  public void setTask_start_time(String taskStartTime) {
+  public void setTaskStartTime(Timestamp taskStartTime) {
     this.taskStartTime = taskStartTime;
   }
 
-  public String getInitial_item() {
+  public String getSearchString() {
+    return searchString;
+  }
+
+  public void setSearchString(String searchString) {
+    this.searchString = searchString;
+  }
+
+  public List<Item> getSearchItems() {
+    return searchItems;
+  }
+
+  public void setSearchItems(List<Item> searchItems) {
+    this.searchItems = searchItems;
+  }
+
+  public Item getInitialItem() {
     return initialItem;
   }
 
-  public void setInitial_item(String initialItem) {
+  public void setInitialItem(Item initialItem) {
     this.initialItem = initialItem;
   }
 
-  public String getAlternative_item() {
+  public List<Item> getAlternativeItem() {
     return alternativeItem;
   }
 
-  public void setAlternative_item(String alternativeItem) {
+  public void setAlternativeItem(List<Item> alternativeItem) {
     this.alternativeItem = alternativeItem;
+  }
+
+  public Item getFinalItem() {
+    return finalItem;
+  }
+
+  public void setFinalItem(Item finalItem) {
+    this.finalItem = finalItem;
   }
 
 }
