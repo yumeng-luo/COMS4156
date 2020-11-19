@@ -2,11 +2,6 @@ package savings.tracker;
 
 import java.sql.SQLException;
 import java.util.Arrays;
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
-import kong.unirest.json.JSONArray;
-import kong.unirest.json.JSONObject;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,8 +16,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import savings.tracker.util.DatabaseJdbc;
-
-
 
 @SpringBootApplication
 public class Application extends WebSecurityConfigurerAdapter {
@@ -48,11 +41,7 @@ public class Application extends WebSecurityConfigurerAdapter {
     }
 
     SpringApplication.run(Application.class, args);
-    
-    String tcin = "54191097";
-    String zipcode = "10025";
-    String locationId = target_getStoreId(zipcode);
-    String price = target_getPrice(tcin, locationId);
+
   }
 
   /**
@@ -110,48 +99,5 @@ public class Application extends WebSecurityConfigurerAdapter {
     source.registerCorsConfiguration("/**", configuration);
     return source;
   }
-  
-  /**
-   * returns the first store ID according to a zipcode.
-   * @param zipcode zipcode
-   * @return location id
-   */
-  public static String target_getStoreId(String zipcode) {
-    String response = Unirest.get("https://target1.p.rapidapi.com/stores/list?zipcode=" + zipcode)
-        .header("x-rapidapi-key", System.getenv("RAPID_API_KEY"))
-        .header("x-rapidapi-host", "target1.p.rapidapi.com")
-        .asString().getBody();
-    
-    JSONArray firstArray = new JSONArray(response);
-    JSONObject firstObject = firstArray.getJSONObject(0);
-    JSONArray secondArray = firstObject.getJSONArray("locations");
-    JSONObject location = secondArray.getJSONObject(0);
-    String locationId = location.get("location_id").toString();
-    
-    System.out.println("\n" + locationId + "\n");
-    return locationId;
-  }
-  
-  /**
-   * gets price of an object.
-   * @param tcin product id
-   * @param storeID store id
-   * @return price as string
-   */
-  public static String target_getPrice(String tcin, String storeID) {
-    HttpResponse<JsonNode> response = Unirest.get(
-        "https://target1.p.rapidapi.com/products/get-details?tcin="
-        + tcin + "&store_id=" + storeID)
-        .header("x-rapidapi-key", System.getenv("RAPID_API_KEY"))
-        .header("x-rapidapi-host", "target1.p.rapidapi.com")
-        .asJson();
-    
-    JsonNode body = response.getBody();
-    JSONObject data = body.getObject();
-    String test = data.getJSONObject("data").getJSONObject("product")
-        .getJSONObject("price").get("current_retail").toString();
-   
-    System.out.println(test);
-    return test;
-  }
+
 }
