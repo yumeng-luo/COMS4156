@@ -85,7 +85,8 @@ public class Controller {
     List<Item> emptyList = new ArrayList<Item>();
     Item emptyItem = new Item();
     OngoingTask task = new OngoingTask(id, "", timestamp, emptyList, emptyItem,
-        emptyList, emptyItem);
+        0, 0, emptyList, emptyItem, 0, 0);
+
     try {
       DatabaseJdbc.addTask(database, "Task", task);
       DatabaseJdbc.removeSearch(database, "Search", id + "1");
@@ -98,17 +99,22 @@ public class Controller {
   }
 
   /**
-   * Search Item by string.
+   * Search Item by string. creates both search items and alternative items
+   * search items are items with exact match alternative items are items with
+   * some but not all match
    * 
    * @param item name of item
+   * @param lat  of user
+   * @param lon  of user
    * @throws SQLException Exception
    */
   @PostMapping("/search")
   @ResponseBody
   public List<Item> searchItem(
-      @RequestParam(value = "item", defaultValue = "coffee") String item,
-      // @RequestBody String item,
-      @AuthenticationPrincipal OAuth2User principal) {
+      @RequestParam(value = "item", defaultValue = "whole milk") String item,
+      @AuthenticationPrincipal OAuth2User principal,
+      @RequestParam(value = "lat", defaultValue = "37.7510") double lat,
+      @RequestParam(value = "lon", defaultValue = "-97.8220") double lon) {
     String id;
     if (principal != null) {
       id = principal.getAttribute("sub");
@@ -132,36 +138,26 @@ public class Controller {
     }
 
     // search for item
-    double lat1 = 45;
-    double lon1 = 23;
     // TODO implement this part after rapid api
-    List<Item> list = WegmanApi.getItems(database, "Store", item, lat1, lon1);
-    /*
-     * double price1 = 5.39; double lat1 = 45; double lon1 = 23; double price2 =
-     * 3.29; double lat2 = 54; double lon2 = 13; double price3 = 1.39; double
-     * lat3 = 4; double lon3 = 17; Item item1 = new Item("Good Coffee",
-     * "123456789", price1, "McDonalds", lat1, lon1); Item item2 = new
-     * Item("Okay Coffee", "111111111", price2, "Tim Hortons", lat2, lon2); Item
-     * item3 = new Item("Bad Coffee", "555555555", price3, "Walmart", lat3,
-     * lon3);
-     * 
-     * 
-     * List<Item> list = new ArrayList<Item>(); list.add(item1);
-     * list.add(item2); list.add(item3);
-     */
+    List<List<Item>> list = WegmanApi.getItems(database, "Store", item, lat,
+        lon);
+    // TODO test 2
+
     // save to ongoing task
-    currentTask.setSearchItems(list);
+    currentTask.setSearchItems(list.get(0));
+    currentTask.setAlternativeItem(list.get(1));
     try {
       DatabaseJdbc.removeSearch(database, "Search", id + "1");
       DatabaseJdbc.removeSearch(database, "Search", id + "2");
-      DatabaseJdbc.addSearch(database, "Search", "Item", list, id + "1");
+      DatabaseJdbc.addSearch(database, "Search", "Item", list.get(0), id + "1");
+      DatabaseJdbc.addSearch(database, "Search", "Item", list.get(1), id + "2");
       DatabaseJdbc.addTask(database, "Task", currentTask);
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
-    return list;
+    return list.get(0);
   }
 
   /**
@@ -194,6 +190,8 @@ public class Controller {
     task.setTaskStartTime(timestamp);
     List<Item> itemList = task.getSearchItems();
     task.setInitialItem(itemList.get(itemNumber));
+    task.setInitialLat(Double.valueOf(task.getInitialItem().getLat()));
+    task.setInitialLon(Double.valueOf(task.getInitialItem().getLon()));
 
     // save to ongoing task
     try {
@@ -207,15 +205,81 @@ public class Controller {
   }
 
   /**
+   * Search Item by string. creates both search items and alternative items
+   * search items are items with exact match alternative items are items with
+   * some but not all match
+   * 
+   * @param lat of user
+   * @param lon of user
+   * @throws SQLException Exception
+   */
+  @PostMapping("/alternatives")
+  @ResponseBody
+  public List<Item> searchAlternativeItem(
+      @AuthenticationPrincipal OAuth2User principal,
+      @RequestParam(value = "lat", defaultValue = "37.7510") double lat,
+      @RequestParam(value = "lon", defaultValue = "-97.8220") double lon) {
+    String id;
+    if (principal != null) {
+      id = principal.getAttribute("sub");
+    } else {
+      id = "105222900313734280075";
+    }
+
+    List<Item> result = new ArrayList<Item>();
+    System.out.print(id);
+    // get task info from table
+    OngoingTask currentTask = new OngoingTask();
+    try {
+      currentTask = DatabaseJdbc.getTask(database, "Task", "Search", "Item",
+          id);
+    } catch (SQLException e1) {
+      e1.printStackTrace();
+    }
+
+    // save to on going task
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    currentTask.setTaskStartTime(timestamp);
+
+    // check if there are alternatives
+    if (currentTask.getAlternativeItem().size() == 0) {
+      // search for more item
+      // TODO implement this part after rapid api
+      result = WegmanApi.getAlternativeItems(database, "Store",
+          currentTask.getSearchString(), lat, lon);
+
+    } else {
+      result = currentTask.getAlternativeItem();
+    }
+
+    // save to ongoing task
+    currentTask.setAlternativeItem(result);
+    try {
+      DatabaseJdbc.removeSearch(database, "Search", id + "2");
+      DatabaseJdbc.addSearch(database, "Search", "Item", result, id + "2");
+      DatabaseJdbc.addTask(database, "Task", currentTask);
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    return result;
+  }
+
+  /**
    * Select Final Item.
    * 
    * @param barcode unique barcode/upc of item chosen
+   * @param lat     of store loaction
+   * @param lon     of store location
    * @throws SQLException Exception
    */
   @PostMapping("/select_purchase")
   @ResponseBody
   public Message selectPurchase(
       @RequestParam(value = "upc", defaultValue = "0") String barcode,
+      @RequestParam(value = "lat", defaultValue = "37.7510") String lat,
+      @RequestParam(value = "lon", defaultValue = "-97.8220") String lon,
       @AuthenticationPrincipal OAuth2User principal) {
     String id;
     if (principal != null) {
@@ -228,7 +292,8 @@ public class Controller {
     Item finalItem = new Item();
     try {
       task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
-      finalItem = DatabaseJdbc.getItem(database, "Item", barcode);
+      finalItem = DatabaseJdbc.getItem(database, "Item", barcode,
+          Double.valueOf(lat), Double.valueOf(lon));
     } catch (SQLException e1) {
       e1.printStackTrace();
     }
@@ -236,10 +301,9 @@ public class Controller {
     // ongoing task
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     task.setTaskStartTime(timestamp);
-    // in case we use row number to access items
-    // List<Item> itemList = task.getSearchItems();
-    // List<Item> itemList2 = task.getAlternativeItem();
     task.setFinalItem(finalItem);
+    task.setFinalLat(Double.valueOf(lat));
+    task.setFinalLon(Double.valueOf(lon));
 
     // save to ongoing task
     try {

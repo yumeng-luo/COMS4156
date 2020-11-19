@@ -20,6 +20,8 @@ import savings.tracker.util.Store;
 public class WegmanApi {
 
   private static final int STORESIZE = 10;
+  private static final int SEARCHSIZE = 60;
+  private static final int ALTSIZE = 60;
 
   /**
    * gets products by name.
@@ -31,7 +33,7 @@ public class WegmanApi {
    * @param lon       user location
    * @return price as string
    */
-  public static List<Item> getItems(DatabaseJdbc jdbc, String tableName,
+  public static List<List<Item>> getItems(DatabaseJdbc jdbc, String tableName,
       String name, double lat, double lon) {
     HttpResponse<String> response = Unirest
         .get("https://api.wegmans.io/products/search?query=" + name
@@ -42,8 +44,9 @@ public class WegmanApi {
     String body = response.getBody();
     JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
     JsonArray results = jsonObject.get("results").getAsJsonArray();
-    List<Item> list = new ArrayList<Item>();
-    for (int i = 0; i < 40; i++) {
+    List<Item> exactList = new ArrayList<Item>();
+    List<Item> altList = new ArrayList<Item>();
+    for (int i = 0; i < SEARCHSIZE; i++) {
       // get item name store and sku
       JsonElement itemJson = results.get(i);
       JsonElement itemName = itemJson.getAsJsonObject().get("name");
@@ -105,11 +108,21 @@ public class WegmanApi {
         item.setPrice(Double.valueOf(price.toString()));
         item.setLat(nearestStores.get(j).getLat());
         item.setLon(nearestStores.get(j).getLon());
-        list.add(new Item(item));
+
+        // check if its exact or close item
+        if (item.getName().toLowerCase().contains(name.toLowerCase())) {
+          exactList.add(new Item(item));
+        } else {
+          altList.add(new Item(item));
+        }
+
       }
 
     }
 
+    List<List<Item>> list = new ArrayList<List<Item>>();
+    list.add(exactList);
+    list.add(altList);
     return list;
   }
 
@@ -194,7 +207,7 @@ public class WegmanApi {
     }
 
     // check distance
-    PriorityQueue<Store> pq = new PriorityQueue<Store>(10,
+    PriorityQueue<Store> pq = new PriorityQueue<Store>(STORESIZE,
         new Comparator<Store>() {
           public int compare(Store s1, Store s2) {
             if (getDistance(lat, lon, s1.getLat(), s1.getLon()) < getDistance(
@@ -216,6 +229,150 @@ public class WegmanApi {
 
     return shortList;
 
+  }
+
+  /**
+   * Find 11th - 20th nearest store.
+   * 
+   * @param jdbc      Database
+   * @param tableName name of store table
+   * @param lat       latitude of user
+   * @param lon       longitude of user
+   * @param type      type of store looking for
+   * @return list of store
+   */
+  public static List<Store> getSecNearestStores(DatabaseJdbc jdbc,
+      String tableName, double lat, double lon, String type) {
+    List<Store> allList = new ArrayList<Store>();
+    List<Store> shortList = new ArrayList<Store>();
+    // get all stores
+    try {
+      allList = DatabaseJdbc.getStore(jdbc, tableName, type);
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    // check distance
+    PriorityQueue<Store> pq = new PriorityQueue<Store>(2 * STORESIZE,
+        new Comparator<Store>() {
+          public int compare(Store s1, Store s2) {
+            if (getDistance(lat, lon, s1.getLat(), s1.getLon()) < getDistance(
+                lat, lon, s2.getLat(), s2.getLon())) {
+              return -1;
+            } else if (getDistance(lat, lon, s1.getLat(), s1
+                .getLon()) > getDistance(lat, lon, s2.getLat(), s2.getLon())) {
+              return 1;
+            }
+            return 0;
+          }
+        });
+    for (int i = 0; i < allList.size(); i++) {
+      pq.add(allList.get(i));
+    }
+    for (int i = 0; i < STORESIZE; i++) {
+      pq.poll();
+    }
+    for (int i = 0; i < STORESIZE; i++) {
+      shortList.add(pq.poll());
+    }
+
+    return shortList;
+
+  }
+
+  /**
+   * gets additional alternatives by distance.
+   * 
+   * @param jdbc      Database
+   * @param tableName name of store table
+   * @param name      product name
+   * @param lat       user location
+   * @param lon       user location
+   * @return price as string
+   */
+  public static List<Item> getAlternativeItems(DatabaseJdbc jdbc,
+      String tableName, String name, double lat, double lon) {
+    HttpResponse<String> response = Unirest
+        .get("https://api.wegmans.io/products/search?query=" + name
+            + "&api-version=2018-10-18")
+        .header("Subscription-Key", "c455d00cb0f64e238a5282d75921f27e")
+        .asString();
+
+    String body = response.getBody();
+    JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
+    JsonArray results = jsonObject.get("results").getAsJsonArray();
+    List<Item> list = new ArrayList<Item>();
+    for (int i = 0; i < ALTSIZE; i++) {
+      // get item name store and sku
+      JsonElement itemJson = results.get(i);
+      JsonElement itemName = itemJson.getAsJsonObject().get("name");
+      JsonElement itemSku = itemJson.getAsJsonObject().get("sku");
+      Item item = new Item();
+      item.setName(itemName.toString().replace("\"", ""));
+      item.setSku(itemSku.toString().replace("\"", ""));
+
+      // get item barcode
+      HttpResponse<String> response2 = Unirest.get(String.format(
+          "https://api.wegmans.io/products/%s?api-version=2018-10-18&Subscri"
+              + "ption-Key=c455d00cb0f64e238a5282d75921f27e",
+          item.getSku()).replace("\"", "")).asString();
+      JsonObject jsonObject2 = new JsonParser().parse(response2.getBody())
+          .getAsJsonObject();
+      if (jsonObject2.get("error") != null) {
+        continue;
+      }
+      JsonArray tradeIdentifiers = jsonObject2.getAsJsonObject()
+          .get("tradeIdentifiers").getAsJsonArray();
+      if (tradeIdentifiers.size() == 0) {
+        continue;
+      }
+      JsonArray barcodes = tradeIdentifiers.get(0).getAsJsonObject()
+          .get("barcodes").getAsJsonArray();
+      if (barcodes.size() == 0) {
+        continue;
+      }
+      JsonElement barcode = barcodes.get(0).getAsJsonObject().get("barcode");
+      item.setBarcode(barcode.toString().replace("\"", ""));
+
+      // get item image
+      JsonArray images = tradeIdentifiers.get(0).getAsJsonObject().get("images")
+          .getAsJsonArray();
+      if (images.size() == 0) {
+        continue;
+      }
+      JsonElement image = images.get(0);
+      item.setImage(image.toString().replace("\"", ""));
+
+      // get item locatin
+
+      // get nearest 11-20 stores
+      List<Store> secNearestStores = getSecNearestStores(jdbc, tableName, lat,
+          lon, "Wegmans Store");
+      for (int j = 0; j < STORESIZE; j++) {
+        HttpResponse<String> response4 = Unirest.get(String.format(
+            "https://api.wegmans.io/products/%s/prices/%d?api-version=2018-10-18&subscription-key=c455d00cb0f64e238a5282d75921f27e",
+            item.getSku(), secNearestStores.get(j).getNumber())
+            .replace("\"", "")).asString();
+
+        JsonObject jsonObject4 = new JsonParser().parse(response4.getBody())
+            .getAsJsonObject();
+        if (jsonObject4.get("error") != null) {
+          continue;
+        }
+        JsonElement price = jsonObject4.getAsJsonObject().get("price");
+        item.setStore(secNearestStores.get(j).getType());
+        item.setPrice(Double.valueOf(price.toString()));
+        item.setLat(secNearestStores.get(j).getLat());
+        item.setLon(secNearestStores.get(j).getLon());
+
+        list.add(new Item(item));
+
+      }
+
+    }
+
+    return list;
   }
 
 }

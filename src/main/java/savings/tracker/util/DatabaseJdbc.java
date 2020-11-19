@@ -94,9 +94,13 @@ public class DatabaseJdbc {
           + "(USER_ID TEXT REFERENCES " + userTable
           + "(USER_ID) PRIMARY KEY, SEARCHSTRING TEXT,"
           + " STARTTIME TIMESTAMP,SEARCH_ID TEXT REFERENCES " + searchtable
-          + "(ID)," + " INITIAL TEXT REFERENCES " + itemTable + "(ID),"
+          + "(ID)," + " INITIAL TEXT REFERENCES " + itemTable
+          + "(ID), INITIAL_LAT FLOAT REFERENCES " + itemTable
+          + "(LAT), INITIAL_LON FLOAT REFERENCES " + itemTable + "(LON),"
           + " ALTERNATIVE_SEARCH TEXT REFERENCES " + searchtable + "(ID),"
-          + " FINAL TEXT REFERENCES " + itemTable + "(ID) )";
+          + " FINAL TEXT REFERENCES " + itemTable
+          + "(ID), FINAL_LAT FLOAT REFERENCES " + itemTable
+          + "(LAT), FINAL_LON FLOAT REFERENCES " + itemTable + "(LON) )";
       // CREATE TABLE IF NOT EXISTS TASK (USER_ID TEXT REFERENCES User(USER_ID)
       // PRIMARY KEY, SEARCHSTRING TEXT, STARTTIME TIMESTAMP,SEARCH_ID TEXT
       // REFERENCES SEARCHRESULT(ID), INITIAL TEXT REFERENCES ITEM(ID),
@@ -181,7 +185,8 @@ public class DatabaseJdbc {
 
     try {
       String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " ( ID TEXT, "
-          + "ITEM_ID TEXT REFERENCES " + itemTable + "(ID) )";
+          + "ITEM_ID TEXT REFERENCES " + itemTable
+          + "(ID) , LAT FLOAT, LON FLOAT )";
       // CREATE TABLE IF NOT EXISTS SEARCHRESULT ( ID TEXT PRIMARY KEY, ITEM_ID
       // TEXT REFERENCES ITEM(ID) )
       stmt = c.prepareStatement(sql);
@@ -431,11 +436,13 @@ public class DatabaseJdbc {
    * @param jdbc      the database
    * @param tableName the table name
    * @param itemId    the item id
+   * @param lat       the store lat
+   * @param lon       the store lon
    * @return item with same id
    * @throws SQLException exception
    */
-  public static Item getItem(DatabaseJdbc jdbc, String tableName, String itemId)
-      throws SQLException {
+  public static Item getItem(DatabaseJdbc jdbc, String tableName, String itemId,
+      double lat, double lon) throws SQLException {
     Statement stmt = null;
     ResultSet rs = null;
     Connection c = jdbc.createConnection();
@@ -445,8 +452,9 @@ public class DatabaseJdbc {
       System.out.println("Opened database successfully for get");
 
       stmt = c.createStatement();
-      rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE ID "
-          + " = \"" + itemId + "\";");
+      rs = stmt
+          .executeQuery("SELECT * FROM " + tableName + " WHERE ID " + " = \""
+              + itemId + "\" and lat  = " + lat + " and lon = " + lon + ";");
 
       if (rs.next()) {
         result.setBarcode(rs.getString("ID"));
@@ -506,26 +514,36 @@ public class DatabaseJdbc {
 
       if (!exist) {
         stmt = c.prepareStatement(
-            "INSERT INTO " + tableName + " values(?,?,?,?,?,?,?)");
+            "INSERT INTO " + tableName + " values(?,?,?,?,?,?,?,?,?,?,?)");
         stmt.setString(1, task.getUserId());
         stmt.setString(2, task.getSearchString());
         stmt.setString(3, String.valueOf(task.getTaskStartTime()));
         stmt.setString(4, task.getUserId() + "1");
         stmt.setString(5, task.getInitialItem().getBarcode());
-        stmt.setString(6, task.getUserId() + "2");
-        stmt.setString(7, task.getFinalItem().getBarcode());
+        stmt.setString(6, String.valueOf(task.getInitialLat()));
+        stmt.setString(7, String.valueOf(task.getInitialLon()));
+        stmt.setString(8, task.getUserId() + "2");
+        stmt.setString(9, task.getFinalItem().getBarcode());
+        stmt.setString(10, String.valueOf(task.getFinalLat()));
+        stmt.setString(11, String.valueOf(task.getFinalLon()));
 
       } else {
         stmt = c.prepareStatement(
             "UPDATE " + tableName + " SET SEARCHSTRING=?, STARTTIME=?,"
                 + "SEARCH_ID=?,INITIAL=?,ALTERNATIVE_SEARCH=?, "
-                + "FINAL=? where USER_ID =\"" + task.getUserId() + "\"");
+                + "FINAL=?, INITIAL_LAT = ?, INITIAL_LON=?,"
+                + " FINAL_LAT=?, FINAL_LON = ?  where USER_ID =\""
+                + task.getUserId() + "\"");
         stmt.setString(1, task.getSearchString());
         stmt.setString(2, String.valueOf(task.getTaskStartTime()));
         stmt.setString(3, task.getUserId() + "1");
         stmt.setString(4, task.getInitialItem().getBarcode());
         stmt.setString(5, task.getUserId() + "2");
         stmt.setString(6, task.getFinalItem().getBarcode());
+        stmt.setString(7, String.valueOf(task.getInitialLat()));
+        stmt.setString(8, String.valueOf(task.getInitialLon()));
+        stmt.setString(9, String.valueOf(task.getFinalLat()));
+        stmt.setString(10, String.valueOf(task.getFinalLon()));
       }
 
       stmt.executeUpdate();
@@ -580,12 +598,17 @@ public class DatabaseJdbc {
         result.setTaskStartTime(rs.getTimestamp("STARTTIME"));
         result.setSearchItems(DatabaseJdbc.getSearch(jdbc, searchTable,
             itemTable, rs.getString("SEARCH_ID")));
+        result.setInitialLat(rs.getDouble("INITIAL_LAT"));
+        result.setInitialLon(rs.getDouble("INITIAL_LON"));
+        result.setFinalLat(rs.getDouble("FINAL_LAT"));
+        result.setFinalLon(rs.getDouble("FINAL_LON"));
         result.setInitialItem(
-            DatabaseJdbc.getItem(jdbc, itemTable, rs.getString("INITIAL")));
+            DatabaseJdbc.getItem(jdbc, itemTable, rs.getString("INITIAL"),
+                result.getInitialLat(), result.getInitialLon()));
         result.setAlternativeItem(DatabaseJdbc.getSearch(jdbc, searchTable,
             itemTable, rs.getString("ALTERNATIVE_SEARCH")));
-        result.setFinalItem(
-            DatabaseJdbc.getItem(jdbc, itemTable, rs.getString("FINAL")));
+        result.setFinalItem(DatabaseJdbc.getItem(jdbc, itemTable,
+            rs.getString("FINAL"), result.getFinalLat(), result.getFinalLon()));
       }
 
       rs.close();
@@ -631,9 +654,12 @@ public class DatabaseJdbc {
       try {
         c.setAutoCommit(false);
         System.out.println("Opened database successfully");
-        stmt = c.prepareStatement("INSERT INTO " + tableName + " values(?,?)");
+        stmt = c
+            .prepareStatement("INSERT INTO " + tableName + " values(?,?,?,?)");
         stmt.setString(1, searchId);
         stmt.setString(2, items.get(i).getBarcode());
+        stmt.setString(3, String.valueOf(items.get(i).getLat()));
+        stmt.setString(4, String.valueOf(items.get(i).getLon()));
 
         stmt.executeUpdate();
         stmt.close();
@@ -1097,10 +1123,10 @@ public class DatabaseJdbc {
 
       stmt = c.createStatement();
       /*
-      System.out.println("SELECT * FROM " + tableName + " WHERE LAT = "
-          + item.getLat() + " and LON = " + item.getLon() + " and ID = \""
-          + item.getBarcode() + "\";");
-          */
+       * System.out.println("SELECT * FROM " + tableName + " WHERE LAT = " +
+       * item.getLat() + " and LON = " + item.getLon() + " and ID = \"" +
+       * item.getBarcode() + "\";");
+       */
       rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE LAT = "
           + item.getLat() + " and LON = " + item.getLon() + " and ID = \""
           + item.getBarcode() + "\";");

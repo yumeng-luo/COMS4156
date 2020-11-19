@@ -433,7 +433,7 @@ public class DatabaseTest {
   public void testInsertSearch() {
     System.out.println("========TESTING INSERT SEARCH ========");
     Item item1 = new Item("HONEYCRISP APPLE", "002", 9.3, "COSTCO", 41.5, 34.1);
-    Item item2 = new Item("AVACADO", "003", 6, "COSTCO", 41.5, 34.1);
+    Item item2 = new Item("AVACADO", "002", 6, "COSTCO", 41.6, 34.1);
     Item item3 = new Item("PEAR", "004", 5, "COSTCO", 41.5, 34.1);
 
     List<Item> list = new ArrayList<Item>();
@@ -456,17 +456,17 @@ public class DatabaseTest {
     try {
       c.setAutoCommit(false);
       stmt = c.createStatement();
-      String sql = "SELECT * FROM ItemTest WHERE ID = \"001\";";
+      String sql = "SELECT * FROM ItemTest WHERE ID = \"002\" and lat=41.5 and lon=34.1;";
       ResultSet rs = stmt.executeQuery(sql);
       while (rs.next()) {
         String id = rs.getString("ID");
-        assertEquals(id, "001");
+        assertEquals(id, "002");
 
         String name = rs.getString("name");
-        assertEquals(name, "FUJI APPLE");
+        assertEquals(name, "HONEYCRISP APPLE");
 
         double price = rs.getDouble("price");
-        assertEquals(price, 7.1);
+        assertEquals(price, 9.3);
 
         String store = rs.getString("store");
         assertEquals(store, "COSTCO");
@@ -620,7 +620,7 @@ public class DatabaseTest {
       DatabaseJdbc.deleteTable(jdbc, "SearchTest");
       DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
       DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list, "123" + "1");
-      Item item4 = DatabaseJdbc.getItem(jdbc, "ItemTest", "004");
+      Item item4 = DatabaseJdbc.getItem(jdbc, "ItemTest", "004", 17.9, 15.8);
       assertEquals(item4.getBarcode(), "004");
       assertEquals(item4.getName(), "PEAR");
       assertEquals(item4.getPrice(), 5);
@@ -702,6 +702,8 @@ public class DatabaseTest {
     task.setSearchString("FRUIT");
     task.setSearchItems(list);
     task.setInitialItem(item3);
+    task.setInitialLat(item3.getLat());
+    task.setInitialLon(item3.getLon());
     task.setAlternativeItem(new ArrayList<Item>());
     task.setFinalItem(new Item());
 
@@ -848,8 +850,7 @@ public class DatabaseTest {
     try {
       DatabaseJdbc.deleteTable(jdbc, "ItemTest");
       DatabaseJdbc.createItemTable(jdbc, "ItemTest");
-      boolean result = DatabaseJdbc.alreadyExistsItem(jdbc, "ItemTest",
-          item);
+      boolean result = DatabaseJdbc.alreadyExistsItem(jdbc, "ItemTest", item);
       assertEquals(result, false);
 
       DatabaseJdbc.addItem(jdbc, "ItemTest", item);
