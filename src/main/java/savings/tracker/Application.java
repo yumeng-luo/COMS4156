@@ -46,36 +46,32 @@ public class Application extends WebSecurityConfigurerAdapter {
 
     try {
       /*
-      // only when needed to clear item  db
-      DatabaseJdbc.deleteTable(database, "Task");
-      DatabaseJdbc.deleteTable(database, "Search");
-      DatabaseJdbc.deleteTable(database, "Item");
-      // end here
+       * // only when needed to clear item db DatabaseJdbc.deleteTable(database,
+       * "Task"); DatabaseJdbc.deleteTable(database, "Search");
+       * DatabaseJdbc.deleteTable(database, "Item"); // end here
        * 
        */
-      
+
       DatabaseJdbc.createLoginTable(database, "User");
       DatabaseJdbc.createItemTable(database, "Item");
       DatabaseJdbc.createSearchTable(database, "Search", "Item");
       DatabaseJdbc.createTaskTable(database, "Task", "User", "Search", "Item");
-      //DatabaseJdbc.deleteTable(database, "Store");
+      // DatabaseJdbc.deleteTable(database, "Store");
       DatabaseJdbc.createStoreTable(database, "Store");
-      
-      /*
-      // can skip this to save time
-      List<Store> stores = WegmanApi.getStores();
 
-      for (int i = 0; i < stores.size(); i++) {
-        DatabaseJdbc.addStore(database, "Store", stores.get(i));
-      }
-      */
+      /*
+       * // can skip this to save time List<Store> stores =
+       * WegmanApi.getStores();
+       * 
+       * for (int i = 0; i < stores.size(); i++) {
+       * DatabaseJdbc.addStore(database, "Store", stores.get(i)); }
+       */
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
     SpringApplication.run(Application.class, args);
-
 
   }
 
@@ -108,7 +104,8 @@ public class Application extends WebSecurityConfigurerAdapter {
         // oauth login quota
         a -> a
             .antMatchers("/frontend", "/", "/error", "/webjars/**", "/search",
-                "/select_item", "/select_purchase", "/no_alternative", "/alternatives")
+                "/select_item", "/select_purchase", "/no_alternative",
+                "/alternatives", "/confirm")
             .permitAll().anyRequest().authenticated())
         .exceptionHandling(e -> e.authenticationEntryPoint(
             new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
@@ -134,6 +131,5 @@ public class Application extends WebSecurityConfigurerAdapter {
     source.registerCorsConfiguration("/**", configuration);
     return source;
   }
-
 
 }

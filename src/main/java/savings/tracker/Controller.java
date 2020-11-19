@@ -122,6 +122,16 @@ public class Controller {
       id = "105222900313734280075";
     }
 
+    // updates user location data
+    try {
+      User user = DatabaseJdbc.getUser(database, "User", id);
+      user.setLat(lat);
+      user.setLon(lon);
+      DatabaseJdbc.updatesUser(database, "User", user);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
     System.out.print(id);
     System.out.print(item);
     // save to on going task
@@ -144,6 +154,12 @@ public class Controller {
     // TODO test 2
 
     // save to ongoing task
+    currentTask.setInitialItem(new Item());
+    currentTask.setInitialLat(0);
+    currentTask.setInitialLon(0);
+    currentTask.setFinalItem(new Item());
+    currentTask.setFinalLat(0);
+    currentTask.setFinalLon(0);
     currentTask.setSearchItems(list.get(0));
     currentTask.setAlternativeItem(list.get(1));
     try {
@@ -240,6 +256,9 @@ public class Controller {
     // save to on going task
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     currentTask.setTaskStartTime(timestamp);
+    currentTask.setFinalItem(new Item());
+    currentTask.setFinalLat(0);
+    currentTask.setFinalLon(0);
 
     // check if there are alternatives
     if (currentTask.getAlternativeItem().size() == 0) {
@@ -313,6 +332,70 @@ public class Controller {
     }
 
     return new Message(200, task.getFinalItem().getName());
+  }
+
+  /**
+   * Confirm Final puchasing Item.
+   * 
+   * @throws SQLException Exception
+   */
+  @PostMapping("/confirm")
+  @ResponseBody
+  public Message confirmPurchase(
+      @AuthenticationPrincipal OAuth2User principal) {
+    String id;
+    if (principal != null) {
+      id = principal.getAttribute("sub");
+    } else {
+      id = "105222900313734280075";
+    }
+    System.out.print(id);
+    User user = new User();
+    OngoingTask task = new OngoingTask();
+    try {
+      user = DatabaseJdbc.getUser(database, "User", id);
+      task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
+    } catch (SQLException e1) {
+      e1.printStackTrace();
+    }
+
+    // ongoing task
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    task.setTaskStartTime(timestamp);
+    Item finalItem = task.getFinalItem();
+    Item initialItem = task.getInitialItem();
+    if (initialItem.getBarcode() == null) {
+      return new Message(201, user.getName() + " haven't chose any items yet!");
+    }
+    if (finalItem.getBarcode() == null) {
+      return new Message(202,
+          user.getName() + " haven't added any items to cart yet!");
+    }
+
+    // after using clear task to avoid multiple purchase
+    task.setInitialItem(new Item());
+    task.setFinalItem(new Item());
+
+    // calculate savings
+    double saving = 0;
+    saving = initialItem.getPrice() - finalItem.getPrice();
+    saving = Math.max(saving, 0);
+    // save to user info
+    try {
+      DatabaseJdbc.addTask(database, "Task", task);
+      user.setSavings(user.getSavings() + saving);
+      DatabaseJdbc.updatesUser(database, "User", user);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    return new Message(200,
+        user.getName() + " purchased " + finalItem.getName() + " with $"
+            + String.valueOf(finalItem.getPrice()) + " instead of "
+            + initialItem.getName() + "with $" + initialItem.getPrice()
+            + ". \n Good Job! You saved $" + String.valueOf(saving)
+            + " on this purchase! \n You have accumulated $" + user.getSavings()
+            + " so far!");
   }
 
 }

@@ -1260,4 +1260,110 @@ public class DatabaseJdbc {
     return true;
   }
 
+  /**
+   * Creates an arraylist of player objects.
+   * 
+   * @param jdbc      the database
+   * @param tableName the table name
+   * @param id        user id
+   * @return returns the arraylist
+   * @throws SQLException exception
+   */
+  public static User getUser(DatabaseJdbc jdbc, String tableName, String id)
+      throws SQLException {
+    Statement stmt = null;
+    ResultSet rs = null;
+    Connection c = jdbc.createConnection();
+    User user = new User();
+    try {
+      c.setAutoCommit(false);
+
+      stmt = c.createStatement();
+      rs = stmt.executeQuery(
+          "SELECT * FROM " + tableName + " WHERE USER_ID = \"" + id + "\";");
+
+      if (rs.next()) {
+        String email = rs.getString("email");
+        String name = rs.getString("name");
+        double savings = rs.getDouble("savings");
+        String location = rs.getString("location");
+
+        String delims = "[ (),]+";
+        String[] tokens = location.split(delims);
+        double lat = Double.parseDouble(tokens[1]);
+        double lon = Double.parseDouble(tokens[2]);
+
+        user = new User(id, email, name, savings, lat, lon);
+
+      }
+
+      rs.close();
+      stmt.close();
+
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      if (rs != null) {
+        rs.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return null;
+    }
+
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    return user;
+  }
+
+
+  /**
+   * updates user data. assumes exists.
+   * 
+   * @param jdbc      the database
+   * @param tableName the table name
+   * @param user user object
+   * @return returns boolean
+   * @throws SQLException exception
+   */
+  public static boolean updatesUser(DatabaseJdbc jdbc, String tableName,
+      User user) throws SQLException {
+    PreparedStatement stmt = null;
+    Connection c = jdbc.createConnection();
+
+    try {
+      c.setAutoCommit(false);
+
+      stmt = c.prepareStatement(
+          "UPDATE " + tableName + " SET EMAIL=?, NAME=?,SAVINGS=?,LOCATION=? WHERE USER_ID=?");
+      stmt.setString(1, user.getEmail());
+      stmt.setString(2, user.getName());
+      stmt.setString(3, String.valueOf(user.getSavings()));
+      stmt.setString(4, "(" + String.valueOf(user.getLat()) + ","
+          + String.valueOf(user.getLon()) + ")");
+      stmt.setString(5, user.getUserId());
+
+      stmt.executeUpdate();
+      stmt.close();
+      c.commit();
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
+    }
+
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    return true;
+  }
 }
