@@ -1,5 +1,8 @@
 {
   "scripts": {
     "test": "jest"
+  },
+  "devDependencies": {
+    "jest-google-maps-mock": "^1.0.3"
   }
 }
