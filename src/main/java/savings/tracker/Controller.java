@@ -133,6 +133,8 @@ public class Controller {
 
     // search for item
     // TODO implement this part after rapid api
+    List<Item> list = WegmanApi.getItems(item);
+    /*
     double price1 = 5.39;
     double lat1 = 45;
     double lon1 = 23;
@@ -148,12 +150,13 @@ public class Controller {
         lat2, lon2);
     Item item3 = new Item("Bad Coffee", "555555555", price3, "Walmart", lat3,
         lon3);
+  
 
     List<Item> list = new ArrayList<Item>();
     list.add(item1);
     list.add(item2);
     list.add(item3);
-
+*/
     // save to ongoing task
     currentTask.setSearchItems(list);
     try {
@@ -221,7 +224,7 @@ public class Controller {
   @PostMapping("/select_purchase")
   @ResponseBody
   public Message selectPurchase(
-      @RequestParam(value = "tcin", defaultValue = "0") String tcin,
+      @RequestParam(value = "upc", defaultValue = "0") String tcin,
       @AuthenticationPrincipal OAuth2User principal) {
     String id;
     if (principal != null) {

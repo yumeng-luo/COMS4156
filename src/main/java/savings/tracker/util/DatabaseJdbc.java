@@ -378,21 +378,23 @@ public class DatabaseJdbc {
       System.out.println("Opened database successfully for addStoreData");
 
       if (!exist) {
-        stmt = c.prepareStatement(
-            "INSERT INTO " + tableName + " values(?,?,?,?,?)");
-        stmt.setString(1, store.getName());
-        stmt.setString(2, String.valueOf(store.getNumber()));
-        stmt.setString(3, store.getType());
-        stmt.setString(4, String.valueOf(store.getLat()));
-        stmt.setString(5, String.valueOf(store.getLon()));
+        stmt = c.prepareStatement("INSERT INTO " + tableName + " values(\""
+            + store.getName() + "\"," + String.valueOf(store.getNumber())
+            + ", \"" + store.getType() + "\",?,?)");
+        stmt.setString(1, String.valueOf(store.getLat()));
+        stmt.setString(2, String.valueOf(store.getLon()));
 
       } else {
-        stmt = c.prepareStatement("UPDATE " + tableName + " SET NAME=?,"
-            + ",LAT=?,LON=? where NUMBER =" + store.getNumber()
-            + " AND TYPE= \"" + store.getType() + "\"");
-        stmt.setString(1, store.getName());
-        stmt.setString(2, String.valueOf(store.getLat()));
-        stmt.setString(3, String.valueOf(store.getLon()));
+        /*
+        System.out.println("UPDATE " + tableName + " SET NAME= \""
+            + store.getName() + "\",LAT=" + String.valueOf(store.getLat())
+            + ",LON=" + String.valueOf(store.getLon()) + " where NUMBER ="
+            + store.getNumber() + " AND TYPE= \"" + store.getType() + "\"");
+            */
+        stmt = c.prepareStatement("UPDATE " + tableName + " SET NAME= \""
+            + store.getName() + "\", LAT=" + String.valueOf(store.getLat())
+            + ",LON=" + String.valueOf(store.getLon()) + " where NUMBER ="
+            + store.getNumber() + " AND TYPE= \"" + store.getType() + "\"");
       }
 
       stmt.executeUpdate();
@@ -1029,6 +1031,8 @@ public class DatabaseJdbc {
       System.out.println("Opened database successfully for User");
 
       stmt = c.createStatement();
+      System.out.println("SELECT * FROM " + tableName + " WHERE NUMBER = "
+          + store.getNumber() + " and TYPE = \"" + store.getType() + "\";");
       rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE NUMBER = "
           + store.getNumber() + " and TYPE = \"" + store.getType() + "\";");
 
