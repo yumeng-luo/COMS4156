@@ -206,6 +206,46 @@ public class DatabaseJdbc {
   }
 
   /**
+   * Creates a table for store info.
+   * 
+   * @param jdbc      database
+   * @param tableName the table name
+   * @return returns boolean
+   * @throws SQLException Exception
+   */
+  public static boolean createStoreTable(DatabaseJdbc jdbc, String tableName)
+      throws SQLException {
+    PreparedStatement stmt = null;
+    Connection c = jdbc.createConnection();
+
+    try {
+      String sql = String.format("create table if not exists %s "
+          + "(name text, number integer, type text,"
+          + " lat float, lon float,CONSTRAINT pk_store"
+          + " primary key (number,type) )", tableName);
+      stmt = c.prepareStatement(sql);
+
+      stmt.executeUpdate();
+      stmt.close();
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
+    }
+
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("Table created successfully");
+    return true;
+  }
+
+  /**
    * Adds login data to data table.
    * 
    * @param jdbc      the database
@@ -294,6 +334,67 @@ public class DatabaseJdbc {
         stmt.setString(3, item.getStore());
         stmt.setString(4, String.valueOf(item.getLat()));
         stmt.setString(5, String.valueOf(item.getLon()));
+      }
+
+      stmt.executeUpdate();
+      stmt.close();
+      c.commit();
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
+    }
+
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("Record created successfully");
+    return true;
+  }
+
+  /**
+   * Adds store data to store table. If already exist, update store.
+   * 
+   * @param jdbc      the database
+   * @param tableName the table name
+   * @param store     the store object
+   * @return returns boolean
+   * @throws SQLException exception
+   */
+  public static boolean addStore(DatabaseJdbc jdbc, String tableName,
+      Store store) throws SQLException {
+
+    boolean exist = DatabaseJdbc.alreadyExistsStore(jdbc, tableName, store);
+    PreparedStatement stmt = null;
+    Connection c = jdbc.createConnection();
+
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully for addStoreData");
+
+      if (!exist) {
+        stmt = c.prepareStatement("INSERT INTO " + tableName + " values(\""
+            + store.getName() + "\"," + String.valueOf(store.getNumber())
+            + ", \"" + store.getType() + "\",?,?)");
+        stmt.setString(1, String.valueOf(store.getLat()));
+        stmt.setString(2, String.valueOf(store.getLon()));
+
+      } else {
+        /*
+        System.out.println("UPDATE " + tableName + " SET NAME= \""
+            + store.getName() + "\",LAT=" + String.valueOf(store.getLat())
+            + ",LON=" + String.valueOf(store.getLon()) + " where NUMBER ="
+            + store.getNumber() + " AND TYPE= \"" + store.getType() + "\"");
+            */
+        stmt = c.prepareStatement("UPDATE " + tableName + " SET NAME= \""
+            + store.getName() + "\", LAT=" + String.valueOf(store.getLat())
+            + ",LON=" + String.valueOf(store.getLon()) + " where NUMBER ="
+            + store.getNumber() + " AND TYPE= \"" + store.getType() + "\"");
       }
 
       stmt.executeUpdate();
@@ -584,8 +685,8 @@ public class DatabaseJdbc {
     try {
       c.setAutoCommit(false);
       System.out.println("Opened database successfully");
-      stmt = c.prepareStatement("DELETE FROM " + tableName
-              + " WHERE ID = \"" + searchId + "\";");
+      stmt = c.prepareStatement(
+          "DELETE FROM " + tableName + " WHERE ID = \"" + searchId + "\";");
 
       stmt.executeUpdate();
       stmt.close();
@@ -882,6 +983,58 @@ public class DatabaseJdbc {
       stmt = c.createStatement();
       rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE " + key
           + " = \"" + id + "\";");
+
+      if (rs.next()) {
+        result = true;
+      }
+
+      rs.close();
+      stmt.close();
+
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      if (rs != null) {
+        rs.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
+    }
+
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return result;
+  }
+
+  /**
+   * Check if an store already exists. must do separately because pk is 2
+   * columns rows
+   * 
+   * @param jdbc      the database
+   * @param tableName the table name
+   * @param store     store object
+   * @return True or False
+   * @throws SQLException exception
+   */
+  public static boolean alreadyExistsStore(DatabaseJdbc jdbc, String tableName,
+      Store store) throws SQLException {
+    Statement stmt = null;
+    ResultSet rs = null;
+    Connection c = jdbc.createConnection();
+    boolean result = false;
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully for User");
+
+      stmt = c.createStatement();
+      System.out.println("SELECT * FROM " + tableName + " WHERE NUMBER = "
+          + store.getNumber() + " and TYPE = \"" + store.getType() + "\";");
+      rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE NUMBER = "
+          + store.getNumber() + " and TYPE = \"" + store.getType() + "\";");
 
       if (rs.next()) {
         result = true;

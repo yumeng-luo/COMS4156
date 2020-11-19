@@ -1,7 +1,19 @@
 package savings.tracker;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.sql.SQLException;
+import java.text.Format;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +28,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import savings.tracker.util.DatabaseJdbc;
+import savings.tracker.util.Item;
+import savings.tracker.util.Store;
 
 @SpringBootApplication
 public class Application extends WebSecurityConfigurerAdapter {
@@ -31,16 +45,26 @@ public class Application extends WebSecurityConfigurerAdapter {
   public static void main(String[] args) {
 
     try {
+      //DatabaseJdbc.deleteTable(database, "Item");
       DatabaseJdbc.createLoginTable(database, "User");
       DatabaseJdbc.createItemTable(database, "Item");
       DatabaseJdbc.createSearchTable(database, "Search", "Item");
       DatabaseJdbc.createTaskTable(database, "Task", "User", "Search", "Item");
+      //DatabaseJdbc.deleteTable(database, "Store");
+      DatabaseJdbc.createStoreTable(database, "Store");
+      //WegmanApi.getItems("dairy milk");
+      List<Store> stores = WegmanApi.getStores();
+
+      for (int i = 0; i < stores.size(); i++) {
+        DatabaseJdbc.addStore(database, "Store", stores.get(i));
+      }
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
     SpringApplication.run(Application.class, args);
+
 
   }
 
@@ -73,7 +97,7 @@ public class Application extends WebSecurityConfigurerAdapter {
         // oauth login quota
         a -> a
             .antMatchers("/frontend", "/", "/error", "/webjars/**", "/search",
-                "/select_item","/select_purchase", "/no_alternative", "/resources/**", "/*.js")
+                "/select_item", "/select_purchase", "/no_alternative")
             .permitAll().anyRequest().authenticated())
         .exceptionHandling(e -> e.authenticationEntryPoint(
             new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
@@ -99,5 +123,6 @@ public class Application extends WebSecurityConfigurerAdapter {
     source.registerCorsConfiguration("/**", configuration);
     return source;
   }
+
 
 }
