@@ -22,6 +22,11 @@ public class WegmanApi {
   private static final int STORESIZE = 10;
   private static final int SEARCHSIZE = 60;
   private static final int ALTSIZE = 60;
+  private static final boolean MUSTBECHEAPER = true;
+
+  public static boolean isMustbecheaper() {
+    return MUSTBECHEAPER;
+  }
 
   /**
    * gets products by name.
@@ -43,6 +48,9 @@ public class WegmanApi {
 
     String body = response.getBody();
     JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
+    if (jsonObject.get("results") == null) {
+      return new ArrayList<List<Item>>();
+    }
     JsonArray results = jsonObject.get("results").getAsJsonArray();
     List<Item> exactList = new ArrayList<Item>();
     List<Item> altList = new ArrayList<Item>();
@@ -284,15 +292,17 @@ public class WegmanApi {
   /**
    * gets additional alternatives by distance.
    * 
-   * @param jdbc      Database
-   * @param tableName name of store table
-   * @param name      product name
-   * @param lat       user location
-   * @param lon       user location
+   * @param jdbc         Database
+   * @param tableName    name of store table
+   * @param name         product name
+   * @param lat          user location
+   * @param lon          user location
+   * @param initialPrice initial item price
    * @return price as string
    */
   public static List<Item> getAlternativeItems(DatabaseJdbc jdbc,
-      String tableName, String name, double lat, double lon) {
+      String tableName, String name, double lat, double lon,
+      double initialPrice) {
     HttpResponse<String> response = Unirest
         .get("https://api.wegmans.io/products/search?query=" + name
             + "&api-version=2018-10-18")
@@ -301,6 +311,9 @@ public class WegmanApi {
 
     String body = response.getBody();
     JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
+    if (jsonObject.get("results") == null) {
+      return new ArrayList<Item>();
+    }
     JsonArray results = jsonObject.get("results").getAsJsonArray();
     List<Item> list = new ArrayList<Item>();
     for (int i = 0; i < ALTSIZE; i++) {
@@ -361,6 +374,11 @@ public class WegmanApi {
           continue;
         }
         JsonElement price = jsonObject4.getAsJsonObject().get("price");
+        if (isMustbecheaper()) {
+          if (Double.valueOf(price.toString()) > initialPrice) {
+            break;
+          }
+        }
         item.setStore(secNearestStores.get(j).getType());
         item.setPrice(Double.valueOf(price.toString()));
         item.setLat(secNearestStores.get(j).getLat());

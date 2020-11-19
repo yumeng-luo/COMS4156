@@ -149,9 +149,6 @@ public class Controller {
 
     // search for item
     // TODO implement this part after rapid api
-    List<List<Item>> list = WegmanApi.getItems(database, "Store", item, lat,
-        lon);
-    // TODO test 2
 
     // save to ongoing task
     currentTask.setInitialItem(new Item());
@@ -160,20 +157,29 @@ public class Controller {
     currentTask.setFinalItem(new Item());
     currentTask.setFinalLat(0);
     currentTask.setFinalLon(0);
-    currentTask.setSearchItems(list.get(0));
-    currentTask.setAlternativeItem(list.get(1));
+    List<List<Item>> list = WegmanApi.getItems(database, "Store", item, lat,
+        lon);
+    if (list.size() == 0) {
+      currentTask.setSearchItems(new ArrayList<Item>());
+      currentTask.setAlternativeItem(new ArrayList<Item>());
+    } else {
+      currentTask.setSearchItems(list.get(0));
+      currentTask.setAlternativeItem(list.get(1));
+    }
     try {
       DatabaseJdbc.removeSearch(database, "Search", id + "1");
       DatabaseJdbc.removeSearch(database, "Search", id + "2");
-      DatabaseJdbc.addSearch(database, "Search", "Item", list.get(0), id + "1");
-      DatabaseJdbc.addSearch(database, "Search", "Item", list.get(1), id + "2");
+      DatabaseJdbc.addSearch(database, "Search", "Item",
+          currentTask.getSearchItems(), id + "1");
+      DatabaseJdbc.addSearch(database, "Search", "Item",
+          currentTask.getAlternativeItem(), id + "2");
       DatabaseJdbc.addTask(database, "Task", currentTask);
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
-    return list.get(0);
+    return currentTask.getSearchItems();
   }
 
   /**
@@ -256,19 +262,37 @@ public class Controller {
     // save to on going task
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     currentTask.setTaskStartTime(timestamp);
+    if (currentTask.getInitialItem().getBarcode() == null) {
+      return result;
+    }
     currentTask.setFinalItem(new Item());
     currentTask.setFinalLat(0);
     currentTask.setFinalLon(0);
 
-    // check if there are alternatives
-    if (currentTask.getAlternativeItem().size() == 0) {
+    // check if there are qualifying alternatives
+    if (currentTask.getAlternativeItem().size() != 0) {
+      // non empty alternatives, check if there is cheaper requirement
+      if (WegmanApi.isMustbecheaper() == false) {
+        result = currentTask.getAlternativeItem();
+      } else {
+        // cheaper requirement
+        for (int i = 0; i < currentTask.getAlternativeItem().size(); i++) {
+          if (currentTask.getAlternativeItem().get(i).getPrice() <= currentTask
+              .getInitialItem().getPrice()) {
+            result.add(currentTask.getAlternativeItem().get(i));
+          }
+        }
+
+      }
+
+    }
+    if (result.size() == 0) {
       // search for more item
       // TODO implement this part after rapid api
       result = WegmanApi.getAlternativeItems(database, "Store",
-          currentTask.getSearchString(), lat, lon);
+          currentTask.getSearchString(), lat, lon,
+          currentTask.getInitialItem().getPrice());
 
-    } else {
-      result = currentTask.getAlternativeItem();
     }
 
     // save to ongoing task
