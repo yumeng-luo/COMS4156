@@ -84,7 +84,7 @@ public class Application extends WebSecurityConfigurerAdapter {
         // oauth login quota
         a -> a
             .antMatchers("/frontend", "/", "/error", "/webjars/**", "/search",
-                "/select_item","/select_purchase", "/no_alternative")
+                "/select_item","/select_purchase", "/no_alternative", "/resources/**", "/*.js")
             .permitAll().anyRequest().authenticated())
         .exceptionHandling(e -> e.authenticationEntryPoint(
             new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
