@@ -9,6 +9,7 @@ public class Item {
   private double lon;
   private String sku;
   private String tcin;
+  private String image;
 
   /**
    * Construct from input.
@@ -24,9 +25,43 @@ public class Item {
     this.lat = lat;
     this.lon = lon;
   }
+  
+  /**
+   * Construct from existing item. make a copy
+   * 
+   */
+  public Item(Item item__) {
+    super();
+    this.name = item__.getName();
+    this.barcode = item__.getBarcode();
+    this.price = item__.getPrice();
+    this.store = item__.getStore();
+    this.lat = item__.getLat();
+    this.lon = item__.getLon();
+    this.tcin = item__.getTcin();
+    this.sku = item__.getSku();
+    this.image = item__.getImage();
+  }
 
   public Item() {
 
+  }
+
+  /**
+   * Construct from input.
+   * 
+   */
+  public Item(String name, String barcode, double price, String store, double lat,
+      double lon, String tcin, String sku, String image) {
+    this.name = name;
+    this.barcode = barcode;
+    this.price = price;
+    this.store = store;
+    this.lat = lat;
+    this.lon = lon;
+    this.tcin = tcin;
+    this.sku = sku;
+    this.image = image;
   }
 
   public String getName() {
@@ -92,4 +127,13 @@ public class Item {
   public void setSku(String sku) {
     this.sku = sku;
   }
+
+  public String getImage() {
+    return image;
+  }
+
+  public void setImage(String image) {
+    this.image = image;
+  }
+  
 }

@@ -115,7 +115,7 @@ public class Controller {
     } else {
       id = "105222900313734280075";
     }
-    
+
     System.out.print(id);
     System.out.print(item);
     // save to on going task
@@ -132,31 +132,23 @@ public class Controller {
     }
 
     // search for item
-    // TODO implement this part after rapid api
-    List<Item> list = WegmanApi.getItems(item);
-    /*
-    double price1 = 5.39;
     double lat1 = 45;
     double lon1 = 23;
-    double price2 = 3.29;
-    double lat2 = 54;
-    double lon2 = 13;
-    double price3 = 1.39;
-    double lat3 = 4;
-    double lon3 = 17;
-    Item item1 = new Item("Good Coffee", "123456789", price1, "McDonalds", lat1,
-        lon1);
-    Item item2 = new Item("Okay Coffee", "111111111", price2, "Tim Hortons",
-        lat2, lon2);
-    Item item3 = new Item("Bad Coffee", "555555555", price3, "Walmart", lat3,
-        lon3);
-  
-
-    List<Item> list = new ArrayList<Item>();
-    list.add(item1);
-    list.add(item2);
-    list.add(item3);
-*/
+    // TODO implement this part after rapid api
+    List<Item> list = WegmanApi.getItems(database, "Store", item, lat1, lon1);
+    /*
+     * double price1 = 5.39; double lat1 = 45; double lon1 = 23; double price2 =
+     * 3.29; double lat2 = 54; double lon2 = 13; double price3 = 1.39; double
+     * lat3 = 4; double lon3 = 17; Item item1 = new Item("Good Coffee",
+     * "123456789", price1, "McDonalds", lat1, lon1); Item item2 = new
+     * Item("Okay Coffee", "111111111", price2, "Tim Hortons", lat2, lon2); Item
+     * item3 = new Item("Bad Coffee", "555555555", price3, "Walmart", lat3,
+     * lon3);
+     * 
+     * 
+     * List<Item> list = new ArrayList<Item>(); list.add(item1);
+     * list.add(item2); list.add(item3);
+     */
     // save to ongoing task
     currentTask.setSearchItems(list);
     try {
@@ -196,7 +188,7 @@ public class Controller {
     } catch (SQLException e1) {
       e1.printStackTrace();
     }
-    
+
     // ongoing task
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     task.setTaskStartTime(timestamp);
@@ -214,17 +206,16 @@ public class Controller {
     return new Message(200, task.getInitialItem().getName());
   }
 
-
   /**
    * Select Final Item.
    * 
-   * @param tcin unique tcin of item chosen
+   * @param barcode unique barcode/upc of item chosen
    * @throws SQLException Exception
    */
   @PostMapping("/select_purchase")
   @ResponseBody
   public Message selectPurchase(
-      @RequestParam(value = "upc", defaultValue = "0") String tcin,
+      @RequestParam(value = "upc", defaultValue = "0") String barcode,
       @AuthenticationPrincipal OAuth2User principal) {
     String id;
     if (principal != null) {
@@ -237,17 +228,17 @@ public class Controller {
     Item finalItem = new Item();
     try {
       task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
-      finalItem = DatabaseJdbc.getItem(database, "Item", tcin);
+      finalItem = DatabaseJdbc.getItem(database, "Item", barcode);
     } catch (SQLException e1) {
       e1.printStackTrace();
     }
-    
+
     // ongoing task
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     task.setTaskStartTime(timestamp);
     // in case we use row number to access items
-    //List<Item> itemList = task.getSearchItems();
-    //List<Item> itemList2 = task.getAlternativeItem();
+    // List<Item> itemList = task.getSearchItems();
+    // List<Item> itemList2 = task.getAlternativeItem();
     task.setFinalItem(finalItem);
 
     // save to ongoing task

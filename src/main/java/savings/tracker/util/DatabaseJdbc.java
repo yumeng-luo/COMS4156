@@ -139,8 +139,9 @@ public class DatabaseJdbc {
 
     try {
       String sql = "CREATE TABLE IF NOT EXISTS " + tableName
-          + "(NAME TEXT, ID TEXT PRIMARY KEY, " + "PRICE FLOAT, STORE TEXT, "
-          + "LAT FLOAT, LON FLOAT )";
+          + "(NAME TEXT, ID TEXT, " + "PRICE FLOAT, STORE TEXT, "
+          + "LAT FLOAT, LON FLOAT, TCIN TEXT, SKU TEXT, IMAGE TEXT,"
+          + " CONSTRAINT pk_item primary key (ID, LAT, LON) )";
       // CREATE TABLE IF NOT EXISTS item (NAME TEXT,
       // ID TEXT PRIMARY KEY, PRICE FLOAT, STORE TEXT, LAT FLOAT, LON FLOAT )
       stmt = c.prepareStatement(sql);
@@ -306,8 +307,7 @@ public class DatabaseJdbc {
   public static boolean addItem(DatabaseJdbc jdbc, String tableName, Item item)
       throws SQLException {
 
-    boolean exist = DatabaseJdbc.alreadyExists(jdbc, tableName, item.getTcin(),
-        "id");
+    boolean exist = DatabaseJdbc.alreadyExistsItem(jdbc, tableName, item);
     PreparedStatement stmt = null;
     Connection c = jdbc.createConnection();
 
@@ -317,23 +317,30 @@ public class DatabaseJdbc {
 
       if (!exist) {
         stmt = c.prepareStatement(
-            "INSERT INTO " + tableName + " values(?,?,?,?,?,?)");
+            "INSERT INTO " + tableName + " values(?,?,?,?,?,?,?,?,?)");
         stmt.setString(1, item.getName());
-        stmt.setString(2, item.getTcin());
+        stmt.setString(2, item.getBarcode());
         stmt.setString(3, String.valueOf(item.getPrice()));
         stmt.setString(4, item.getStore());
         stmt.setString(5, String.valueOf(item.getLat()));
         stmt.setString(6, String.valueOf(item.getLon()));
+        stmt.setString(7, item.getTcin());
+        stmt.setString(8, item.getSku());
+        stmt.setString(9, item.getImage());
 
       } else {
         stmt = c
             .prepareStatement("UPDATE " + tableName + " SET NAME=?, PRICE=?,"
-                + "STORE=?,LAT=?,LON=? where ID =\"" + item.getTcin() + "\"");
+                + "STORE=?, TCIN=?, SKU=?, IMAGE=? where ID =\""
+                + item.getBarcode() + "\" and lat = ? and lon = ?");
         stmt.setString(1, item.getName());
         stmt.setString(2, String.valueOf(item.getPrice()));
         stmt.setString(3, item.getStore());
-        stmt.setString(4, String.valueOf(item.getLat()));
-        stmt.setString(5, String.valueOf(item.getLon()));
+        stmt.setString(4, item.getTcin());
+        stmt.setString(5, item.getSku());
+        stmt.setString(6, item.getImage());
+        stmt.setString(7, String.valueOf(item.getLat()));
+        stmt.setString(8, String.valueOf(item.getLon()));
       }
 
       stmt.executeUpdate();
@@ -386,11 +393,11 @@ public class DatabaseJdbc {
 
       } else {
         /*
-        System.out.println("UPDATE " + tableName + " SET NAME= \""
-            + store.getName() + "\",LAT=" + String.valueOf(store.getLat())
-            + ",LON=" + String.valueOf(store.getLon()) + " where NUMBER ="
-            + store.getNumber() + " AND TYPE= \"" + store.getType() + "\"");
-            */
+         * System.out.println("UPDATE " + tableName + " SET NAME= \"" +
+         * store.getName() + "\",LAT=" + String.valueOf(store.getLat()) +
+         * ",LON=" + String.valueOf(store.getLon()) + " where NUMBER =" +
+         * store.getNumber() + " AND TYPE= \"" + store.getType() + "\"");
+         */
         stmt = c.prepareStatement("UPDATE " + tableName + " SET NAME= \""
             + store.getName() + "\", LAT=" + String.valueOf(store.getLat())
             + ",LON=" + String.valueOf(store.getLon()) + " where NUMBER ="
@@ -442,12 +449,15 @@ public class DatabaseJdbc {
           + " = \"" + itemId + "\";");
 
       if (rs.next()) {
-        result.setTcin(rs.getString("ID"));
+        result.setBarcode(rs.getString("ID"));
         result.setName(rs.getString("name"));
         result.setPrice(rs.getDouble("price"));
         result.setStore(rs.getString("store"));
         result.setLat(rs.getDouble("lat"));
         result.setLon(rs.getDouble("lon"));
+        result.setTcin(rs.getString("TCIN"));
+        result.setSku(rs.getString("SKU"));
+        result.setImage(rs.getString("IMAGE"));
       }
 
       rs.close();
@@ -501,9 +511,9 @@ public class DatabaseJdbc {
         stmt.setString(2, task.getSearchString());
         stmt.setString(3, String.valueOf(task.getTaskStartTime()));
         stmt.setString(4, task.getUserId() + "1");
-        stmt.setString(5, task.getInitialItem().getTcin());
+        stmt.setString(5, task.getInitialItem().getBarcode());
         stmt.setString(6, task.getUserId() + "2");
-        stmt.setString(7, task.getFinalItem().getTcin());
+        stmt.setString(7, task.getFinalItem().getBarcode());
 
       } else {
         stmt = c.prepareStatement(
@@ -513,9 +523,9 @@ public class DatabaseJdbc {
         stmt.setString(1, task.getSearchString());
         stmt.setString(2, String.valueOf(task.getTaskStartTime()));
         stmt.setString(3, task.getUserId() + "1");
-        stmt.setString(4, task.getInitialItem().getTcin());
+        stmt.setString(4, task.getInitialItem().getBarcode());
         stmt.setString(5, task.getUserId() + "2");
-        stmt.setString(6, task.getFinalItem().getTcin());
+        stmt.setString(6, task.getFinalItem().getBarcode());
       }
 
       stmt.executeUpdate();
@@ -623,7 +633,7 @@ public class DatabaseJdbc {
         System.out.println("Opened database successfully");
         stmt = c.prepareStatement("INSERT INTO " + tableName + " values(?,?)");
         stmt.setString(1, searchId);
-        stmt.setString(2, items.get(i).getTcin());
+        stmt.setString(2, items.get(i).getBarcode());
 
         stmt.executeUpdate();
         stmt.close();
@@ -783,12 +793,15 @@ public class DatabaseJdbc {
             + " = \"" + items.get(i) + "\";");
 
         if (rs.next()) {
-          item.setTcin(rs.getString("ID"));
+          item.setBarcode(rs.getString("ID"));
           item.setName(rs.getString("name"));
           item.setPrice(rs.getDouble("price"));
           item.setStore(rs.getString("store"));
           item.setLat(rs.getDouble("lat"));
           item.setLon(rs.getDouble("lon"));
+          item.setSku(rs.getString("SKU"));
+          item.setImage(rs.getString("IMAGE"));
+          item.setTcin(rs.getString("TCIN"));
           result.add(item);
         }
 
@@ -1011,8 +1024,8 @@ public class DatabaseJdbc {
   }
 
   /**
-   * Check if an store already exists. must do separately because pk is 2
-   * columns rows
+   * Check if a store already exists. must do separately because pk is 2 columns
+   * rows
    * 
    * @param jdbc      the database
    * @param tableName the table name
@@ -1063,6 +1076,124 @@ public class DatabaseJdbc {
   }
 
   /**
+   * Check if an item already exists. must do separately because pk is 3 columns
+   * rows
+   * 
+   * @param jdbc      the database
+   * @param tableName the table name
+   * @param item      item object
+   * @return True or False
+   * @throws SQLException exception
+   */
+  public static boolean alreadyExistsItem(DatabaseJdbc jdbc, String tableName,
+      Item item) throws SQLException {
+    Statement stmt = null;
+    ResultSet rs = null;
+    Connection c = jdbc.createConnection();
+    boolean result = false;
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully for User");
+
+      stmt = c.createStatement();
+      /*
+      System.out.println("SELECT * FROM " + tableName + " WHERE LAT = "
+          + item.getLat() + " and LON = " + item.getLon() + " and ID = \""
+          + item.getBarcode() + "\";");
+          */
+      rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE LAT = "
+          + item.getLat() + " and LON = " + item.getLon() + " and ID = \""
+          + item.getBarcode() + "\";");
+
+      if (rs.next()) {
+        result = true;
+      }
+
+      rs.close();
+      stmt.close();
+
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      if (rs != null) {
+        rs.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
+    }
+
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return result;
+  }
+
+  /**
+   * Return all stores given type.
+   * 
+   * @param jdbc      the database
+   * @param tableName the table name
+   * @param type      store type "Wegmans"
+   * @return True or False
+   * @throws SQLException exception
+   */
+  public static List<Store> getStore(DatabaseJdbc jdbc, String tableName,
+      String type) throws SQLException {
+    Statement stmt = null;
+    ResultSet rs = null;
+    Connection c = jdbc.createConnection();
+    List<Store> result = new ArrayList<Store>();
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully for User");
+
+      stmt = c.createStatement();
+      // System.out.println("SELECT * FROM " + tableName + " WHERE TYPE = \"" +
+      // type + "\";");
+      rs = stmt.executeQuery(
+          "SELECT * FROM " + tableName + " WHERE TYPE = \"" + type + "\";");
+
+      while (rs.next()) {
+        String name = rs.getString("NAME");
+        String number = rs.getString("NUMBER");
+        String lat = rs.getString("LAT");
+        String lon = rs.getString("LON");
+
+        Store current = new Store();
+        current.setLat(Double.valueOf(lat));
+        current.setLon(Double.valueOf(lon));
+        current.setNumber(Integer.valueOf(number));
+        current.setName(name);
+        current.setType(type);
+        result.add(current);
+      }
+
+      rs.close();
+      stmt.close();
+
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      if (rs != null) {
+        rs.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return result;
+    }
+
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return result;
+  }
+
+  /**
    * deletes the entries in the given table.
    * 
    * @param jdbc      the database
@@ -1080,7 +1211,7 @@ public class DatabaseJdbc {
       System.out.println("Opened database successfully for deleteTable");
 
       stmt = c.createStatement();
-      String sql = "DELETE from " + tableName;
+      String sql = "DROP table " + tableName;
 
       stmt.executeUpdate(sql);
       c.commit();
@@ -1102,4 +1233,5 @@ public class DatabaseJdbc {
     System.out.println("Table deleted successfully");
     return true;
   }
+
 }

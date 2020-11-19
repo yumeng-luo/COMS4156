@@ -45,19 +45,30 @@ public class Application extends WebSecurityConfigurerAdapter {
   public static void main(String[] args) {
 
     try {
-      //DatabaseJdbc.deleteTable(database, "Item");
+      /*
+      // only when needed to clear item  db
+      DatabaseJdbc.deleteTable(database, "Task");
+      DatabaseJdbc.deleteTable(database, "Search");
+      DatabaseJdbc.deleteTable(database, "Item");
+      // end here
+       * 
+       */
+      
       DatabaseJdbc.createLoginTable(database, "User");
       DatabaseJdbc.createItemTable(database, "Item");
       DatabaseJdbc.createSearchTable(database, "Search", "Item");
       DatabaseJdbc.createTaskTable(database, "Task", "User", "Search", "Item");
       //DatabaseJdbc.deleteTable(database, "Store");
       DatabaseJdbc.createStoreTable(database, "Store");
-      //WegmanApi.getItems("dairy milk");
+      
+      /*
+      // can skip this to save time
       List<Store> stores = WegmanApi.getStores();
 
       for (int i = 0; i < stores.size(); i++) {
         DatabaseJdbc.addStore(database, "Store", stores.get(i));
       }
+      */
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

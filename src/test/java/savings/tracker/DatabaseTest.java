@@ -52,7 +52,8 @@ public class DatabaseTest {
     DatabaseJdbc.createLoginTable(jdbc, "UserTest");
     DatabaseJdbc.createItemTable(jdbc, "ItemTest");
     DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
-    DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest", "ItemTest");
+    DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest",
+        "ItemTest");
     DatabaseJdbc.createStoreTable(jdbc, "StoreTest");
 
   }
@@ -69,9 +70,10 @@ public class DatabaseTest {
       DatabaseJdbc.createLoginTable(jdbc, "UserTest");
       DatabaseJdbc.createItemTable(jdbc, "ItemTest");
       DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
-      DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest", "ItemTest");
+      DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest",
+          "ItemTest");
       DatabaseJdbc.createStoreTable(jdbc, "StoreTest");
-      
+
       DatabaseJdbc.deleteTable(jdbc, "TaskTest");
       DatabaseJdbc.deleteTable(jdbc, "SearchTest");
       DatabaseJdbc.deleteTable(jdbc, "ItemTest");
@@ -93,9 +95,8 @@ public class DatabaseTest {
       stmt.close();
       c.commit();
       c.close();
-      assertEquals(1, 0);
     } catch (Exception e) {
-      // correct
+      assertEquals(1, 0);
     }
 
   }
@@ -209,7 +210,8 @@ public class DatabaseTest {
     try {
       DatabaseJdbc.deleteTable(jdbc, "UserTest");
       DatabaseJdbc.createLoginTable(jdbc, "UserTest");
-      boolean result = DatabaseJdbc.alreadyExists(jdbc, "UserTest", "56789", "user_id");
+      boolean result = DatabaseJdbc.alreadyExists(jdbc, "UserTest", "56789",
+          "user_id");
       assertEquals(result, false);
 
       DatabaseJdbc.addLoginData(jdbc, "UserTest", user1);
@@ -269,8 +271,8 @@ public class DatabaseTest {
       try {
         c.setAutoCommit(false);
         stmt = c.createStatement();
-        String sql = "SELECT * FROM UserTest WHERE USER_ID = " + user1.getUserId()
-            + ";";
+        String sql = "SELECT * FROM UserTest WHERE USER_ID = "
+            + user1.getUserId() + ";";
         ResultSet rs = stmt.executeQuery(sql);
         while (rs.next()) {
           String userId = rs.getString("USER_ID");
@@ -307,7 +309,7 @@ public class DatabaseTest {
     }
 
   }
-  
+
   /*
    * Test insert Item
    * 
@@ -363,7 +365,7 @@ public class DatabaseTest {
     }
 
   }
-  
+
   /*
    * Test insert Item that already exist
    * 
@@ -389,7 +391,7 @@ public class DatabaseTest {
     try {
       c.setAutoCommit(false);
       stmt = c.createStatement();
-      String sql = "SELECT * FROM ItemTest WHERE ID = \"001\";";
+      String sql = "SELECT * FROM ItemTest WHERE ID = \"001\" and lat = 14.5;";
       ResultSet rs = stmt.executeQuery(sql);
       while (rs.next()) {
         String id = rs.getString("ID");
@@ -421,7 +423,7 @@ public class DatabaseTest {
     }
 
   }
-  
+
   /*
    * Test insert search record
    * 
@@ -433,17 +435,17 @@ public class DatabaseTest {
     Item item1 = new Item("HONEYCRISP APPLE", "002", 9.3, "COSTCO", 41.5, 34.1);
     Item item2 = new Item("AVACADO", "003", 6, "COSTCO", 41.5, 34.1);
     Item item3 = new Item("PEAR", "004", 5, "COSTCO", 41.5, 34.1);
-    
+
     List<Item> list = new ArrayList<Item>();
     list.add(item1);
     list.add(item2);
     list.add(item3);
-    
+
     try {
       DatabaseJdbc.deleteTable(jdbc, "SearchTest");
       DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
       DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list, "123" + "1");
-      
+
     } catch (SQLException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -486,8 +488,7 @@ public class DatabaseTest {
     }
 
   }
-  
-  
+
   /*
    * Test insert task record
    * 
@@ -501,12 +502,12 @@ public class DatabaseTest {
     Item item1 = new Item("HONEYCRISP APPLE", "002", 9.3, "COSTCO", 41.5, 34.1);
     Item item2 = new Item("AVACADO", "003", 6, "COSTCO", 41.5, 34.1);
     Item item3 = new Item("PEAR", "004", 5, "COSTCO", 41.5, 34.1);
-    
+
     List<Item> list = new ArrayList<Item>();
     list.add(item1);
     list.add(item2);
     list.add(item3);
-    
+
     OngoingTask task = new OngoingTask();
     task.setUserId("34535667");
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -516,7 +517,7 @@ public class DatabaseTest {
     task.setInitialItem(item3);
     task.setAlternativeItem(new ArrayList<Item>());
     task.setFinalItem(new Item());
-    
+
     try {
       DatabaseJdbc.deleteTable(jdbc, "TaskTest");
       DatabaseJdbc.deleteTable(jdbc, "SearchTest");
@@ -525,11 +526,12 @@ public class DatabaseTest {
       DatabaseJdbc.createLoginTable(jdbc, "UserTest");
       DatabaseJdbc.createItemTable(jdbc, "ItemTest");
       DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
-      DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest", "ItemTest");
-      
+      DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest",
+          "ItemTest");
+
       DatabaseJdbc.addLoginData(jdbc, "UserTest", user);
       DatabaseJdbc.addTask(jdbc, "TaskTest", task);
-      
+
     } catch (SQLException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -546,8 +548,8 @@ public class DatabaseTest {
         String id = rs.getString("USER_ID");
         assertEquals(id, "34535667");
 
-        //Timestamp time = rs.getTimestamp("STARTTIME");
-        //assertEquals(time, timestamp);
+        // Timestamp time = rs.getTimestamp("STARTTIME");
+        // assertEquals(time, timestamp);
 
         String searchString = rs.getString("SEARCHSTRING");
         assertEquals(searchString, "FRUIT");
@@ -569,7 +571,7 @@ public class DatabaseTest {
     }
 
   }
-  
+
   /*
    * Test AlreadyExists on item table
    * 
@@ -582,7 +584,8 @@ public class DatabaseTest {
     try {
       DatabaseJdbc.deleteTable(jdbc, "ItemTest");
       DatabaseJdbc.createItemTable(jdbc, "ItemTest");
-      boolean result = DatabaseJdbc.alreadyExists(jdbc, "ItemTest", "001", "id");
+      boolean result = DatabaseJdbc.alreadyExists(jdbc, "ItemTest", "001",
+          "id");
       assertEquals(result, false);
 
       DatabaseJdbc.addItem(jdbc, "ItemTest", item);
@@ -595,7 +598,7 @@ public class DatabaseTest {
     }
 
   }
-  
+
   /*
    * Test get item
    * 
@@ -607,32 +610,31 @@ public class DatabaseTest {
     Item item1 = new Item("HONEYCRISP APPLE", "002", 9.3, "COSTCO", 41.5, 34.1);
     Item item2 = new Item("AVACADO", "003", 6, "COSTCO", 41.5, 34.1);
     Item item3 = new Item("PEAR", "004", 5, "COSTCO", 17.9, 15.8);
-    
+
     List<Item> list = new ArrayList<Item>();
     list.add(item1);
     list.add(item2);
     list.add(item3);
-    
+
     try {
       DatabaseJdbc.deleteTable(jdbc, "SearchTest");
       DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
       DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list, "123" + "1");
       Item item4 = DatabaseJdbc.getItem(jdbc, "ItemTest", "004");
-      assertEquals(item4.getTcin(), "004");
+      assertEquals(item4.getBarcode(), "004");
       assertEquals(item4.getName(), "PEAR");
       assertEquals(item4.getPrice(), 5);
       assertEquals(item4.getStore(), "COSTCO");
       assertEquals(item4.getLat(), 17.9);
       assertEquals(item4.getLon(), 15.8);
-      
+
     } catch (SQLException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
     }
 
   }
-  
-  
+
   /*
    * Test get search record
    * 
@@ -644,33 +646,36 @@ public class DatabaseTest {
     Item item1 = new Item("HONEYCRISP APPLE", "002", 9.3, "COSTCO", 41.5, 34.1);
     Item item2 = new Item("AVACADO", "003", 6, "COSTCO", 41.5, 34.1);
     Item item3 = new Item("PEAR", "004", 5, "COSTCO", 41.5, 34.1);
-    
+
     List<Item> list1 = new ArrayList<Item>();
     list1.add(item1);
     list1.add(item2);
     list1.add(item3);
-    
+
     Item item4 = new Item("MILK", "005", 3, "7-11", 41.5, 34.1);
     Item item5 = new Item("TEA", "006", 4.5, "TARGET", 41.5, 34.1);
     List<Item> list2 = new ArrayList<Item>();
     list2.add(item4);
     list2.add(item5);
-    
+
     try {
       DatabaseJdbc.deleteTable(jdbc, "SearchTest");
       DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
-      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list1, "123" + "2");
-      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list2, "123" + "1");
-      List<Item> result = DatabaseJdbc.getSearch(jdbc, "SearchTest", "ItemTest", "1232");
+      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list1,
+          "123" + "2");
+      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list2,
+          "123" + "1");
+      List<Item> result = DatabaseJdbc.getSearch(jdbc, "SearchTest", "ItemTest",
+          "1232");
       assertEquals(3, result.size());
-      
+
     } catch (SQLException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
     }
 
   }
-  
+
   /*
    * Test get task
    * 
@@ -684,12 +689,12 @@ public class DatabaseTest {
     Item item1 = new Item("HONEYCRISP APPLE", "002", 9.3, "COSTCO", 41.5, 34.1);
     Item item2 = new Item("AVACADO", "003", 6, "COSTCO", 41.5, 34.1);
     Item item3 = new Item("PEAR", "004", 5, "COSTCO", 41.5, 34.1);
-    
+
     List<Item> list = new ArrayList<Item>();
     list.add(item1);
     list.add(item2);
     list.add(item3);
-    
+
     OngoingTask task = new OngoingTask();
     task.setUserId("34535667");
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -699,9 +704,9 @@ public class DatabaseTest {
     task.setInitialItem(item3);
     task.setAlternativeItem(new ArrayList<Item>());
     task.setFinalItem(new Item());
-    
+
     OngoingTask result = new OngoingTask();
-    
+
     try {
       DatabaseJdbc.deleteTable(jdbc, "TaskTest");
       DatabaseJdbc.deleteTable(jdbc, "SearchTest");
@@ -710,24 +715,27 @@ public class DatabaseTest {
       DatabaseJdbc.createLoginTable(jdbc, "UserTest");
       DatabaseJdbc.createItemTable(jdbc, "ItemTest");
       DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
-      DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest", "ItemTest");
-      
+      DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest",
+          "ItemTest");
+
       DatabaseJdbc.addLoginData(jdbc, "UserTest", user);
-      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list, "34535667" + "1");
+      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list,
+          "34535667" + "1");
       DatabaseJdbc.addTask(jdbc, "TaskTest", task);
-      result = DatabaseJdbc.getTask(jdbc, "TaskTest", "SearchTest", "ItemTest", "34535667");
+      result = DatabaseJdbc.getTask(jdbc, "TaskTest", "SearchTest", "ItemTest",
+          "34535667");
       assertEquals("34535667", result.getUserId());
-      //assertEquals(timestamp, result.getTaskStartTime());
+      // assertEquals(timestamp, result.getTaskStartTime());
       assertEquals("FRUIT", result.getSearchString());
       assertEquals(3, result.getSearchItems().size());
-      assertEquals("004", result.getInitialItem().getTcin());
-      
+      assertEquals("004", result.getInitialItem().getBarcode());
+
     } catch (SQLException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
     }
   }
-  
+
   /*
    * Test REMOVE search record
    * 
@@ -739,27 +747,30 @@ public class DatabaseTest {
     Item item1 = new Item("HONEYCRISP APPLE", "002", 9.3, "COSTCO", 41.5, 34.1);
     Item item2 = new Item("AVACADO", "003", 6, "COSTCO", 41.5, 34.1);
     Item item3 = new Item("PEAR", "004", 5, "COSTCO", 41.5, 34.1);
-    
+
     List<Item> list1 = new ArrayList<Item>();
     list1.add(item1);
     list1.add(item2);
     list1.add(item3);
-    
+
     Item item4 = new Item("MILK", "005", 3, "7-11", 41.5, 34.1);
     Item item5 = new Item("TEA", "006", 4.5, "TARGET", 41.5, 34.1);
     List<Item> list2 = new ArrayList<Item>();
     list2.add(item4);
     list2.add(item5);
-    
+
     try {
       DatabaseJdbc.deleteTable(jdbc, "SearchTest");
       DatabaseJdbc.createSearchTable(jdbc, "SearchTest", "ItemTest");
-      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list1, "123" + "2");
-      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list2, "123" + "1");
+      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list1,
+          "123" + "2");
+      DatabaseJdbc.addSearch(jdbc, "SearchTest", "ItemTest", list2,
+          "123" + "1");
       DatabaseJdbc.removeSearch(jdbc, "SearchTest", "123" + "2");
-      List<Item> result = DatabaseJdbc.getSearch(jdbc, "SearchTest", "ItemTest", "1232");
+      List<Item> result = DatabaseJdbc.getSearch(jdbc, "SearchTest", "ItemTest",
+          "1232");
       assertEquals(0, result.size());
-      
+
     } catch (SQLException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -775,15 +786,74 @@ public class DatabaseTest {
   @Order(17)
   public void testAlreadyExists3() {
     System.out.println("========TESTING AlreadyExists ========");
-    Store store = new Store("RIDGEMONT", "Wegmans Store", 12, 43.20785, -77.70403);
+    Store store = new Store("RIDGEMONT", "Wegmans Store", 12, 43.20785,
+        -77.70403);
     try {
       DatabaseJdbc.deleteTable(jdbc, "StoreTest");
-      DatabaseJdbc.createItemTable(jdbc, "StoreTest");
-      boolean result = DatabaseJdbc.alreadyExistsStore(jdbc, "StoreTest", store);
+      DatabaseJdbc.createStoreTable(jdbc, "StoreTest");
+      boolean result = DatabaseJdbc.alreadyExistsStore(jdbc, "StoreTest",
+          store);
       assertEquals(result, false);
 
       DatabaseJdbc.addStore(jdbc, "StoreTest", store);
       result = DatabaseJdbc.alreadyExistsStore(jdbc, "StoreTest", store);
+      assertEquals(result, true);
+
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+
+  /*
+   * Test get store on Store table
+   * 
+   */
+  @Test
+  @Order(18)
+  public void testGetStore() {
+    System.out.println("========TESTING GetStore ========");
+    Store store = new Store("RIDGEMONT", "Wegmans Store", 12, 43.20785,
+        -77.70403);
+    Store store2 = new Store("MT. LAUREL", "Wegmans Store", 8, 39.96771,
+        -74.91507);
+    try {
+      DatabaseJdbc.deleteTable(jdbc, "StoreTest");
+      DatabaseJdbc.createStoreTable(jdbc, "StoreTest");
+      DatabaseJdbc.addStore(jdbc, "StoreTest", store);
+      DatabaseJdbc.addStore(jdbc, "StoreTest", store2);
+      List<Store> stores = DatabaseJdbc.getStore(jdbc, "StoreTest",
+          "Wegmans Store");
+      assertEquals(2, stores.size());
+
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+
+  /*
+   * Test AlreadyExists on Item table
+   * 
+   */
+  @Test
+  @Order(19)
+  public void testAlreadyExists4() {
+    System.out.println("========TESTING AlreadyExists ========");
+    Item item = new Item("CV Ella Coffee-2Maria Med", "73038517792", 9.99,
+        "Wegmans Store", 43.03306, -76.05325, "73038517792", "766617",
+        "https://wfmproducts.azureedge.net/images-500/00730385177928.jpg");
+    try {
+      DatabaseJdbc.deleteTable(jdbc, "ItemTest");
+      DatabaseJdbc.createItemTable(jdbc, "ItemTest");
+      boolean result = DatabaseJdbc.alreadyExistsItem(jdbc, "ItemTest",
+          item);
+      assertEquals(result, false);
+
+      DatabaseJdbc.addItem(jdbc, "ItemTest", item);
+      result = DatabaseJdbc.alreadyExistsItem(jdbc, "ItemTest", item);
       assertEquals(result, true);
 
     } catch (SQLException e) {
