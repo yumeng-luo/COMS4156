@@ -1,0 +1,5 @@
+ignore:
+    - "Message.java"
+    - "PurchaseRecord.java"
+    - "User.java"
+
