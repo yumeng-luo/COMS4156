@@ -106,7 +106,9 @@ public class Application extends WebSecurityConfigurerAdapter {
             .antMatchers("/frontend", "/", "/error", "/webjars/**", "/search",
                 "/select_item", "/select_purchase", "/no_alternative",
                 "/alternatives", "/confirm")
-            .permitAll().anyRequest().authenticated())
+            // if there are any authentication problems, first try uncommenting either of the two and using the other
+//            .permitAll().anyRequest().authenticated())
+            .authenticated())
         .exceptionHandling(e -> e.authenticationEntryPoint(
             new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
         .csrf(c -> c
