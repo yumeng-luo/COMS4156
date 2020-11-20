@@ -90,7 +90,7 @@
 	</div>
 	<div class="container text-danger error"></div>
 
-	<!--item search page-->
+	<!--item search page https://mdbootstrap.com/docs/jquery/forms/search/-->
 	<div class="container">
 		<div class="input-group md-form form-sm form-1 pl-0">
 			<div class="input-group-prepend">
@@ -103,15 +103,26 @@
 		<script src="js/search.js"></script>
 	</div>
 
+	<!--item search page https://mdbootstrap.com/docs/jquery/components/list-group/ -->
+	<div class="container">
+		<div class="list-group">
+			<button type="button" class="list-group-item list-group-item-action active">Cras justo odio</button>
+			<button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
+			<button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
+			<button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
+			<button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button>
+		</div>
+	</div>
+
 	
 	<!-- Based on the following Google Maps API tutorial: https://codelabs.developers.google.com/codelabs/google-maps-nearby-search-js#4-->
 
-	<div class="container" style="display">
+	<div class="container">
 		<div id="map"></div>
 		<script src="js/map.js"></script>
 		<script async defer src="https://maps.googleapis.com/maps/api/js?key=ASK_JUN_FOR_API&libraries=places&callback=initMap">
 		</script>
-		<p> Nearby stores: </p>
+		<p> Nearby stores (max 20): </p>
 		<p id="list"></p>
 	</div>
 </body>
