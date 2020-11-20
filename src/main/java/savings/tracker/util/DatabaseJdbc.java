@@ -776,6 +776,8 @@ public class DatabaseJdbc {
     ResultSet rs = null;
     Connection c = jdbc.createConnection();
     List<String> items = new ArrayList<String>();
+    List<Double> lats = new ArrayList<Double>();
+    List<Double> lons = new ArrayList<Double>();
     List<Item> result = new ArrayList<Item>();
     try {
       c.setAutoCommit(false);
@@ -787,6 +789,8 @@ public class DatabaseJdbc {
 
       while (rs.next()) {
         items.add(rs.getString("ITEM_ID"));
+        lats.add(rs.getDouble("LAT"));
+        lons.add(rs.getDouble("LON"));
       }
 
       rs.close();
@@ -816,7 +820,8 @@ public class DatabaseJdbc {
 
         stmt = c.createStatement();
         rs = stmt.executeQuery("SELECT * FROM " + itemTable + " WHERE ID "
-            + " = \"" + items.get(i) + "\";");
+            + " = \"" + items.get(i) + "\" AND LAT = " + lats.get(i)
+            + " AND LON = " + lons.get(i) + ";");
 
         if (rs.next()) {
           item.setBarcode(rs.getString("ID"));
@@ -1320,13 +1325,12 @@ public class DatabaseJdbc {
     return user;
   }
 
-
   /**
    * updates user data. assumes exists.
    * 
    * @param jdbc      the database
    * @param tableName the table name
-   * @param user user object
+   * @param user      user object
    * @return returns boolean
    * @throws SQLException exception
    */
@@ -1338,8 +1342,8 @@ public class DatabaseJdbc {
     try {
       c.setAutoCommit(false);
 
-      stmt = c.prepareStatement(
-          "UPDATE " + tableName + " SET EMAIL=?, NAME=?,SAVINGS=?,LOCATION=? WHERE USER_ID=?");
+      stmt = c.prepareStatement("UPDATE " + tableName
+          + " SET EMAIL=?, NAME=?,SAVINGS=?,LOCATION=? WHERE USER_ID=?");
       stmt.setString(1, user.getEmail());
       stmt.setString(2, user.getName());
       stmt.setString(3, String.valueOf(user.getSavings()));

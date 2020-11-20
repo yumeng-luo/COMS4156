@@ -217,7 +217,7 @@ public class Controller {
 
     // save to ongoing task
     try {
-      DatabaseJdbc.removeSearch(database, "Search", id + "2");
+      //DatabaseJdbc.removeSearch(database, "Search", id + "2");
       DatabaseJdbc.addTask(database, "Task", task);
     } catch (SQLException e) {
       e.printStackTrace();
@@ -240,7 +240,16 @@ public class Controller {
   public List<Item> searchAlternativeItem(
       @AuthenticationPrincipal OAuth2User principal,
       @RequestParam(value = "lat", defaultValue = "37.7510") double lat,
-      @RequestParam(value = "lon", defaultValue = "-97.8220") double lon) {
+      @RequestParam(value = "lon", defaultValue = "-97.8220") double lon,
+      @RequestParam(value = "CHEAPER", defaultValue = "false") boolean cheaper,
+      @RequestParam(value = "CLOSER", defaultValue = "false") boolean closer,
+      @RequestParam(value = "SAME", defaultValue = "false") boolean same) {
+    
+    //chaneg switches accordingly 
+    WegmanApi.setMustbecheaper(cheaper);
+    WegmanApi.setMustbecloser(closer);
+    WegmanApi.setMustbesameitem(same);
+    
     String id;
     if (principal != null) {
       id = principal.getAttribute("sub");
@@ -269,24 +278,10 @@ public class Controller {
     currentTask.setFinalLat(0);
     currentTask.setFinalLon(0);
 
-    // check if there are qualifying alternatives
-    if (currentTask.getAlternativeItem().size() != 0) {
-      // non empty alternatives, check if there is cheaper requirement
-      if (WegmanApi.isMustbecheaper() == false) {
-        result = currentTask.getAlternativeItem();
-      } else {
-        // cheaper requirement
-        for (int i = 0; i < currentTask.getAlternativeItem().size(); i++) {
-          if (currentTask.getAlternativeItem().get(i).getPrice() <= currentTask
-              .getInitialItem().getPrice()) {
-            result.add(currentTask.getAlternativeItem().get(i));
-          }
-        }
+    result = filterAlternativeItem(lat, lon, currentTask.getAlternativeItem(),
+        currentTask.getInitialItem());
 
-      }
-
-    }
-    if (result.size() == 0) {
+    if (result.size() <= 10) {
       // search for more item
       // TODO implement this part after rapid api
       result = WegmanApi.getAlternativeItems(database, "Store",
@@ -294,6 +289,8 @@ public class Controller {
           currentTask.getInitialItem().getPrice());
 
     }
+    result = filterAlternativeItem(lat, lon, result,
+        currentTask.getInitialItem());
 
     // save to ongoing task
     currentTask.setAlternativeItem(result);
@@ -304,6 +301,58 @@ public class Controller {
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
+    }
+
+    return result;
+  }
+
+  /**
+   * Filter Alternatives based on toggle switch.
+   * 
+   * @param lat          of user
+   * @param lon          of user
+   * @param alternatives list of alternatives
+   * @param initialItem  initial chosen item
+   * @throws SQLException Exception
+   */
+  public List<Item> filterAlternativeItem(double lat, double lon,
+      List<Item> alternatives, Item initialItem) {
+
+    List<Item> result = new ArrayList<Item>();
+
+    // check if there are alternatives
+    if (alternatives.size() != 0) {
+      // deep copy
+      // non empty alternatives, check if there is alt requirement
+      for (int i = 0; i < alternatives.size(); i++) {
+        if (WegmanApi.isMustbecheaper() == false
+            || alternatives.get(i).getPrice() <= initialItem.getPrice()) {
+          // no cheaper requirement or yes cheaper requirement but cheaper
+
+          // check distance reuirement
+          double lat1 = alternatives.get(i).getLat(); // alt
+          double lon1 = alternatives.get(i).getLon();
+          double lat2 = initialItem.getLat(); // initial
+          double lon2 = initialItem.getLon();
+          // lat lon user
+          double distance1 = WegmanApi.getDistance(lat, lon, lat1, lon1);
+          double distance2 = WegmanApi.getDistance(lat, lon, lat2, lon2);
+          if (WegmanApi.isMustbecloser() == false || distance1 <= distance2) {
+            // no distance requirement or yes but closer
+
+            String barcode1 = initialItem.getBarcode();
+            String barcode2 = alternatives.get(i).getBarcode();
+            boolean locationNotMatch = ((lat1 != lat2) || (lon1 != lon2));
+            // check same item requirement
+            if (WegmanApi.isMustbesameitem() == false
+                || (barcode2.equals(barcode1) && locationNotMatch)) {
+              // no same item requirement or yes but same item but different
+              // location
+              result.add(new Item(alternatives.get(i)));
+            }
+          }
+        }
+      }
     }
 
     return result;

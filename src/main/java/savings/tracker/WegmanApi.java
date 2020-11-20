@@ -22,10 +22,32 @@ public class WegmanApi {
   private static final int STORESIZE = 10;
   private static final int SEARCHSIZE = 60;
   private static final int ALTSIZE = 60;
-  private static final boolean MUSTBECHEAPER = true;
+  private static boolean MUSTBECHEAPER = true;
+  private static boolean MUSTBECLOSER = true;
+  private static boolean MUSTBESAMEITEM = false;
+
+  public static boolean isMustbecloser() {
+    return MUSTBECLOSER;
+  }
+
+  public static boolean isMustbesameitem() {
+    return MUSTBESAMEITEM;
+  }
 
   public static boolean isMustbecheaper() {
     return MUSTBECHEAPER;
+  }
+
+  public static void setMustbecloser(boolean mustbecloser) {
+    MUSTBECLOSER = mustbecloser;
+  }
+
+  public static void setMustbesameitem(boolean mustbesameitem) {
+    MUSTBESAMEITEM = mustbesameitem;
+  }
+
+  public static void setMustbecheaper(boolean mustbecheaper) {
+    MUSTBECHEAPER = mustbecheaper;
   }
 
   /**
@@ -278,10 +300,8 @@ public class WegmanApi {
     for (int i = 0; i < allList.size(); i++) {
       pq.add(allList.get(i));
     }
-    for (int i = 0; i < STORESIZE; i++) {
-      pq.poll();
-    }
-    for (int i = 0; i < STORESIZE; i++) {
+
+    for (int i = 0; i < 2 * STORESIZE; i++) {
       shortList.add(pq.poll());
     }
 
@@ -290,7 +310,8 @@ public class WegmanApi {
   }
 
   /**
-   * gets additional alternatives by distance.
+   * gets additional alternatives by distance. and filter based on toggle
+   * switches
    * 
    * @param jdbc         Database
    * @param tableName    name of store table
@@ -359,7 +380,7 @@ public class WegmanApi {
 
       // get item locatin
 
-      // get nearest 11-20 stores
+      // get nearest 1-20 stores
       List<Store> secNearestStores = getSecNearestStores(jdbc, tableName, lat,
           lon, "Wegmans Store");
       for (int j = 0; j < STORESIZE; j++) {

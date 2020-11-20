@@ -40,7 +40,6 @@ public class OngoingTask {
     this.finalLon = finalLon;
   }
 
-
   /**
    * Construct from blank.
    * 
@@ -88,8 +87,15 @@ public class OngoingTask {
     return searchItems;
   }
 
+  /**
+   * Deep Copy.
+   * 
+   */
   public void setSearchItems(List<Item> searchItems) {
-    this.searchItems = searchItems;
+    this.searchItems = new ArrayList<Item>();
+    for (int i = 0; i < searchItems.size(); i++) {
+      this.searchItems.add(searchItems.get(i));
+    }
   }
 
   public Item getInitialItem() {
@@ -97,15 +103,23 @@ public class OngoingTask {
   }
 
   public void setInitialItem(Item initialItem) {
-    this.initialItem = initialItem;
+    this.initialItem = new Item(initialItem);
   }
 
   public List<Item> getAlternativeItem() {
     return alternativeItem;
   }
 
+  /**
+   * Deep Copy.
+   * 
+   */
   public void setAlternativeItem(List<Item> alternativeItem) {
-    this.alternativeItem = alternativeItem;
+    this.alternativeItem = new ArrayList<Item>();
+    for (int i = 0; i < alternativeItem.size(); i++) {
+      this.alternativeItem.add(alternativeItem.get(i));
+    }
+
   }
 
   public Item getFinalItem() {
@@ -113,7 +127,7 @@ public class OngoingTask {
   }
 
   public void setFinalItem(Item finalItem) {
-    this.finalItem = finalItem;
+    this.finalItem = new Item(finalItem);
   }
 
   public double getInitialLat() {
