@@ -64,8 +64,8 @@ savings-tracker
 <th>Errors</th>
 <th>Missing Classes</th></tr>
 <tr class="b">
-<td>13</td>
-<td>12</td>
+<td>16</td>
+<td>16</td>
 <td>0</td>
 <td>0</td></tr></table></div>
 <div class="section">
@@ -81,24 +81,33 @@ savings-tracker
 <td><a href="#savings.tracker.WegmanApi">savings.tracker.WegmanApi</a></td>
 <td>1</td></tr>
 <tr class="b">
-<td><a href="#savings.tracker.util.DatabaseJdbc">savings.tracker.util.DatabaseJdbc</a></td>
-<td>6</td></tr>
+<td><a href="#savings.tracker.WegmanApi$1">savings.tracker.WegmanApi$1</a></td>
+<td>1</td></tr>
 <tr class="a">
-<td><a href="#savings.tracker.util.Item">savings.tracker.util.Item</a></td>
+<td><a href="#savings.tracker.WegmanApi$2">savings.tracker.WegmanApi$2</a></td>
 <td>1</td></tr>
 <tr class="b">
+<td><a href="#savings.tracker.util.DatabaseJdbc">savings.tracker.util.DatabaseJdbc</a></td>
+<td>7</td></tr>
+<tr class="a">
+<td><a href="#savings.tracker.util.Dictionary">savings.tracker.util.Dictionary</a></td>
+<td>1</td></tr>
+<tr class="b">
+<td><a href="#savings.tracker.util.Item">savings.tracker.util.Item</a></td>
+<td>1</td></tr>
+<tr class="a">
 <td><a href="#savings.tracker.util.OngoingTask">savings.tracker.util.OngoingTask</a></td>
 <td>3</td></tr></table></div><a name="savings.tracker.TargetApi"></a>
 <div class="section">
 <h3><a name="savings.tracker.TargetApi"></a>savings.tracker.TargetApi</h3>
 <table border="0" class="bodyTable">
-<tr class="a">
+<tr class="b">
 <th>Bug</th>
 <th>Category</th>
 <th>Details</th>
 <th>Line</th>
 <th>Priority</th></tr>
-<tr class="b">
+<tr class="a">
 <td>Dead store to price in savings.tracker.TargetApi.main(String[])</td>
 <td>STYLE</td>
 <td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#DLS_DEAD_LOCAL_STORE">DLS_DEAD_LOCAL_STORE</a></td>
@@ -107,62 +116,113 @@ savings-tracker
 <div class="section">
 <h3><a name="savings.tracker.WegmanApi"></a>savings.tracker.WegmanApi</h3>
 <table border="0" class="bodyTable">
-<tr class="a">
+<tr class="b">
 <th>Bug</th>
 <th>Category</th>
 <th>Details</th>
 <th>Line</th>
 <th>Priority</th></tr>
-<tr class="b">
+<tr class="a">
 <td>Boxing/unboxing to parse a primitive savings.tracker.WegmanApi.getStores()</td>
 <td>PERFORMANCE</td>
 <td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#DM_BOXED_PRIMITIVE_FOR_PARSING">DM_BOXED_PRIMITIVE_FOR_PARSING</a></td>
-<td>108</td>
-<td>High</td></tr></table></div><a name="savings.tracker.util.DatabaseJdbc"></a>
+<td>182</td>
+<td>High</td></tr></table></div><a name="savings.tracker.WegmanApi1"></a>
 <div class="section">
-<h3><a name="savings.tracker.util.DatabaseJdbc"></a>savings.tracker.util.DatabaseJdbc</h3>
+<h3><a name="savings.tracker.WegmanApi.241"></a>savings.tracker.WegmanApi$1</h3>
 <table border="0" class="bodyTable">
-<tr class="a">
+<tr class="b">
 <th>Bug</th>
 <th>Category</th>
 <th>Details</th>
 <th>Line</th>
 <th>Priority</th></tr>
+<tr class="a">
+<td>savings.tracker.WegmanApi$1.compare(Store, Store) incorrectly handles double value</td>
+<td>BAD_PRACTICE</td>
+<td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#CO_COMPARETO_INCORRECT_FLOATING">CO_COMPARETO_INCORRECT_FLOATING</a></td>
+<td>245</td>
+<td>Medium</td></tr></table></div><a name="savings.tracker.WegmanApi2"></a>
+<div class="section">
+<h3><a name="savings.tracker.WegmanApi.242"></a>savings.tracker.WegmanApi$2</h3>
+<table border="0" class="bodyTable">
+<tr class="b">
+<th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+<th>Priority</th></tr>
+<tr class="a">
+<td>savings.tracker.WegmanApi$2.compare(Store, Store) incorrectly handles double value</td>
+<td>BAD_PRACTICE</td>
+<td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#CO_COMPARETO_INCORRECT_FLOATING">CO_COMPARETO_INCORRECT_FLOATING</a></td>
+<td>292</td>
+<td>Medium</td></tr></table></div><a name="savings.tracker.util.DatabaseJdbc"></a>
+<div class="section">
+<h3><a name="savings.tracker.util.DatabaseJdbc"></a>savings.tracker.util.DatabaseJdbc</h3>
+<table border="0" class="bodyTable">
+<tr class="b">
+<th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+<th>Priority</th></tr>
+<tr class="a">
+<td>Boxing/unboxing to parse a primitive savings.tracker.util.DatabaseJdbc.getStore(DatabaseJdbc, String, String)</td>
+<td>PERFORMANCE</td>
+<td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#DM_BOXED_PRIMITIVE_FOR_PARSING">DM_BOXED_PRIMITIVE_FOR_PARSING</a></td>
+<td>1199</td>
+<td>High</td></tr>
 <tr class="b">
 <td>A prepared statement is generated from a nonconstant String in savings.tracker.util.DatabaseJdbc.addItem(DatabaseJdbc, String, Item)</td>
 <td>SECURITY</td>
 <td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING">SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING</a></td>
-<td>330</td>
+<td>338</td>
 <td>Medium</td></tr>
 <tr class="a">
 <td>A prepared statement is generated from a nonconstant String in savings.tracker.util.DatabaseJdbc.addStore(DatabaseJdbc, String, Store)</td>
 <td>SECURITY</td>
 <td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING">SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING</a></td>
-<td>381</td>
+<td>393</td>
 <td>Medium</td></tr>
 <tr class="b">
 <td>A prepared statement is generated from a nonconstant String in savings.tracker.util.DatabaseJdbc.addTask(DatabaseJdbc, String, OngoingTask)</td>
 <td>SECURITY</td>
 <td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING">SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING</a></td>
-<td>509</td>
+<td>531</td>
 <td>Medium</td></tr>
 <tr class="a">
 <td>A prepared statement is generated from a nonconstant String in savings.tracker.util.DatabaseJdbc.createItemTable(DatabaseJdbc, String)</td>
 <td>SECURITY</td>
 <td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING">SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING</a></td>
-<td>146</td>
+<td>151</td>
 <td>Medium</td></tr>
 <tr class="b">
 <td>A prepared statement is generated from a nonconstant String in savings.tracker.util.DatabaseJdbc.createSearchTable(DatabaseJdbc, String, String)</td>
 <td>SECURITY</td>
 <td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING">SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING</a></td>
-<td>186</td>
+<td>192</td>
 <td>Medium</td></tr>
 <tr class="a">
 <td>A prepared statement is generated from a nonconstant String in savings.tracker.util.DatabaseJdbc.createTaskTable(DatabaseJdbc, String, String, String, String)</td>
 <td>SECURITY</td>
 <td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING">SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING</a></td>
-<td>105</td>
+<td>109</td>
+<td>Medium</td></tr></table></div><a name="savings.tracker.util.Dictionary"></a>
+<div class="section">
+<h3><a name="savings.tracker.util.Dictionary"></a>savings.tracker.util.Dictionary</h3>
+<table border="0" class="bodyTable">
+<tr class="b">
+<th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+<th>Priority</th></tr>
+<tr class="a">
+<td>Write to static field savings.tracker.util.Dictionary.wordsSet from instance method new savings.tracker.util.Dictionary()</td>
+<td>STYLE</td>
+<td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD">ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD</a></td>
+<td>26</td>
 <td>Medium</td></tr></table></div><a name="savings.tracker.util.Item"></a>
 <div class="section">
 <h3><a name="savings.tracker.util.Item"></a>savings.tracker.util.Item</h3>
@@ -174,10 +234,10 @@ savings-tracker
 <th>Line</th>
 <th>Priority</th></tr>
 <tr class="a">
-<td>Unused field: savings.tracker.util.Item.tcin</td>
+<td>Unread field: savings.tracker.util.Item.tcin</td>
 <td>PERFORMANCE</td>
-<td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#UUF_UNUSED_FIELD">UUF_UNUSED_FIELD</a></td>
-<td></td>
+<td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#URF_UNREAD_FIELD">URF_UNREAD_FIELD</a></td>
+<td>41</td>
 <td>Medium</td></tr></table></div><a name="savings.tracker.util.OngoingTask"></a>
 <div class="section">
 <h3><a name="savings.tracker.util.OngoingTask"></a>savings.tracker.util.OngoingTask</h3>
@@ -192,19 +252,19 @@ savings-tracker
 <td>savings.tracker.util.OngoingTask.getTaskStartTime() may expose internal representation by returning OngoingTask.taskStartTime</td>
 <td>MALICIOUS_CODE</td>
 <td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#EI_EXPOSE_REP">EI_EXPOSE_REP</a></td>
-<td>58</td>
+<td>71</td>
 <td>Medium</td></tr>
 <tr class="b">
-<td>new savings.tracker.util.OngoingTask(String, String, Timestamp, List, Item, List, Item) may expose internal representation by storing an externally mutable object into OngoingTask.taskStartTime</td>
+<td>new savings.tracker.util.OngoingTask(String, String, Timestamp, List, Item, double, double, List, Item, double, double) may expose internal representation by storing an externally mutable object into OngoingTask.taskStartTime</td>
 <td>MALICIOUS_CODE</td>
 <td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#EI_EXPOSE_REP2">EI_EXPOSE_REP2</a></td>
-<td>27</td>
+<td>32</td>
 <td>Medium</td></tr>
 <tr class="a">
 <td>savings.tracker.util.OngoingTask.setTaskStartTime(Timestamp) may expose internal representation by storing an externally mutable object into OngoingTask.taskStartTime</td>
 <td>MALICIOUS_CODE</td>
 <td><a class="externalLink" href="https://spotbugs.readthedocs.io/en/latest/bugDescriptions.html#EI_EXPOSE_REP2">EI_EXPOSE_REP2</a></td>
-<td>62</td>
+<td>75</td>
 <td>Medium</td></tr></table></div>
       </div>
     </div>
