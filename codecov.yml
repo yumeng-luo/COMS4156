@@ -1,5 +1,5 @@
 ignore:
-    - "Message.java"
-    - "PurchaseRecord.java"
-    - "User.java"
+    - "src/main/java/savings/tracker/util/Message.java"
+    - "src/main/java/savings/tracker/util/PurchaseRecord.java"
+    - "src/main/java/savings/tracker/util/User.java"
 
