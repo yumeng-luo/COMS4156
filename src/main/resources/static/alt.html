@@ -71,12 +71,13 @@
 </head>
 <body>
 	<h1>List of Alternatives</h1>
-	<div class="container"></div>
-	<div class="container unauthenticated">
+	<div class="container">You chose "Coffee 1"</div>
+	<div class="container"> Coffee 1 image and description here... </div>
+	<!-- <div class="container unauthenticated">
 	  <div>
 	    With Google: <a href="/oauth2/authorization/google">click here</a>
 	  </div>
-	</div>
+	</div> -->
 	<div class="container authenticated" style="display:none">
 	    Logged in as: <span id="user"></span>
 	  <div>
@@ -86,7 +87,7 @@
 	<div class="container text-danger error"></div>
 
 	<!--item search page https://mdbootstrap.com/docs/jquery/forms/search/-->
-	<div class="container">
+<!-- 	<div class="container">
 		<div class="input-group md-form form-sm form-1 pl-0">
 			<div class="input-group-prepend">
 				<span class="input-group-text purple lighten-3" id="basic-text1"><i class="fas fa-search text-white"
@@ -96,10 +97,10 @@
 		</div>
 		<div id='search'></div>
 		<script src="js/search.js"></script>
-	</div>
+	</div> -->
 
 	<!--item search page https://mdbootstrap.com/docs/jquery/components/list-group/ -->
-	<div class="container">
+	<!-- <div class="container">
 		<div class="list-group">
 			<button type="button" class="list-group-item list-group-item-action active">Cras justo odio</button>
 			<button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
@@ -107,11 +108,11 @@
 			<button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
 			<button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button>
 		</div>
-	</div>
+	</div> -->
 
 	
 	<!-- Based on the following Google Maps API tutorial: https://codelabs.developers.google.com/codelabs/google-maps-nearby-search-js#4-->
-
+	<div class="container">We found n items similar to "Coffee 1" at stores near your location</div>
 	<div class="container">
 		<div id="map"></div>
 		<script src="js/map.js"></script>
@@ -119,6 +120,17 @@
 		</script>
 		<p> Nearby stores (max 20): </p>
 		<p id="list"></p>
+	</div>
+
+	<div class="container">List of alternatives...</div>
+	<div class="container">
+		<div class="list-group">
+			<button type="button" class="list-group-item list-group-item-action active">Coffee 7</button><br>
+			<button type="button" class="list-group-item list-group-item-action">Coffee 8</button><br>
+			<button type="button" class="list-group-item list-group-item-action">Coffee 9</button><br>
+			<button type="button" class="list-group-item list-group-item-action">Coffee 10</button><br>
+			<button type="button" class="list-group-item list-group-item-action">Coffee 11</button><br>
+		</div>
 	</div>
 </body>
 </html>

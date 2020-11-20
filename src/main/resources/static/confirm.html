@@ -71,14 +71,13 @@
 </head>
 <body>
 	<h1>Confirm Alternative Option</h1>
-	<div class="container"></div>
-	<div class="container unauthenticated">
+	<!-- <div class="container unauthenticated">
 	  <div>
 	    With Google: <a href="/oauth2/authorization/google">click here</a>
 	    <br>
 	    <a href="alt.html"><button>Go back</button></a>
 	  </div>
-	</div>
+	</div> -->
 	<div class="container authenticated" style="display:none">
 	    Logged in as: <span id="user"></span>
 	  <div>
@@ -86,9 +85,10 @@
 	  </div>
 	</div>
 	<div class="container text-danger error"></div>
+	<div class="container">Compare "Coffee 8" with "Coffee 1"</div>
 
 	<!--item search page https://mdbootstrap.com/docs/jquery/forms/search/-->
-	<div class="container">
+<!-- 	<div class="container">
 		<div class="input-group md-form form-sm form-1 pl-0">
 			<div class="input-group-prepend">
 				<span class="input-group-text purple lighten-3" id="basic-text1"><i class="fas fa-search text-white"
@@ -98,16 +98,13 @@
 		</div>
 		<div id='search'></div>
 		<script src="js/search.js"></script>
-	</div>
+	</div> -->
 
 	<!--item search page https://mdbootstrap.com/docs/jquery/components/list-group/ -->
 	<div class="container">
 		<div class="list-group">
-			<button type="button" class="list-group-item list-group-item-action active">Cras justo odio</button>
-			<button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
-			<button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
-			<button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
-			<button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button>
+			<button type="button" class="list-group-item list-group-item-action active">Coffee 8</button>
+			<button type="button" class="list-group-item list-group-item-action">Coffee 1</button>
 		</div>
 	</div>
 
@@ -119,8 +116,13 @@
 		<script src="js/map.js"></script>
 		<script async defer src="https://maps.googleapis.com/maps/api/js?key=ASK_JUN_FOR_API&libraries=places&callback=initMap">
 		</script>
-		<p> Nearby stores (max 20): </p>
-		<p id="list"></p>
+	</div>
+	<div class="container">
+		<span><strong>"Coffee 8" is available at Walmart (11 Rd., New York, NY)</strong>
+		</span>
+		<br>
+		<span>You will save $0.39</span><br>
+		<button type="button">Buy this instead</button>
 	</div>
 </body>
 </html>
