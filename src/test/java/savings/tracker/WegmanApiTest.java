@@ -20,6 +20,7 @@ public class WegmanApiTest {
   @Test
   @Order(1)
   public void testGetStore() throws Exception {
+    Thread.sleep(20000);
     DatabaseJdbc.createStoreTable(database, "Store");
     
     List<Store> stores = WegmanApi.getStores();
@@ -70,6 +71,18 @@ public class WegmanApiTest {
   @Order(6)
   public void testGetItems()  {
 
+    try {
+      Thread.sleep(20000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    try {
+      Thread.sleep(20000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     List<List<Item>> list = WegmanApi.getItems(database, "Store", "whole milk", 43.663,
         -72.368);
     
@@ -77,14 +90,41 @@ public class WegmanApiTest {
     assert (list.get(0).size() > 0);
     assert (list.get(1).size() > 0);
   }
-  
   @Test
   @Order(7)
+  public void sleepToAvoidlimit()  {
+    try {
+      Thread.sleep(40000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+  
+  @Test
+  @Order(8)
   public void testGetAlternatives()  {
+    try {
+      Thread.sleep(10000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
     List<Item> list = WegmanApi.getAlternativeItems(database, "Store",
         "whole milk", 43.663, -72.368, 20);
     
     assert (list.size() > 0);
   }
+  @Test
+  @Order(9)
+  public void sleepToAvoidlimit2()  {
+    try {
+      Thread.sleep(40000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+  
 }
