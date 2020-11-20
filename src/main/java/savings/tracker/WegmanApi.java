@@ -179,7 +179,7 @@ public class WegmanApi {
       JsonElement storeLon = storeJson.getAsJsonObject().get("longitude");
       Store store = new Store();
       store.setName(storeName.toString().replace("\"", ""));
-      store.setNumber(Integer.valueOf(storeNumber.toString()));
+      store.setNumber(Integer.parseInt(storeNumber.toString()));
       store.setType(storeType.toString().replace("\"", ""));
       store.setLat(storeLat.getAsDouble());
       store.setLon(storeLon.getAsDouble());
@@ -238,14 +238,9 @@ public class WegmanApi {
     PriorityQueue<Store> pq = new PriorityQueue<Store>(STORESIZE,
         new Comparator<Store>() {
           public int compare(Store s1, Store s2) {
-            if (getDistance(lat, lon, s1.getLat(), s1.getLon()) < getDistance(
-                lat, lon, s2.getLat(), s2.getLon())) {
-              return -1;
-            } else if (getDistance(lat, lon, s1.getLat(), s1
-                .getLon()) > getDistance(lat, lon, s2.getLat(), s2.getLon())) {
-              return 1;
-            }
-            return 0;
+            return Double.compare(
+                getDistance(lat, lon, s1.getLat(), s1.getLon()),
+                getDistance(lat, lon, s2.getLat(), s2.getLon()));
           }
         });
     for (int i = 0; i < allList.size(); i++) {
@@ -285,14 +280,9 @@ public class WegmanApi {
     PriorityQueue<Store> pq = new PriorityQueue<Store>(2 * STORESIZE,
         new Comparator<Store>() {
           public int compare(Store s1, Store s2) {
-            if (getDistance(lat, lon, s1.getLat(), s1.getLon()) < getDistance(
-                lat, lon, s2.getLat(), s2.getLon())) {
-              return -1;
-            } else if (getDistance(lat, lon, s1.getLat(), s1
-                .getLon()) > getDistance(lat, lon, s2.getLat(), s2.getLon())) {
-              return 1;
-            }
-            return 0;
+            return Double.compare(
+                getDistance(lat, lon, s1.getLat(), s1.getLon()),
+                getDistance(lat, lon, s2.getLat(), s2.getLon()));
           }
         });
     for (int i = 0; i < allList.size(); i++) {
