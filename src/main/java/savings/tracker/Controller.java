@@ -421,5 +421,11 @@ public class Controller {
             + " on this purchase! \n You have accumulated $" + user.getSavings()
             + " so far!");
   }
-
+  /**
+   * For testing purposes only.
+   * @return database instance
+   */
+  public static DatabaseJdbc getDb() {
+    return database;
+  }
 }

@@ -32,7 +32,7 @@ public class EmailTest {
   public void sendEmailTest() throws IOException {
     
     Mail mail = SendGridEmailer.buildDynamicTemplate();
-    assertEquals(SendGridEmailer.send(mail), true);
+    assertEquals(SendGridEmailer.send(mail, System.getenv("SENDGRID_API_KEY")), true);
   }
   
   

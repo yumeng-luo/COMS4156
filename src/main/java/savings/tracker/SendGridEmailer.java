@@ -17,8 +17,8 @@ public class SendGridEmailer {
    * @return boolean on success
    * @throws IOException exception
    */
-  public static boolean send(final Mail mail) throws IOException {
-    final SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
+  public static boolean send(final Mail mail, String API_KEY) throws IOException {
+    final SendGrid sg = new SendGrid(API_KEY);
     sg.addRequestHeader("X-Mock", "true");
     final Request request = new Request();
     
@@ -71,7 +71,7 @@ public class SendGridEmailer {
    */
   public static void sendDynamicEmail() throws IOException {
     final Mail dynamicTemplate = buildDynamicTemplate();
-    send(dynamicTemplate);
+    send(dynamicTemplate, System.getenv("SENDGRID_API_KEY"));
   }
   
   /**
