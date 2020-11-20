@@ -30,17 +30,17 @@ public class Item {
    * Construct from existing item. make a copy
    * 
    */
-  public Item(Item item__) {
+  public Item(Item item2) {
     super();
-    this.name = item__.getName();
-    this.barcode = item__.getBarcode();
-    this.price = item__.getPrice();
-    this.store = item__.getStore();
-    this.lat = item__.getLat();
-    this.lon = item__.getLon();
-    this.tcin = item__.getTcin();
-    this.sku = item__.getSku();
-    this.image = item__.getImage();
+    this.name = item2.getName();
+    this.barcode = item2.getBarcode();
+    this.price = item2.getPrice();
+    this.store = item2.getStore();
+    this.lat = item2.getLat();
+    this.lon = item2.getLon();
+    this.tcin = item2.getTcin();
+    this.sku = item2.getSku();
+    this.image = item2.getImage();
   }
 
   public Item() {

@@ -217,7 +217,7 @@ public class Controller {
 
     // save to ongoing task
     try {
-      //DatabaseJdbc.removeSearch(database, "Search", id + "2");
+      // DatabaseJdbc.removeSearch(database, "Search", id + "2");
       DatabaseJdbc.addTask(database, "Task", task);
     } catch (SQLException e) {
       e.printStackTrace();
@@ -244,12 +244,12 @@ public class Controller {
       @RequestParam(value = "CHEAPER", defaultValue = "false") boolean cheaper,
       @RequestParam(value = "CLOSER", defaultValue = "false") boolean closer,
       @RequestParam(value = "SAME", defaultValue = "false") boolean same) {
-    
-    //chaneg switches accordingly 
+
+    // chaneg switches accordingly
     WegmanApi.setMustbecheaper(cheaper);
     WegmanApi.setMustbecloser(closer);
     WegmanApi.setMustbesameitem(same);
-    
+
     String id;
     if (principal != null) {
       id = principal.getAttribute("sub");
@@ -440,6 +440,7 @@ public class Controller {
     if (initialItem.getBarcode() == null) {
       return new Message(201, user.getName() + " haven't chose any items yet!");
     }
+
     if (finalItem.getBarcode() == null) {
       return new Message(202,
           user.getName() + " haven't added any items to cart yet!");
@@ -470,8 +471,10 @@ public class Controller {
             + " on this purchase! \n You have accumulated $" + user.getSavings()
             + " so far!");
   }
+
   /**
    * For testing purposes only.
+   * 
    * @return database instance
    */
   public static DatabaseJdbc getDb() {

@@ -17,8 +17,8 @@ public class SendGridEmailer {
    * @return boolean on success
    * @throws IOException exception
    */
-  public static boolean send(final Mail mail, String API_KEY) throws IOException {
-    final SendGrid sg = new SendGrid(API_KEY);
+  public static boolean send(final Mail mail, String apiKey) throws IOException {
+    final SendGrid sg = new SendGrid(apiKey);
     sg.addRequestHeader("X-Mock", "true");
     final Request request = new Request();
     

@@ -85,7 +85,6 @@ public class TargetApi {
   /**
    * gets price of an object.
    * @param tcin product id
-   * @param storeID store id
    * @return price as string
    */
   public static String target_getPrice(String tcin, String storeId) throws 
