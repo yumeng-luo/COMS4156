@@ -36,6 +36,7 @@ public class TargetApi {
     
     try {
       price = target_getPrice(tcin, locationId);
+      System.out.println(price);
     } catch (InvalUserInputException e) {
       System.out.println(e.toString());
       return;
