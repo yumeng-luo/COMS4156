@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+	<script type="text/javascript" src="js/map.js"></script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
 	<meta name="description" content="Savers Savings Tracker"/>
@@ -23,6 +24,7 @@
 	<script type="text/javascript" src="js/popper.min.js"></script>
 	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="/js/mdb.min.js"></script>
+	<script type="text/javascript" src="js/util.js"></script>
     <script type="text/javascript">
 	    $.get("/user", function(data) {
 	        $("#user").html(data.name);
@@ -85,7 +87,8 @@
 	  </div>
 	</div>
 	<div class="container text-danger error"></div>
-	<div class="container">Compare "Coffee 8" with "Coffee 1"</div>
+	<!-- <div class="container" id="compare">Compare "Coffee 8" with "Coffee 1"</div> -->
+	<div class="container" id="compare"></div>
 
 	<!--item search page https://mdbootstrap.com/docs/jquery/forms/search/-->
 <!-- 	<div class="container">
@@ -103,8 +106,8 @@
 	<!--item search page https://mdbootstrap.com/docs/jquery/components/list-group/ -->
 	<div class="container">
 		<div class="list-group">
-			<button type="button" class="list-group-item list-group-item-action active">Coffee 8</button>
-			<button type="button" class="list-group-item list-group-item-action">Coffee 1</button>
+			<button type="button" class="list-group-item list-group-item-action active">Original item goes here</button>
+			<button type="button" class="list-group-item list-group-item-action">Alternative goes here</button>
 		</div>
 	</div>
 
@@ -118,11 +121,18 @@
 		</script>
 	</div>
 	<div class="container">
-		<span><strong>"Coffee 8" is available at Walmart (11 Rd., New York, NY)</strong>
-		</span>
+		<strong><span id="selection_info">
+			<!-- <strong>"Coffee 8" is available at Walmart (11 Rd., New York, NY)</strong> -->
+		</span></strong>
 		<br>
 		<span>You will save $0.39</span><br>
-		<button type="button">Buy this instead</button>
+		<button onclick="confirm_purchase()">Buy this instead</button>
 	</div>
+	<script>
+		request_alternatives();
+		var item_name = localStorage.getItem("final_selection");
+		document.getElementById("compare").innerHTML = "Compare " + localStorage.getItem("final_selection") + "with" + localStorage.getItem("alternative_item");
+		document.getElementById("selection_info").innerHTML = localStorage.getItem("final_selection") + " is available at " + "[DUMMY VALUE: 11 Rd WalMart, NY]";
+	</script>
 </body>
 </html>
