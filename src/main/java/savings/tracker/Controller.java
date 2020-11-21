@@ -263,7 +263,9 @@ public class Controller {
     } else {
       id = "105222900313734280075";
     }
-
+    
+    int zip = TargetApi.getZip(lat, lon);
+    List<Item> targetList;
     List<Item> result = new ArrayList<Item>();
     
     // temporary dummy return value
@@ -306,6 +308,15 @@ public class Controller {
     currentTask.setFinalItem(new Item());
     currentTask.setFinalLat(0);
     currentTask.setFinalLon(0);
+    
+    // adding target searches for those in alternative here
+    
+    targetList = TargetApi.getTargetAlternatives(zip, currentTask.getAlternativeItem());
+    if (targetList != null) {
+      for (int i = 0; i < targetList.size(); i++) {
+        result.add(targetList.get(i));
+      }
+    }
 
     result = filterAlternativeItem(lat, lon, currentTask.getAlternativeItem(),
         currentTask.getInitialItem());
@@ -315,8 +326,16 @@ public class Controller {
       result = WegmanApi.getAlternativeItems(database, "Store",
           currentTask.getSearchString(), lat, lon,
           currentTask.getInitialItem().getPrice());
+      
+      targetList = TargetApi.getSecTargetAlternatives(zip, result);
+      if (targetList != null) {
+        for (int i = 0; i < targetList.size(); i++) {
+          result.add(targetList.get(i));
+        }
 
+      }
     }
+      
     result = filterAlternativeItem(lat, lon, result,
         currentTask.getInitialItem());
 
