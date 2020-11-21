@@ -1,6 +1,11 @@
 <!doctype html>
 <html lang="en">
 <head>
+	<!-- <script type="text/javascript" src="webjars/jquery/jquery.min.js"></script> -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script type="text/javascript" src="js/map.js"></script>
+	<script type="text/javascript" src="js/util.js"></script>
+	
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
 	<meta name="description" content="Savers Savings Tracker"/>
@@ -13,19 +18,17 @@
 	<!-- Google Fonts Roboto -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
 	<!-- Bootstrap core CSS -->
-	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
 	<!-- Material Design Bootstrap -->
-	<link rel="stylesheet" href="css/mdb.min.css">
+	<!-- <link rel="stylesheet" href="css/mdb.min.css"> -->
 	<!-- Your custom styles (optional) -->
 	<link rel="stylesheet" href="css/style.css">
 
-	<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
-	<script type="text/javascript" src="js/popper.min.js"></script>
-	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="/js/mdb.min.js"></script>
-	<script type="text/javascript" src="js/util.js"></script>
-	<script type="text/javascript" src="js/map.js"></script>
-    <script type="text/javascript">
+	
+	<!-- <script type="text/javascript" src="js/popper.min.js"></script> -->
+	<!-- <script type="text/javascript" src="/js/bootstrap.min.js"></script> -->
+	<!-- <script type="text/javascript" src="/js/mdb.min.js"></script> -->
+   <!--  <script type="text/javascript">
 	    $.get("/user", function(data) {
 	        $("#user").html(data.name);
 	        $(".unauthenticated").hide()
@@ -46,9 +49,9 @@
 		        $(".error").html('');
 		    }
 		});
-	</script>
-	<script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
-	<script type="text/javascript">
+	</script> -->
+	<!-- <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script> -->
+	<!-- <script type="text/javascript">
 		$.ajaxSetup({
 		  beforeSend : function(xhr, settings) {
 		    if (settings.type == 'POST' || settings.type == 'PUT'
@@ -62,9 +65,9 @@
 		    }
 		  }
 		});
-	</script>
+	</script> -->
 	<script>
-		alert(localStorage.getItem("alternative_item"));
+		// alert(localStorage.getItem("alternative_item"));
 	</script>
 	<style>
     #map {
@@ -154,6 +157,7 @@
 		request_alternatives();
 		document.getElementById("alt_name").innerHTML = document.getElementById("alt_name").innerHTML + localStorage.getItem("alternative_item");
 	</script>
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key=ASK_JUN_FOR_API&libraries=places&callback=initMap"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=ASK_JUN_FOR_API&libraries=places&callback=initMap">
+	</script>
 </body>
 </html>

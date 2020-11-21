@@ -1,5 +1,4 @@
 let searched_item;
-let pos;
 
 function init_search() {
   // if (navigator.geolocation) {
