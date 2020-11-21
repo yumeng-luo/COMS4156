@@ -115,12 +115,19 @@ public class Controller {
       @AuthenticationPrincipal OAuth2User principal,
       @RequestParam(value = "lat", defaultValue = "37.7510") double lat,
       @RequestParam(value = "lon", defaultValue = "-97.8220") double lon) {
+    /**
+     * TODO: test if multiple /search calls can be called with changing item name.
+     * Currently, the endpoint is reusing the first search item for all subsequent /search calls.
+     * Also, reduce database operations (taking too long on the frontend).
+     */
     String id;
     if (principal != null) {
       id = principal.getAttribute("sub");
     } else {
       id = "105222900313734280075";
     }
+    
+    System.out.println("/search called->item: " + item);
 
     // updates user location data
     try {
