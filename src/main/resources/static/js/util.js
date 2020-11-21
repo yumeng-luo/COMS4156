@@ -25,17 +25,52 @@ function init_search() {
   } 
 
 function select_search(item_index) {
-      searched_item=document.getElementById("search_bar").value
+    searched_item=document.getElementById("search_bar").value
 
-      var xhttp = new XMLHttpRequest(); 
-      xhttp.onreadystatechange = function() { 
-        if (this.readyState == 4 && this.status == 200) { 
-          window.location.href = "alt.html";
-        }
-      };
-      // alert("item=" + searched_item + "&lat=37.7510&lon=-97.8220");
-      xhttp.open("POST", "/select_item", true);
-      xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhttp.send('item_number='+item_index);
-    // }  
-  } 
+    var xhttp = new XMLHttpRequest(); 
+    xhttp.onreadystatechange = function() { 
+      if (this.readyState == 4 && this.status == 200) {
+        alert("redirecting to: " + this.responseText);
+        localStorage.setItem("alternative_item",this.responseText);
+        window.location.href = "alt.html";
+      }
+    };
+    // alert("item=" + searched_item + "&lat=37.7510&lon=-97.8220");
+    xhttp.open("POST", "/select_item", true);
+    xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhttp.send('item_number='+item_index);
+  // }  
+} 
+
+function request_alternatives(item_index) {
+    // searched_item=document.getElementById("search_bar").value
+
+    var xhttp = new XMLHttpRequest(); 
+    xhttp.onreadystatechange = function() { 
+      if (this.readyState == 4 && this.status == 200) { 
+        document.getElementById("alternative-search-result").innerHTML = this.responseText;  
+      }
+    };
+    // alert("item=" + searched_item + "&lat=37.7510&lon=-97.8220");
+    xhttp.open("POST", "/alternatives", true);
+    xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhttp.send('lat=37.7510&lon=-97.8220&CHEAPER=false&CLOSER=false&SAME=false');
+  // }
+}
+
+function select_alternative(upc) {
+    // searched_item=document.getElementById("search_bar").value
+
+    var xhttp = new XMLHttpRequest(); 
+    xhttp.onreadystatechange = function() { 
+      if (this.readyState == 4 && this.status == 200) { 
+        window.location.href = "alt.html";
+      }
+    };
+    // alert("item=" + searched_item + "&lat=37.7510&lon=-97.8220");
+    xhttp.open("POST", "/select_purchase", true);
+    xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhttp.send('upc='+upc);
+  // }  
+} 
+

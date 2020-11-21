@@ -265,6 +265,27 @@ public class Controller {
     }
 
     List<Item> result = new ArrayList<Item>();
+    
+    // temporary dummy return value
+    List<Item> dummy_result = new ArrayList<Item>();
+    Item item1 = new Item();
+    item1.setName("name1");
+    item1.setBarcode("barcode1");
+    item1.setPrice(99.99);
+    item1.setStore("store1");
+    item1.setLat(100);
+    item1.setLon(100);
+    
+    Item item2 = new Item();
+    item2.setName("name2");
+    item2.setBarcode("barcode2");
+    item2.setPrice(299.99);
+    item2.setStore("store2");
+    item2.setLat(200);
+    item2.setLon(200);
+    dummy_result.add(item1);
+    dummy_result.add(item2);
+    
     System.out.print(id);
     // get task info from table
     OngoingTask currentTask = new OngoingTask();
@@ -274,6 +295,7 @@ public class Controller {
     } catch (SQLException e1) {
       e1.printStackTrace();
     }
+//    dummy_result = currentTask.getAlternativeItem();
 
     // save to on going task
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -287,7 +309,6 @@ public class Controller {
 
     result = filterAlternativeItem(lat, lon, currentTask.getAlternativeItem(),
         currentTask.getInitialItem());
-
     if (result.size() <= 10) {
       // search for more item
       // TODO implement this part after rapid api
@@ -309,8 +330,8 @@ public class Controller {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
-    return result;
+    return dummy_result;
+//    return result;
   }
 
   /**

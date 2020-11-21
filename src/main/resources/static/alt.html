@@ -23,6 +23,7 @@
 	<script type="text/javascript" src="js/popper.min.js"></script>
 	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="/js/mdb.min.js"></script>
+	<script type="text/javascript" src="js/util.js"></script>
     <script type="text/javascript">
 	    $.get("/user", function(data) {
 	        $("#user").html(data.name);
@@ -61,6 +62,9 @@
 		  }
 		});
 	</script>
+	<script>
+		alert(localStorage.getItem("alternative_item"));
+	</script>
 	<style>
     #map {
       height: 500px;
@@ -71,13 +75,6 @@
 </head>
 <body>
 	<h1>List of Alternatives</h1>
-	<div class="container">You chose "Coffee 1"</div>
-	<div class="container"> Coffee 1 image and description here... </div>
-	<!-- <div class="container unauthenticated">
-	  <div>
-	    With Google: <a href="/oauth2/authorization/google">click here</a>
-	  </div>
-	</div> -->
 	<div class="container authenticated" style="display:none">
 	    Logged in as: <span id="user"></span>
 	  <div>
@@ -85,6 +82,15 @@
 	  </div>
 	</div>
 	<div class="container text-danger error"></div>
+
+	<div class="container" id="alt_name">You chose </div>
+	<div class="container"> Original item image and description here... </div>
+	<!-- <div class="container unauthenticated">
+	  <div>
+	    With Google: <a href="/oauth2/authorization/google">click here</a>
+	  </div>
+	</div> -->
+	
 
 	<!--item search page https://mdbootstrap.com/docs/jquery/forms/search/-->
 <!-- 	<div class="container">
@@ -112,18 +118,22 @@
 
 	
 	<!-- Based on the following Google Maps API tutorial: https://codelabs.developers.google.com/codelabs/google-maps-nearby-search-js#4-->
-	<div class="container">We found n items similar to "Coffee 1" at stores near your location</div>
+	<div class="container">We found n similar items at stores near your location</div>
 	<div class="container">
 		<div id="map"></div>
 		<script src="js/map.js"></script>
 		<script async defer src="https://maps.googleapis.com/maps/api/js?key=ASK_JUN_FOR_API&libraries=places&callback=initMap">
 		</script>
-		<p> Nearby stores (max 20): </p>
+		<p> Nearby stores: </p>
 		<p id="list"></p>
 	</div>
 
 	<div class="container">List of alternatives...</div>
 	<div class="container">
+		<div id="alternative-search-result"><br>
+		</div>
+	</div>
+<!-- 	<div class="container">
 		<div class="list-group">
 			<button type="button" class="list-group-item list-group-item-action active">Coffee 7</button><br>
 			<button type="button" class="list-group-item list-group-item-action">Coffee 8</button><br>
@@ -131,6 +141,16 @@
 			<button type="button" class="list-group-item list-group-item-action">Coffee 10</button><br>
 			<button type="button" class="list-group-item list-group-item-action">Coffee 11</button><br>
 		</div>
+	</div> -->
+	<div class="container">
+		<button onclick="select_alternative(100)"> Click this button after the search
+			is complete to test select_search() [embed this function to buttons in search
+			result list after implemented]
+		</button>
 	</div>
+	<script>
+		request_alternatives();
+		document.getElementById("alt_name").innerHTML = document.getElementById("alt_name").innerHTML + localStorage.getItem("alternative_item");
+	</script>
 </body>
 </html>
