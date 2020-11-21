@@ -9,24 +9,20 @@
 	<!-- icon -->
 	<link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon">
 	<!-- Font Awesome -->
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-	<!-- Google Fonts -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+	<!-- Google Fonts Roboto -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
 	<!-- Bootstrap core CSS -->
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<!-- Material Design Bootstrap -->
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/mdb.min.css">
 	<!-- Your custom styles (optional) -->
 	<link rel="stylesheet" href="css/style.css">
 
-	<!-- JQuery -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<!-- Bootstrap tooltips -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
-	<!-- Bootstrap core JavaScript -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
-	<!-- MDB core JavaScript -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+	<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="js/popper.min.js"></script>
+	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/js/mdb.min.js"></script>
     <script type="text/javascript">
 	    $.get("/user", function(data) {
 	        $("#user").html(data.name);
@@ -65,7 +61,6 @@
 		  }
 		});
 	</script>
-	<script type="text/javascript" src="js/util.js"></script>
 	<style>
     #map {
       height: 500px;
@@ -75,14 +70,14 @@
   </style>
 </head>
 <body>
-	<h1>Savings Tracker</h1>
-	<span>Main page</span>
-	<div class="container"></div>
-	<div class="container unauthenticated">
+	<h1>Confirm Alternative Option</h1>
+	<!-- <div class="container unauthenticated">
 	  <div>
 	    With Google: <a href="/oauth2/authorization/google">click here</a>
+	    <br>
+	    <a href="alt.html"><button>Go back</button></a>
 	  </div>
-	</div>
+	</div> -->
 	<div class="container authenticated" style="display:none">
 	    Logged in as: <span id="user"></span>
 	  <div>
@@ -90,50 +85,44 @@
 	  </div>
 	</div>
 	<div class="container text-danger error"></div>
+	<div class="container">Compare "Coffee 8" with "Coffee 1"</div>
 
 	<!--item search page https://mdbootstrap.com/docs/jquery/forms/search/-->
-	<div class="container">
+<!-- 	<div class="container">
 		<div class="input-group md-form form-sm form-1 pl-0">
-			<input class="form-control my-0 py-1" type="text" placeholder="Search"  id="search_bar">
-			<div type="button" onclick="init_search()" class="input-group-prepend">
+			<div class="input-group-prepend">
 				<span class="input-group-text purple lighten-3" id="basic-text1"><i class="fas fa-search text-white"
 					aria-hidden="true"></i></span>
 			</div>
+			<input class="form-control my-0 py-1" type="text" placeholder="Search" aria-label="Search">
 		</div>
-	</div>
-	<div class="container">
-		<div id="item-search-result">Search result will appear here:<br>
-		</div>
-	</div>
+		<div id='search'></div>
+		<script src="js/search.js"></script>
+	</div> -->
 
 	<!--item search page https://mdbootstrap.com/docs/jquery/components/list-group/ -->
 	<div class="container">
-		<div id='searched'></div>
 		<div class="list-group">
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action active">Cras justo odio</button></a>
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button></a>
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button></a>
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button></a>
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button></a>
+			<button type="button" class="list-group-item list-group-item-action active">Coffee 8</button>
+			<button type="button" class="list-group-item list-group-item-action">Coffee 1</button>
 		</div>
-	</div>
-
-	<!-- dummy button to test select_search before search list is implemented -->
-	<div type="button" onclick="select_search(1)"> Click this button after the search
-		is complete to test select_search() [embed this function to buttons in search
-		result list after implemented]
 	</div>
 
 	
 	<!-- Based on the following Google Maps API tutorial: https://codelabs.developers.google.com/codelabs/google-maps-nearby-search-js#4-->
 
-<!-- 	<div class="container">
+	<div class="container">
 		<div id="map"></div>
 		<script src="js/map.js"></script>
 		<script async defer src="https://maps.googleapis.com/maps/api/js?key=ASK_JUN_FOR_API&libraries=places&callback=initMap">
 		</script>
-		<p> Nearby stores (max 20): </p>
-		<p id="list"></p>
-	</div> -->
+	</div>
+	<div class="container">
+		<span><strong>"Coffee 8" is available at Walmart (11 Rd., New York, NY)</strong>
+		</span>
+		<br>
+		<span>You will save $0.39</span><br>
+		<button type="button">Buy this instead</button>
+	</div>
 </body>
 </html>

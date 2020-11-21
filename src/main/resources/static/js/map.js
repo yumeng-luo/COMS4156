@@ -14,12 +14,12 @@ function initMap() {
     if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
         pos = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
         };
         map = new google.maps.Map(document.getElementById('map'), {
-        center: pos,
-        zoom: 15
+            center: pos,
+            zoom: 15
         });
         bounds.extend(pos);
 
@@ -131,3 +131,8 @@ function showDetails(placeResult, marker, status) {
       	console.log('showDetails failed: ' + status);
     }
 }
+
+module.exports = { initMap: initMap, handleLocationError: handleLocationError, 
+    getNearbyPlaces: getNearbyPlaces, nearbyCallback: nearbyCallback, createMarkers: createMarkers, 
+    showDetails: showDetails, pos: pos, map: map, bounds: bounds, infoWindow: infoWindow,
+    currentInfoWindow: currentInfoWindow, service: service, infoPane: infoPane }
