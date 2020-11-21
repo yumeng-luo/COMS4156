@@ -65,7 +65,7 @@
 		  }
 		});
 	</script>
-	<script type="text/javascript" src="js/util.js"></script>
+	<script type="text/javascript" src="js/search.js"></script>
 	<style>
     #map {
       height: 500px;
@@ -94,15 +94,12 @@
 	<!--item search page https://mdbootstrap.com/docs/jquery/forms/search/-->
 	<div class="container">
 		<div class="input-group md-form form-sm form-1 pl-0">
+			<input class="form-control my-0 py-1" type="text" placeholder="Search"  id="search_bar">
 			<div type="button" onclick="init_search()" class="input-group-prepend">
 				<span class="input-group-text purple lighten-3" id="basic-text1"><i class="fas fa-search text-white"
 					aria-hidden="true"></i></span>
 			</div>
-			<input class="form-control my-0 py-1" type="text" placeholder="Search" aria-label="Search">
-			<button type="button" onclick="init_search()">Search!</button>
 		</div>
-		<div id='search'></div>
-		<script src="js/search.js"></script>
 	</div>
 	<div class="container">
 		<div id="item-search-result">Search result will appear here:<br>
@@ -111,6 +108,7 @@
 
 	<!--item search page https://mdbootstrap.com/docs/jquery/components/list-group/ -->
 	<div class="container">
+		<div id='searched'></div>
 		<div class="list-group">
 			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action active">Cras justo odio</button></a>
 			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button></a>
