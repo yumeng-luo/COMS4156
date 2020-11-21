@@ -9,24 +9,20 @@
 	<!-- icon -->
 	<link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon">
 	<!-- Font Awesome -->
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-	<!-- Google Fonts -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+	<!-- Google Fonts Roboto -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
 	<!-- Bootstrap core CSS -->
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<!-- Material Design Bootstrap -->
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/mdb.min.css">
 	<!-- Your custom styles (optional) -->
 	<link rel="stylesheet" href="css/style.css">
 
-	<!-- JQuery -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<!-- Bootstrap tooltips -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
-	<!-- Bootstrap core JavaScript -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
-	<!-- MDB core JavaScript -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+	<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="js/popper.min.js"></script>
+	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/js/mdb.min.js"></script>
     <script type="text/javascript">
 	    $.get("/user", function(data) {
 	        $("#user").html(data.name);
@@ -65,7 +61,6 @@
 		  }
 		});
 	</script>
-	<script type="text/javascript" src="js/util.js"></script>
 	<style>
     #map {
       height: 500px;
@@ -75,14 +70,14 @@
   </style>
 </head>
 <body>
-	<h1>Savings Tracker</h1>
-	<span>Main page</span>
-	<div class="container"></div>
-	<div class="container unauthenticated">
+	<h1>List of Alternatives</h1>
+	<div class="container">You chose "Coffee 1"</div>
+	<div class="container"> Coffee 1 image and description here... </div>
+	<!-- <div class="container unauthenticated">
 	  <div>
 	    With Google: <a href="/oauth2/authorization/google">click here</a>
 	  </div>
-	</div>
+	</div> -->
 	<div class="container authenticated" style="display:none">
 	    Logged in as: <span id="user"></span>
 	  <div>
@@ -92,44 +87,50 @@
 	<div class="container text-danger error"></div>
 
 	<!--item search page https://mdbootstrap.com/docs/jquery/forms/search/-->
-	<div class="container">
+<!-- 	<div class="container">
 		<div class="input-group md-form form-sm form-1 pl-0">
-			<div type="button" onclick="init_search()" class="input-group-prepend">
+			<div class="input-group-prepend">
 				<span class="input-group-text purple lighten-3" id="basic-text1"><i class="fas fa-search text-white"
 					aria-hidden="true"></i></span>
 			</div>
 			<input class="form-control my-0 py-1" type="text" placeholder="Search" aria-label="Search">
-			<button type="button" onclick="init_search()">Search!</button>
 		</div>
 		<div id='search'></div>
 		<script src="js/search.js"></script>
-	</div>
-	<div class="container">
-		<div id="item-search-result">Search result will appear here:<br>
-		</div>
-	</div>
+	</div> -->
 
 	<!--item search page https://mdbootstrap.com/docs/jquery/components/list-group/ -->
-	<div class="container">
+	<!-- <div class="container">
 		<div class="list-group">
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action active">Cras justo odio</button></a>
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button></a>
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button></a>
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button></a>
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button></a>
+			<button type="button" class="list-group-item list-group-item-action active">Cras justo odio</button>
+			<button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
+			<button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
+			<button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
+			<button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button>
 		</div>
-	</div>
+	</div> -->
 
 	
 	<!-- Based on the following Google Maps API tutorial: https://codelabs.developers.google.com/codelabs/google-maps-nearby-search-js#4-->
-
-<!-- 	<div class="container">
+	<div class="container">We found n items similar to "Coffee 1" at stores near your location</div>
+	<div class="container">
 		<div id="map"></div>
 		<script src="js/map.js"></script>
 		<script async defer src="https://maps.googleapis.com/maps/api/js?key=ASK_JUN_FOR_API&libraries=places&callback=initMap">
 		</script>
 		<p> Nearby stores (max 20): </p>
 		<p id="list"></p>
-	</div> -->
+	</div>
+
+	<div class="container">List of alternatives...</div>
+	<div class="container">
+		<div class="list-group">
+			<button type="button" class="list-group-item list-group-item-action active">Coffee 7</button><br>
+			<button type="button" class="list-group-item list-group-item-action">Coffee 8</button><br>
+			<button type="button" class="list-group-item list-group-item-action">Coffee 9</button><br>
+			<button type="button" class="list-group-item list-group-item-action">Coffee 10</button><br>
+			<button type="button" class="list-group-item list-group-item-action">Coffee 11</button><br>
+		</div>
+	</div>
 </body>
 </html>
