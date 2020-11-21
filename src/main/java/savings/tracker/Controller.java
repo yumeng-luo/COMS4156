@@ -264,7 +264,7 @@ public class Controller {
       id = "105222900313734280075";
     }
     
-    int zip = TargetApi.getZip(lat, lon);
+//    int zip = TargetApi.getZip(lat, lon);
     List<Item> targetList;
     List<Item> result = new ArrayList<Item>();
     
@@ -311,12 +311,12 @@ public class Controller {
     
     // adding target searches for those in alternative here
     
-    targetList = TargetApi.getTargetAlternatives(zip, currentTask.getAlternativeItem());
-    if (targetList != null) {
-      for (int i = 0; i < targetList.size(); i++) {
-        result.add(targetList.get(i));
-      }
-    }
+//    targetList = TargetApi.getTargetAlternatives(zip, currentTask.getAlternativeItem());
+//    if (targetList != null) {
+//      for (int i = 0; i < targetList.size(); i++) {
+//        result.add(targetList.get(i));
+//      }
+//    }
 
     result = filterAlternativeItem(lat, lon, currentTask.getAlternativeItem(),
         currentTask.getInitialItem());
@@ -327,13 +327,13 @@ public class Controller {
           currentTask.getSearchString(), lat, lon,
           currentTask.getInitialItem().getPrice());
       
-      targetList = TargetApi.getSecTargetAlternatives(zip, result);
-      if (targetList != null) {
-        for (int i = 0; i < targetList.size(); i++) {
-          result.add(targetList.get(i));
-        }
-
-      }
+//      targetList = TargetApi.getSecTargetAlternatives(zip, result);
+//      if (targetList != null) {
+//        for (int i = 0; i < targetList.size(); i++) {
+//          result.add(targetList.get(i));
+//        }
+//
+//      }
     }
       
     result = filterAlternativeItem(lat, lon, result,
