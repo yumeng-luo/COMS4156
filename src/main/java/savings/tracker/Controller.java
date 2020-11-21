@@ -432,7 +432,7 @@ public class Controller {
     try {
       task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
       // remove after demo - dummy value
-      if (barcode == "100") {
+      if (barcode.equals("100")) {
         finalItem.setName("final item");
         finalItem.setBarcode("100");
         finalItem.setPrice(99.99);
