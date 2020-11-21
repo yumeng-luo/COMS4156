@@ -431,8 +431,18 @@ public class Controller {
     Item finalItem = new Item();
     try {
       task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
-      finalItem = DatabaseJdbc.getItem(database, "Item", barcode,
-          Double.valueOf(lat), Double.valueOf(lon));
+      // remove after demo - dummy value
+      if (barcode == "100") {
+        finalItem.setName("final item");
+        finalItem.setBarcode("100");
+        finalItem.setPrice(99.99);
+        finalItem.setStore("final destination");
+        finalItem.setLat(100);
+        finalItem.setLon(100);
+      } else {
+        finalItem = DatabaseJdbc.getItem(database, "Item", barcode,
+        Double.valueOf(lat), Double.valueOf(lon));
+      }
     } catch (SQLException e1) {
       e1.printStackTrace();
     }

@@ -64,7 +64,7 @@ function select_alternative(upc) {
     var xhttp = new XMLHttpRequest(); 
     xhttp.onreadystatechange = function() { 
       if (this.readyState == 4 && this.status == 200) { 
-        window.location.href = "alt.html";
+        window.location.href = "confirm.html";
       }
     };
     // alert("item=" + searched_item + "&lat=37.7510&lon=-97.8220");
