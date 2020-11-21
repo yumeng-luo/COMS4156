@@ -2,7 +2,7 @@ let searched_item;
 let pos;
 let search_json;
 
-function init_search() {
+async function init_search() {
   // if (navigator.geolocation) {
   //   navigator.geolocation.getCurrentPosition(position => {
   //       pos = {
@@ -12,19 +12,16 @@ function init_search() {
   //     });
       searched_item=document.getElementById("search_bar").value
 
-      var xhttp = new XMLHttpRequest();	
-      xhttp.onreadystatechange = function() {	
-        if (this.readyState == 4 && this.status == 200) {	
-          search_json = this.responseText;	
-        }
-      };
-      // alert("item=" + searched_item + "&lat=37.7510&lon=-97.8220");
-      xhttp.open("POST", "/search", true);
-      xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhttp.send('item='+searched_item+'&lat=37.7510&lon=-97.8220');
-      return search_json
+      const response = await fetch("/search", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'item='+searched_item+'&lat=37.7510&lon=-97.8220'
+      });
+      generate_list(await response.json());
     // }	
-  } 
+  }
 
 function select_search(item_index) {
     searched_item=document.getElementById("search_bar").value
