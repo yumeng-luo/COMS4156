@@ -279,6 +279,12 @@ public class Controller {
     WegmanApi.setMustbecloser(closer);
     WegmanApi.setMustbesameitem(same);
 
+    try {
+      Thread.sleep(3000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     String id;
     if (principal != null) {
       id = principal.getAttribute("sub");
@@ -318,12 +324,13 @@ public class Controller {
     // get task info from table
     OngoingTask currentTask = new OngoingTask();
     try {
+      
       currentTask = DatabaseJdbc.getTask(database, "Task", "Search", "Item",
           id);
     } catch (SQLException e1) {
       e1.printStackTrace();
     }
-//    dummy_result = currentTask.getAlternativeItem();
+    //dummy_result = currentTask.getAlternativeItem();
 
     // save to on going task
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -331,7 +338,7 @@ public class Controller {
     if (currentTask.getInitialItem().getBarcode() == null) {
       System.out.println("\n no initial barcode\n");
       System.out.flush();
-      return result;
+      return dummy_result;
     }
     currentTask.setFinalItem(new Item());
     currentTask.setFinalLat(0);
@@ -366,6 +373,12 @@ public class Controller {
           currentTask.getInitialItem());
     }
 
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     // save to ongoing task
     currentTask.setAlternativeItem(result);
     try {
@@ -381,7 +394,9 @@ public class Controller {
 //    System.out.flush();
     // return result;
 
+   
     return currentTask.getAlternativeItem();
+    //return dummy_result;
   }
 
   /**
