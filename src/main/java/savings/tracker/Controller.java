@@ -22,7 +22,7 @@ import savings.tracker.util.User;
 
 @RestController
 public class Controller {
-  private static int ALTERNATIVE_NUMBER = 5;
+  private static int ALTERNATIVE_NUMBER = 1;
 
   private static DatabaseJdbc database = new DatabaseJdbc();
 

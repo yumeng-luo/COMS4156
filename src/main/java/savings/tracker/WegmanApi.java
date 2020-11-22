@@ -17,9 +17,9 @@ import savings.tracker.util.Store;
 
 public class WegmanApi {
 
-  private static final int STORESIZE = 10;
-  private static final int SEARCHSIZE = 30;
-  private static final int ALTSIZE = 60;
+  private static final int STORESIZE = 3;
+  private static final int SEARCHSIZE = 10;
+  private static final int ALTSIZE = 20;
   private static boolean MUSTBECHEAPER = true;
   private static boolean MUSTBECLOSER = true;
   private static boolean MUSTBESAMEITEM = false;
