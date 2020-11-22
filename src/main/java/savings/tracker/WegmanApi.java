@@ -17,9 +17,9 @@ import savings.tracker.util.Store;
 
 public class WegmanApi {
 
-  private static final int STORESIZE = 10;
-  private static final int SEARCHSIZE = 30;
-  private static final int ALTSIZE = 60;
+  private static final int STORESIZE = 3;
+  private static final int SEARCHSIZE = 10;
+  private static final int ALTSIZE = 20;
   private static boolean MUSTBECHEAPER = true;
   private static boolean MUSTBECLOSER = true;
   private static boolean MUSTBESAMEITEM = false;
@@ -188,6 +188,23 @@ public class WegmanApi {
 
     String body = response.getBody();
     JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
+    JsonObject errorObject;
+    if ((errorObject = jsonObject.getAsJsonObject("error")) != null ) {
+      System.out.println("\n wegmans inside error\n");
+      System.out.println("\n code is: " + errorObject.get("code") + "\n");
+      System.out.flush();
+      if (errorObject.get("code").toString().contains("TooManyRequests")) {
+        System.out.println("\n wegmans get stores call failed, sleeping and redoing\n");
+        System.out.flush();
+        try {
+          Thread.sleep(10000);
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        return getStores();
+      }
+    }
     JsonArray results = jsonObject.get("stores").getAsJsonArray();
     List<Store> list = new ArrayList<Store>();
     for (int i = 0; i < results.size(); i++) {
@@ -341,6 +358,23 @@ public class WegmanApi {
 
     String body = response.getBody();
     JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
+    JsonObject errorObject;
+    if ((errorObject = jsonObject.getAsJsonObject("error")) != null ) {
+      System.out.println("\n wegmans inside error\n");
+      System.out.println("\n code is: " + errorObject.get("code") + "\n");
+      System.out.flush();
+      if (errorObject.get("code").toString().contains("TooManyRequests")) {
+        System.out.println("\n wegmans get alternative items call failed, sleeping and redoing\n");
+        System.out.flush();
+        try {
+          Thread.sleep(10000);
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        return getAlternativeItems(jdbc,tableName,name,lat,lon,initialPrice);
+      }
+    }
     if (jsonObject.get("results") == null) {
       return new ArrayList<Item>();
     }
