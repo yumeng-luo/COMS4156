@@ -65,19 +65,26 @@
 		  }
 		});
 	</script>
+	<script type="text/javascript" src="js/results.js"></script>
 	<script type="text/javascript" src="js/util.js"></script>
 	<style>
     #map {
       height: 500px;
 	  width: 400px;
       background-color: grey;
-    }
+	}
+	h1 {
+		margin-top: 7%;
+	}
   </style>
 </head>
+
+
 <body>
-	<h1>Savings Tracker</h1>
-	<span>Main page</span>
-	<div class="container"></div>
+	<div class="container">
+		<h1>Savings Tracker</h1>
+		<span>Main page</span>
+	</div>
 	<div class="container unauthenticated">
 	  <div>
 	    With Google: <a href="/oauth2/authorization/google">click here</a>
@@ -101,27 +108,16 @@
 			</div>
 		</div>
 	</div>
-	<div class="container">
-		<div id="item-search-result">Search result will appear here:<br>
-		</div>
-	</div>
 
 	<!--item search page https://mdbootstrap.com/docs/jquery/components/list-group/ -->
 	<div class="container">
-		<div id='searched'></div>
-		<div class="list-group">
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action active">Cras justo odio</button></a>
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button></a>
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button></a>
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button></a>
-			<a href="alt.html"><button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button></a>
-		</div>
+		<div id='results' class="list-group"></div>
 	</div>
 
 	<!-- dummy button to test select_search before search list is implemented -->
-	<div type="button" onclick="select_search(1)"> Click this button after the search
-		is complete to test select_search() [embed this function to buttons in search
-		result list after implemented]
+	<div class="container">
+		<div type="button" onclick="select_search(1)">
+		</div>
 	</div>
 
 	
