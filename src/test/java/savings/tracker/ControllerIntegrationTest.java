@@ -304,8 +304,8 @@ public class ControllerIntegrationTest {
     ResponseEntity<String> response = template.postForEntity(base.toString(),
         entity, String.class);
 
-    JsonObject jsonObject = new JsonParser().parse(response.getBody())
-        .getAsJsonObject();
+    //JsonObject jsonObject = new JsonParser().parse(response.getBody())
+        //.getAsJsonObject();
 
     //assertEquals(jsonObject.get("status").toString(), "500");
   }

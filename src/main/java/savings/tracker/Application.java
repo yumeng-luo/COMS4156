@@ -107,8 +107,8 @@ public class Application extends WebSecurityConfigurerAdapter {
                 "/select_item", "/select_purchase", "/no_alternative",
                 "/alternatives", "/confirm")
             // if there are any authentication problems, first try uncommenting either of the two and using the other
-//            .permitAll().anyRequest().authenticated())
-            .authenticated())
+            .permitAll().anyRequest().authenticated())
+            //.authenticated())
         .exceptionHandling(e -> e.authenticationEntryPoint(
             new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
         .csrf(c -> c

@@ -22,6 +22,7 @@ import savings.tracker.util.User;
 
 @RestController
 public class Controller {
+  private static int ALTERNATIVE_NUMBER = 5;
 
   private static DatabaseJdbc database = new DatabaseJdbc();
 
@@ -106,8 +107,8 @@ public class Controller {
    * @param item name of item
    * @param lat  of user
    * @param lon  of user
-   * @throws InterruptedException 
-   * @throws SQLException Exception
+   * @throws InterruptedException
+   * @throws SQLException         Exception
    */
   @PostMapping("/search")
   @ResponseBody
@@ -115,11 +116,13 @@ public class Controller {
       @RequestParam(value = "item", defaultValue = "whole milk") String item,
       @AuthenticationPrincipal OAuth2User principal,
       @RequestParam(value = "lat", defaultValue = "37.7510") double lat,
-      @RequestParam(value = "lon", defaultValue = "-97.8220") double lon) throws InterruptedException {
+      @RequestParam(value = "lon", defaultValue = "-97.8220") double lon)
+      throws InterruptedException {
     /**
-     * TODO: test if multiple /search calls can be called with changing item name.
-     * Currently, the endpoint is reusing the first search item for all subsequent /search calls.
-     * Also, reduce database operations (taking too long on the frontend).
+     * TODO: test if multiple /search calls can be called with changing item
+     * name. Currently, the endpoint is reusing the first search item for all
+     * subsequent /search calls. Also, reduce database operations (taking too
+     * long on the frontend).
      */
     String id;
     if (principal != null) {
@@ -127,7 +130,7 @@ public class Controller {
     } else {
       id = "105222900313734280075";
     }
-    
+
     System.out.println("/search called->item: " + item);
 
     // updates user location data
@@ -170,10 +173,10 @@ public class Controller {
     if (list.size() == 0) {
       currentTask.setSearchItems(new ArrayList<Item>());
       currentTask.setAlternativeItem(new ArrayList<Item>());
-      
+
       System.out.println("\n search returned 0 results\n");
       System.out.flush();
-      
+
     } else {
       currentTask.setSearchItems(list.get(0));
       currentTask.setAlternativeItem(list.get(1));
@@ -229,13 +232,15 @@ public class Controller {
 
     System.out.println("\n setting initial item\n");
     System.out.flush();
-    
-    System.out.println("\n initial item name" + task.getInitialItem().getName());
+
+    System.out
+        .println("\n initial item name" + task.getInitialItem().getName());
     System.out.flush();
 
-    System.out.println("\n initial item barcode" + task.getInitialItem().getBarcode()+ "\n");
+    System.out.println(
+        "\n initial item barcode" + task.getInitialItem().getBarcode() + "\n");
     System.out.flush();
-    
+
     // save to ongoing task
     try {
       // DatabaseJdbc.removeSearch(database, "Search", id + "2");
@@ -266,10 +271,9 @@ public class Controller {
       @RequestParam(value = "CLOSER", defaultValue = "false") boolean closer,
       @RequestParam(value = "SAME", defaultValue = "false") boolean same) {
 
-    
     System.out.println("\nstarting alter\n");
     System.out.flush();
-    
+
     // chaneg switches accordingly
     WegmanApi.setMustbecheaper(cheaper);
     WegmanApi.setMustbecloser(closer);
@@ -281,17 +285,15 @@ public class Controller {
     } else {
       id = "105222900313734280075";
     }
-    
 
 //    int zip = TargetApi.getZip(lat, lon);
 //    System.out.println("\n zip " + zip + "\n");
 //    System.out.flush();
-    
 
     int zip = TargetApi.getZip(lat, lon);
     List<Item> targetList;
     List<Item> result = new ArrayList<Item>();
-    
+
     // temporary dummy return value
     List<Item> dummy_result = new ArrayList<Item>();
     Item item1 = new Item();
@@ -301,7 +303,7 @@ public class Controller {
     item1.setStore("store1");
     item1.setLat(100);
     item1.setLon(100);
-    
+
     Item item2 = new Item();
     item2.setName("name2");
     item2.setBarcode("barcode2");
@@ -311,7 +313,7 @@ public class Controller {
     item2.setLon(200);
     dummy_result.add(item1);
     dummy_result.add(item2);
-    
+
     System.out.print(id);
     // get task info from table
     OngoingTask currentTask = new OngoingTask();
@@ -334,9 +336,9 @@ public class Controller {
     currentTask.setFinalItem(new Item());
     currentTask.setFinalLat(0);
     currentTask.setFinalLon(0);
-    
+
     // adding target searches for those in alternative here
-    
+
 //    targetList = TargetApi.getTargetAlternatives(zip, currentTask.getAlternativeItem());
 //    if (targetList != null) {
 //      for (int i = 0; i < targetList.size(); i++) {
@@ -346,13 +348,13 @@ public class Controller {
 
     result = filterAlternativeItem(lat, lon, currentTask.getAlternativeItem(),
         currentTask.getInitialItem());
-    if (result.size() <= 10) {
+    if (result.size() < ALTERNATIVE_NUMBER) {
       // search for more item
       // TODO implement this part after rapid api
       result = WegmanApi.getAlternativeItems(database, "Store",
           currentTask.getSearchString(), lat, lon,
           currentTask.getInitialItem().getPrice());
-      
+
 //      targetList = TargetApi.getSecTargetAlternatives(zip, result);
 //      if (targetList != null) {
 //        for (int i = 0; i < targetList.size(); i++) {
@@ -360,10 +362,9 @@ public class Controller {
 //        }
 //
 //      }
+      result = filterAlternativeItem(lat, lon, result,
+          currentTask.getInitialItem());
     }
-      
-    result = filterAlternativeItem(lat, lon, result,
-        currentTask.getInitialItem());
 
     // save to ongoing task
     currentTask.setAlternativeItem(result);
@@ -376,12 +377,11 @@ public class Controller {
       e.printStackTrace();
     }
 
-    
 //    System.out.println("\nresult" + result.size() + "\n");
 //    System.out.flush();
-      //return result;
+    // return result;
 
-    return dummy_result;
+    return currentTask.getAlternativeItem();
   }
 
   /**
@@ -472,7 +472,7 @@ public class Controller {
         finalItem.setLon(100);
       } else {
         finalItem = DatabaseJdbc.getItem(database, "Item", barcode,
-        Double.valueOf(lat), Double.valueOf(lon));
+            Double.valueOf(lat), Double.valueOf(lon));
       }
     } catch (SQLException e1) {
       e1.printStackTrace();
