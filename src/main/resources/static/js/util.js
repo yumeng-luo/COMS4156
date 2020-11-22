@@ -31,22 +31,6 @@ function select_search(item_index) {
     show_alt(item_index);
 } 
 
-function request_alternatives_old(item_index) {
-  // searched_item=document.getElementById("search_bar").value
-
-  var xhttp = new XMLHttpRequest(); 
-  xhttp.onreadystatechange = function() { 
-    if (this.readyState == 4 && this.status == 200) { 
-      document.getElementById("alternative-search-result").innerHTML = this.responseText;  
-    }
-  };
-  // alert("item=" + searched_item + "&lat=37.7510&lon=-97.8220");
-  xhttp.open("POST", "/alternatives", true);
-  xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  xhttp.send('lat=37.7510&lon=-97.8220&CHEAPER=false&CLOSER=false&SAME=false');
-// }
-}
-
 async function request_alternatives() {
   //{
   const response = await fetch ("/alternatives", {
@@ -56,24 +40,24 @@ async function request_alternatives() {
     },
     body: 'lat=37.7510&lon=-97.8220&CHEAPER=false&CLOSER=false&SAME=false'
   });
-  console.log(await response.json());
+  generate_alt(await response.json());
 // }
 }
 
-function select_alternative(upc) {
+function select_alternative(upc,item_index) {
     // searched_item=document.getElementById("search_bar").value
     var xhttp = new XMLHttpRequest(); 
     xhttp.onreadystatechange = function() { 
       if (this.readyState == 4 && this.status == 200) { 
         var Data = JSON.parse(this.responseText);
         localStorage.setItem("final_selection", Data.message);
-        window.location.href = "confirm.html";
       }
     };
     // alert("item=" + searched_item + "&lat=37.7510&lon=-97.8220");
     xhttp.open("POST", "/select_purchase", true);
     xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhttp.send('upc='+upc);
+    show_confirm(item_index);
   // }  
 }
 

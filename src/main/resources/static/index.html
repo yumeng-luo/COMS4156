@@ -6,16 +6,19 @@
 	<meta name="description" content="Savers Savings Tracker"/>
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 	<title>Savers</title>
-    
-    <base href="/"/>
+	<!-- icon -->
+	<link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon">
 	<!-- Font Awesome -->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
 	<!-- Google Fonts -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
-    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
-    <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
-    
+	<!-- Bootstrap core CSS -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Material Design Bootstrap -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+	<!-- Your custom styles (optional) -->
+	<link rel="stylesheet" href="css/style.css">
+
 	<!-- JQuery -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<!-- Bootstrap tooltips -->
@@ -62,6 +65,8 @@
 		  }
 		});
 	</script>
+	<script type="text/javascript" src="js/results.js"></script>
+	<script type="text/javascript" src="js/util.js"></script>
 	<style>
     #map {
       height: 500px;
@@ -78,7 +83,6 @@
 <body>
 	<div class="container">
 		<h1>Savings Tracker</h1>
-		<span>Main page</span>
 	</div>
 	<div class="container unauthenticated">
 	  <div>
@@ -107,22 +111,17 @@
 		<div id='results' class="list-group"></div>
 	</div>
 
-
-
-
-
-
-
-
-
-
-
 	<div class="container" id="alt_name"></div>
+	<div class="container" id="confirm_mesg"></div>
+
+	<div class="container" id="map" style="display:none">
+		<script src="js/map.js"></script>
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=asdf&libraries=places&callback=initMap">
+		</script>
+	</div>
+
 	<div class="container">
 		<div id='alt_results' class="list-group"></div>
 	</div>
-
-	<!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=ASK_JUN_FOR_API&libraries=places&callback=initMap">
-	</script>-->
 </body>
 </html>

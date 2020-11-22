@@ -3,4 +3,5 @@
 application.yml
 .classpath
 .project
+ase.db
 .settings
