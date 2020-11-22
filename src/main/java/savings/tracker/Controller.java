@@ -169,6 +169,10 @@ public class Controller {
     if (list.size() == 0) {
       currentTask.setSearchItems(new ArrayList<Item>());
       currentTask.setAlternativeItem(new ArrayList<Item>());
+      
+      System.out.println("\n search returned 0 results\n");
+      System.out.flush();
+      
     } else {
       currentTask.setSearchItems(list.get(0));
       currentTask.setAlternativeItem(list.get(1));
@@ -222,6 +226,15 @@ public class Controller {
     task.setInitialLat(Double.valueOf(task.getInitialItem().getLat()));
     task.setInitialLon(Double.valueOf(task.getInitialItem().getLon()));
 
+    System.out.println("\n setting initial item\n");
+    System.out.flush();
+    
+    System.out.println("\n initial item name" + task.getInitialItem().getName());
+    System.out.flush();
+
+    System.out.println("\n initial item barcode" + task.getInitialItem().getBarcode()+ "\n");
+    System.out.flush();
+    
     // save to ongoing task
     try {
       // DatabaseJdbc.removeSearch(database, "Search", id + "2");
@@ -252,6 +265,10 @@ public class Controller {
       @RequestParam(value = "CLOSER", defaultValue = "false") boolean closer,
       @RequestParam(value = "SAME", defaultValue = "false") boolean same) {
 
+    
+    System.out.println("\nstarting alter\n");
+    System.out.flush();
+    
     // chaneg switches accordingly
     WegmanApi.setMustbecheaper(cheaper);
     WegmanApi.setMustbecloser(closer);
@@ -265,6 +282,9 @@ public class Controller {
     }
     
     int zip = TargetApi.getZip(lat, lon);
+    System.out.println("\n zip " + zip + "\n");
+    System.out.flush();
+    
     List<Item> targetList;
     List<Item> result = new ArrayList<Item>();
     System.out.print(id);
@@ -281,6 +301,8 @@ public class Controller {
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     currentTask.setTaskStartTime(timestamp);
     if (currentTask.getInitialItem().getBarcode() == null) {
+      System.out.println("\n no initial barcode\n");
+      System.out.flush();
       return result;
     }
     currentTask.setFinalItem(new Item());
@@ -328,7 +350,9 @@ public class Controller {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
+    
+    System.out.println("\nresult" + result.size() + "\n");
+    System.out.flush();
     return result;
   }
 

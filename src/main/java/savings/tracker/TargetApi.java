@@ -90,7 +90,12 @@ public class TargetApi {
         .header("x-rapidapi-key", System.getenv("RAPID_API_KEY"))
         .header("x-rapidapi-host", "target1.p.rapidapi.com")
         .asString().getBody();
-    //System.out.println(response);
+
+    System.out.println("\n starting target getstoreid\n");
+    System.out.flush();
+    System.out.println("\n getstoreid response " + response +"\n");
+    System.out.flush();
+    
     JSONArray firstArray = new JSONArray(response);
     JSONObject firstObject = firstArray.getJSONObject(0);
     
@@ -123,7 +128,7 @@ public class TargetApi {
       store.setName("Target");
       store.setNumber(location.getInt("location_id"));
       
-      JSONObject geographic = location.getJSONObject("geographic_specification");
+      JSONObject geographic = location.getJSONObject("geographic_specifications");
       store.setLon(geographic.getDouble("longitude"));
       store.setLat(geographic.getDouble("latitude"));
       
