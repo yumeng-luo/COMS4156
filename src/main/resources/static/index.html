@@ -83,7 +83,6 @@
 <body>
 	<div class="container">
 		<h1>Savings Tracker</h1>
-		<span>Main page</span>
 	</div>
 	<div class="container unauthenticated">
 	  <div>
@@ -113,13 +112,11 @@
 	</div>
 
 
-
-
-
-
-
-
-
+	<div class="container" id="map" style="display:none">
+		<script src="js/map.js"></script>
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDANShPdPOYXH1Pd0MOfggC4BzkIO4tzqo&libraries=places&callback=initMap">
+		</script>
+	</div>
 
 
 	<div class="container" id="alt_name"></div>
@@ -127,7 +124,6 @@
 		<div id='alt_results' class="list-group"></div>
 	</div>
 
-	<!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=ASK_JUN_FOR_API&libraries=places&callback=initMap">
-	</script>-->
+	<div class="container" id="confirm_mesg"></div>
 </body>
 </html>
