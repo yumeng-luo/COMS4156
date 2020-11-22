@@ -57,9 +57,14 @@ public class WegmanApi {
    * @param lat       user location
    * @param lon       user location
    * @return price as string
+   * @throws InterruptedException 
    */
   public static List<List<Item>> getItems(DatabaseJdbc jdbc, String tableName,
-      String name, double lat, double lon) {
+      String name, double lat, double lon) throws InterruptedException {
+    
+    System.out.println("\n starting wegmans get items call\n");
+    System.out.flush();
+    
     HttpResponse<String> response = Unirest
         .get("https://api.wegmans.io/products/search?query=" + name
             + "&api-version=2018-10-18")
@@ -67,7 +72,23 @@ public class WegmanApi {
         .asString();
 
     String body = response.getBody();
+    System.out.println("\n wegmen get item response" + body + "\n");
+    System.out.flush();
+    
     JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
+    JsonObject errorObject;
+    if ((errorObject = jsonObject.getAsJsonObject("error")) != null ) {
+      System.out.println("\n wegmans inside error\n");
+      System.out.println("\n code is: " + errorObject.get("code") + "\n");
+      System.out.flush();
+      if (errorObject.get("code").toString().contains("TooManyRequests")) {
+        System.out.println("\n wegmans get items call failed, sleeping and redoing\n");
+        System.out.flush();
+        Thread.sleep(10000);
+        return getItems(jdbc, tableName, name, lat, lon);
+      }
+    }
+    
     if (jsonObject.get("results") == null) {
       return new ArrayList<List<Item>>();
     }

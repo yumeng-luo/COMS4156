@@ -56,14 +56,14 @@ public class ControllerIntegrationTest {
   @Order(2)
   public void userTest() throws Exception {
     this.base = new URL("http://localhost:" + port + "/user");
-    Thread.sleep(20000);
+    //Thread.sleep(20000);
 
   }
   
   @Test
   @Order(3)
   public void sleepToAvoidLimit() throws Exception {
-    Thread.sleep(20000);
+    //Thread.sleep(20000);
   }
 
   // confirms the first option of listed items is as expected
@@ -71,7 +71,7 @@ public class ControllerIntegrationTest {
   @Order(4)
   public void searchValidItemName() throws Exception {
 
-    Thread.sleep(20000);
+    //Thread.sleep(20000);
     this.base = new URL("http://localhost:" + port + "/search");
 
     HttpHeaders headers = new HttpHeaders();
@@ -96,7 +96,7 @@ public class ControllerIntegrationTest {
   @Test
   @Order(5)
   public void sleepToAvoidLimit2() throws Exception {
-    Thread.sleep(20000);
+    //Thread.sleep(20000);
   }
 
   // confirms the selected item response is as expected
@@ -104,7 +104,7 @@ public class ControllerIntegrationTest {
   @Order(6)
   public void selectValidItemName() throws Exception {
 
-    Thread.sleep(2000);
+    //Thread.sleep(2000);
     this.base = new URL("http://localhost:" + port + "/select_item");
 
     HttpHeaders headers = new HttpHeaders();
@@ -131,7 +131,7 @@ public class ControllerIntegrationTest {
   @Order(7)
   public void alternativeValidItemName() throws Exception {
 
-    Thread.sleep(15000);
+    //Thread.sleep(15000);
     this.base = new URL("http://localhost:" + port + "/alternatives");
 
     HttpHeaders headers = new HttpHeaders();
@@ -157,7 +157,7 @@ public class ControllerIntegrationTest {
   @Test
   @Order(8)
   public void sleepToAvoidLimit3() throws Exception {
-    Thread.sleep(20000);
+    //Thread.sleep(20000);
   }
 
   // Tests that the tested alternative above is properly chosen as purchased
@@ -207,7 +207,7 @@ public class ControllerIntegrationTest {
   @Test
   @Order(10)
   public void confirmValidItemName() throws Exception {
-    Thread.sleep(10000);
+    //Thread.sleep(10000);
     this.base = new URL("http://localhost:" + port + "/confirm");
 
     HttpHeaders headers = new HttpHeaders();
@@ -288,7 +288,7 @@ public class ControllerIntegrationTest {
   @Order(13)
   public void searchTestInvalidItemName() throws Exception {
 
-    Thread.sleep(10000);
+    //Thread.sleep(10000);
     this.base = new URL("http://localhost:" + port + "/search");
 
     HttpHeaders headers = new HttpHeaders();

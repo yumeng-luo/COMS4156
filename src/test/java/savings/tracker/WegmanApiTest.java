@@ -69,7 +69,7 @@ public class WegmanApiTest {
   
   @Test
   @Order(6)
-  public void testGetItems()  {
+  public void testGetItems() throws InterruptedException  {
 
     try {
       Thread.sleep(20000);

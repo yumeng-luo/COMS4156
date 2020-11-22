@@ -106,6 +106,7 @@ public class Controller {
    * @param item name of item
    * @param lat  of user
    * @param lon  of user
+   * @throws InterruptedException 
    * @throws SQLException Exception
    */
   @PostMapping("/search")
@@ -114,7 +115,7 @@ public class Controller {
       @RequestParam(value = "item", defaultValue = "whole milk") String item,
       @AuthenticationPrincipal OAuth2User principal,
       @RequestParam(value = "lat", defaultValue = "37.7510") double lat,
-      @RequestParam(value = "lon", defaultValue = "-97.8220") double lon) {
+      @RequestParam(value = "lon", defaultValue = "-97.8220") double lon) throws InterruptedException {
     /**
      * TODO: test if multiple /search calls can be called with changing item name.
      * Currently, the endpoint is reusing the first search item for all subsequent /search calls.
@@ -378,7 +379,7 @@ public class Controller {
     
 //    System.out.println("\nresult" + result.size() + "\n");
 //    System.out.flush();
-//    return result;
+      //return result;
 
     return dummy_result;
   }
