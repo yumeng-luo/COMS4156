@@ -290,7 +290,7 @@ public class Controller {
 //    System.out.println("\n zip " + zip + "\n");
 //    System.out.flush();
 
-    int zip = TargetApi.getZip(lat, lon);
+    //int zip = TargetApi.getZip(lat, lon);
     List<Item> targetList;
     List<Item> result = new ArrayList<Item>();
 

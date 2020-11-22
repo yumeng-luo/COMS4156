@@ -131,7 +131,7 @@ public class ControllerIntegrationTest {
   @Order(7)
   public void alternativeValidItemName() throws Exception {
 
-    //Thread.sleep(15000);
+    Thread.sleep(15000);
     this.base = new URL("http://localhost:" + port + "/alternatives");
 
     HttpHeaders headers = new HttpHeaders();
