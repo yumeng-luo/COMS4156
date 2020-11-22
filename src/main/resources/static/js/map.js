@@ -132,7 +132,7 @@ function showDetails(placeResult, marker, status) {
     }
 }
 
-module.exports = { initMap: initMap, handleLocationError: handleLocationError, 
-    getNearbyPlaces: getNearbyPlaces, nearbyCallback: nearbyCallback, createMarkers: createMarkers, 
-    showDetails: showDetails, pos: pos, map: map, bounds: bounds, infoWindow: infoWindow,
-    currentInfoWindow: currentInfoWindow, service: service, infoPane: infoPane }
+//module.exports = { initMap: initMap, handleLocationError: handleLocationError, 
+//    getNearbyPlaces: getNearbyPlaces, nearbyCallback: nearbyCallback, createMarkers: createMarkers, 
+//    showDetails: showDetails, pos: pos, map: map, bounds: bounds, infoWindow: infoWindow,
+//    currentInfoWindow: currentInfoWindow, service: service, infoPane: infoPane }
