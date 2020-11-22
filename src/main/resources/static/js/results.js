@@ -3,7 +3,7 @@ let search_ind;
 let alt_list;
 //generates a list of buttons based on a parsed json list of items
 function generate_searched(items) {
-  //document.getElementById("map").style="display:none";
+  document.getElementById("map").style.display="none";
   document.getElementById("alt_name").innerHTML="";
   results=document.getElementById('results');
   item_list=items;
@@ -28,7 +28,7 @@ function show_alt(item_index) {
   search_ind=item_index;
   document.getElementById('results').innerHTML="";
   document.getElementById("alt_name").innerHTML="You chose "+item.name+" $"+item.price+", <br /> here are some alternatives:";
-  //document.getElementById("map").style="display:block";
+  document.getElementById("map").style.display="block";
   request_alternatives();
 }
 
@@ -36,7 +36,8 @@ function show_confirm(item_index) {
   fin_item=alt_list[item_index];
   ori_item=item_list[search_ind];
   document.getElementById('alt_results').innerHTML="";
-  document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You will save $"+ori_item.price-fin_item.price;
+  document.getElementById('alt_name').innerHTML="";
+  document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You haved saved $"+(ori_item.price-fin_item.price);
   confirm_purchase();
 }
 
