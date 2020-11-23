@@ -16,5 +16,6 @@ You can find each of these API keys in the following files:
 2. Google Maps: src/main/resources/index.html (look for "<script async defer src="https://maps.googleapis.com/maps/api/js?key={API_KEY_HERE}&libraries=places&callback=initMap">")
 3. SendGrid: src/main/java/savings/tracker/util/SendGridEmailer.java (look for System.getenv("SENDGRID_API_KEY"). ie "send(dynamicTemplate, System.getenv("SENDGRID_API_KEY"))")
 4. Target: src/main/java/savings/tracker/util/SendGridEmailer.java (look for System.getenv("RAPID_API_KEY"). ie "header("x-rapidapi-key", System.getenv("RAPID_API_KEY"))")
-(wegman is public so it's already included in code)
+  
+  (wegman is public so it's already included in code)
 
