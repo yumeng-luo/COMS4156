@@ -2,17 +2,17 @@ package savings.tracker.util;
 
 public class PurchaseRecord {
 
-  private int userId;
+  private String userId;
   private String date;
   private String item;
-  private float price;
-  private float saving;
+  private double price;
+  private double saving;
 
-  public int getUserId() {
+  public String getUserId() {
     return userId;
   }
 
-  public void setUserId(int userId) {
+  public void setUserId(String userId) {
     this.userId = userId;
   }
 
@@ -32,19 +32,19 @@ public class PurchaseRecord {
     this.item = item;
   }
 
-  public float getPrice() {
+  public double getPrice() {
     return price;
   }
 
-  public void setPrice(float price) {
+  public void setPrice(double price) {
     this.price = price;
   }
 
-  public float getSaving() {
+  public double getSaving() {
     return saving;
   }
 
-  public void setSaving(float saving) {
+  public void setSaving(double saving) {
     this.saving = saving;
   }
 }

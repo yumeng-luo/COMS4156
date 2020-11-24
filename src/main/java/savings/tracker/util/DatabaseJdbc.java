@@ -1,12 +1,18 @@
 package savings.tracker.util;
 
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 //import org.sqlite.JDBC;
 
@@ -53,6 +59,45 @@ public class DatabaseJdbc {
           "CREATE TABLE IF NOT EXISTS %s (%s, %s, %s, %s, %s, %s)", tableName,
           "USER_ID text PRIMARY KEY", "EMAIL TEXT", "NAME TEXT",
           "SAVINGS FLOAT", "LOCATION POINT", "ONLINE BOOLEAN DEFAULT FALSE");
+      stmt = c.prepareStatement(sql);
+
+      stmt.executeUpdate();
+      stmt.close();
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
+    }
+
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("Table created successfully");
+    return true;
+  }
+  
+  /**
+   * Create table for confirmed purchases.
+   * @param jdbc
+   * @param tableName
+   * @return
+   * @throws SQLException 
+   */
+  public static boolean createPurchaseTable(DatabaseJdbc jdbc, String tableName)
+      throws SQLException {
+    PreparedStatement stmt = null;
+    Connection c = jdbc.createConnection();
+
+    try {
+      String sql = String.format(
+          "CREATE TABLE IF NOT EXISTS %s (%s, %s, %s, %s, %s)", tableName,
+          "USER_ID text PRIMARY KEY", "DATE TEXT", "ITEM_NAME TEXT", "PRICE DOUBLE",
+          "SAVINGS DOUBLE");
       stmt = c.prepareStatement(sql);
 
       stmt.executeUpdate();
@@ -299,7 +344,54 @@ public class DatabaseJdbc {
     System.out.println("Record created successfully");
     return true;
   }
+  
+  /**
+   * Adds purchase record to data table.
+   * @param jdbc database
+   * @param tableName table name
+   * @param item item
+   * @return
+   * @throws SQLException
+   */
+  public static boolean addPurchaseData(DatabaseJdbc jdbc, String tableName,
+      Item item, String userId, Double savings, String date) throws SQLException {
+    PreparedStatement stmt = null;
+    Connection c = jdbc.createConnection();
 
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully for addPurchaseData");
+
+      stmt = c.prepareStatement(
+          "INSERT INTO " + tableName + " values(?,?,?,?,?)");
+      stmt.setString(1, userId);
+      stmt.setString(2, date);
+      stmt.setString(3, item.getName());
+      stmt.setDouble(4, item.getPrice());
+      stmt.setDouble(5, savings);
+
+      stmt.executeUpdate();
+      stmt.close();
+      c.commit();
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return false;
+    }
+
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    
+    System.out.println("id: " + userId);
+    System.out.println("Record created successfully");
+    return true;
+  }
+  
   /**
    * Adds item data to item table. If already exist, update item.
    * 
@@ -1003,6 +1095,63 @@ public class DatabaseJdbc {
     System.out.println("Got logged in user successfully");
     return loggedInList;
   }
+  
+  /**
+   * Gets purchase record for a user
+   * @param jdbc
+   * @param tableName
+   * @return
+   * @throws SQLException
+   */
+  public static List<PurchaseRecord> getPurchaseData(DatabaseJdbc jdbc, String tableName, String userId)
+      throws SQLException {
+    Statement stmt = null;
+    ResultSet rs = null;
+    Connection c = jdbc.createConnection();
+    List<PurchaseRecord> purchaseList = new ArrayList<PurchaseRecord>();
+
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully for getPurchaseData");
+
+      stmt = c.createStatement();
+      String sql = "SELECT * FROM " + tableName + " WHERE USER_ID = " + userId + ";";
+      rs = stmt.executeQuery(sql);
+
+      while (rs.next()) {
+        PurchaseRecord record = new PurchaseRecord();
+        record.setUserId(rs.getString("user_id"));
+        record.setDate(rs.getString("date"));
+        record.setItem(rs.getString("item_name"));
+        record.setPrice(rs.getDouble("price"));
+        record.setSaving(rs.getDouble("savings"));
+        
+        purchaseList.add(record);
+      }
+
+      rs.close();
+      stmt.close();
+
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      if (rs != null) {
+        rs.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return null;
+    }
+
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("Got purchase records");
+    return purchaseList;
+  }
 
   /**
    * Check if an entry already exists.
@@ -1369,5 +1518,47 @@ public class DatabaseJdbc {
     }
 
     return true;
+  }
+  
+  /**
+   * Returns the savings of a user within the last 7 days.
+   * @param purchaseList purchase list
+   * @return savings
+   */
+  public static double getWeekSavings(List<PurchaseRecord> purchaseList) {
+    
+//    Calendar currentCal = Calendar.getInstance();
+//    Calendar weekCal = Calendar.getInstance();
+//    weekCal.add(Calendar.DATE, -7); 
+//    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd"); 
+    double savings = 0;
+    
+    LocalDate currentDate = LocalDate.now();
+    LocalDate weekDate = currentDate.minusDays(7);
+
+    
+    for (int i = 0; i < purchaseList.size(); i++) {
+      PurchaseRecord record = purchaseList.get(i);
+//      Date dateObj;
+      
+      LocalDate recordDate = LocalDate.parse(record.getDate());
+      
+      System.out.println("Current time: " + currentDate);
+      System.out.println("recorded time: " + recordDate);
+      System.out.println("week ago time: " + weekDate);
+//        
+//        System.out.println("before" + recordCal.before(currentCal.getTime()));
+//        System.out.println("after" + recordCal.after(weekCal.getTime()));
+      
+      if (!recordDate.isAfter(currentDate)
+          && recordDate.isAfter(weekDate)) {
+        
+        savings += record.getSaving();
+        System.out.println("SAVINGS: " + savings);
+      } 
+          
+    }
+
+    return savings;
   }
 }
