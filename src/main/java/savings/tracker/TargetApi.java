@@ -24,34 +24,15 @@ public class TargetApi {
    */
   public static void main(String[] args) {
     
-    /*
-    String tcin = "54191097"; //54191097
-    String zipcode = "05001";
-    String locationId;
-    String price;
     
+    int locationId = 1263;
+    String validTcin = "54191097";
+    double price = 129.99;
+
+    Item item = TargetApi.getItem(locationId, validTcin);
+
     
-    //Catches invalid user response / no options (maybe do basic user input checking before)
-    try {
-      locationId = target_getStoreId(zipcode);
-      
-      if (locationId == null) {
-        System.out.println("no available stores in zipcode");
-        return;
-      }
-      
-    } catch (InvalUserInputException e) {
-      System.out.println(e.toString());
-      return;
-    }
-    
-    try {
-      price = target_getPrice(tcin, locationId);
-      System.out.println(price);
-    } catch (InvalUserInputException e) {
-      System.out.println(e.toString());
-      return;
-    }*/
+    assert (item.getPrice() == price);
   }
   
   /**
@@ -240,6 +221,7 @@ public class TargetApi {
     item.setPrice(price);
     item.setTcin(tcin);
     item.setStore("Target");
+    item.setImage("https://1000logos.net/wp-content/uploads/2017/06/Target-Logo.png");
     
     System.out.println(price);
     return item;
