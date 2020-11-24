@@ -26,6 +26,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import savings.tracker.util.DatabaseJdbc;
+import savings.tracker.util.Item;
+import savings.tracker.util.OngoingTask;
 import savings.tracker.util.User;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -112,7 +114,7 @@ public class ControllerIntegrationTest {
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
     Map<String, Object> map = new HashMap<>();
-    map.put("item_number", "0");
+    map.put("item_number", "1");
 
     HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
     ResponseEntity<String> response = template.postForEntity(base.toString(),
@@ -129,9 +131,12 @@ public class ControllerIntegrationTest {
   // need to test what happens if there are no alternatives
   @Test
   @Order(7)
-  public void alternativeValidItemName() throws Exception {
+  public void alternativeValidItemNameAndNoSavings() throws Exception {
 
-    Thread.sleep(15000);
+    DatabaseJdbc database = Controller.getDb();
+    User user = DatabaseJdbc.getUser(database, "User", "105222900313734280075");
+    oldSavings = user.getSavings();
+
     this.base = new URL("http://localhost:" + port + "/alternatives");
 
     HttpHeaders headers = new HttpHeaders();
@@ -139,8 +144,8 @@ public class ControllerIntegrationTest {
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
     Map<String, Object> map = new HashMap<>();
-    map.put("lat", "37.751");
-    map.put("lon", "-97.822");
+    map.put("lat", "37.7510");
+    map.put("lon", "-97.8220");
 
     HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
     ResponseEntity<String> response = template.postForEntity(base.toString(),
@@ -150,22 +155,31 @@ public class ControllerIntegrationTest {
     JSONArray firstArray = new JSONArray(response.getBody());
     JSONObject firstObject = firstArray.getJSONObject(0);
 
+    DatabaseJdbc updatedDatabase = Controller.getDb(); 
+    User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075"); 
+    newSavings = updatedUser.getSavings(); 
+    
+    System.out.println("Old savings :" + oldSavings);
+    System.out.println("New savings :" + newSavings);
+    
+    double diff = newSavings - oldSavings;
+    assertEquals(diff, 0); 
     assert (firstArray.length() > 0);
     assert (firstObject.get("name") != null);
   }
   
-  @Test
-  @Order(8)
-  public void sleepToAvoidLimit3() throws Exception {
-    //Thread.sleep(20000);
-  }
-
+  
   // Tests that the tested alternative above is properly chosen as purchased
   // item
-
   @Test
   @Order(9)
-  public void purchaseValidItemName() throws Exception {
+  public void purchaseValidItemNameAndStillNoSavings() throws Exception {
+    
+    Thread.sleep(3000);
+    DatabaseJdbc database = Controller.getDb();
+    User user = DatabaseJdbc.getUser(database, "User", "105222900313734280075");
+    oldSavings = user.getSavings();
+    
     this.base = new URL("http://localhost:" + port + "/select_purchase");
 
     HttpHeaders headers = new HttpHeaders();
@@ -184,30 +198,37 @@ public class ControllerIntegrationTest {
     JsonObject jsonObject = new JsonParser().parse(response.getBody())
         .getAsJsonObject();
 
-    DatabaseJdbc database = Controller.getDb();
-    User user = DatabaseJdbc.getUser(database, "User", "105222900313734280075");
-    oldSavings = user.getSavings();
-
-    //assertEquals(jsonObject.get("code").toString(), "200");
+    System.out.println("\n purchase\n" + response.getBody() + "\n");
+    
+    DatabaseJdbc updatedDatabase = Controller.getDb(); 
+    User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075"); 
+    newSavings = updatedUser.getSavings(); 
+    
+    System.out.println("Old savings :" + oldSavings);
+    System.out.println("New savings :" + newSavings);
+    
+    double diff = newSavings - oldSavings;
+    assertEquals (diff, 0); 
+    assertEquals(jsonObject.get("code").toString(), "200");
+    
+    Item chosenItem = DatabaseJdbc.getItem(updatedDatabase, "Item", "7880005592",
+        42.06996, -80.1919);
+    OngoingTask task = DatabaseJdbc.getTask(updatedDatabase, "Task", "Search", "Item",
+        "105222900313734280075");
+    
+    System.out.println("\nchosen item: " + chosenItem.getName() + "\n");
+    System.out.println("\nFinal Chosen Item : " + task.getFinalItem().getName() + "\n");
   }
 
-  // test that no savings are recorded for now
-  // Doesnt work for some reason
-  /*
-   * @Test
-   * 
-   * @Order(7) public void noConfirmationNoSaving() throws SQLException {
-   * DatabaseJdbc database = Controller.getDb(); User user =
-   * DatabaseJdbc.getUser(database, "User", "105222900313734280075"); newSavings
-   * = user.getSavings(); double diff = newSavings - oldSavings;
-   * 
-   * assertEquals(diff, 0); }
-   */
 
   @Test
   @Order(10)
   public void confirmValidItemName() throws Exception {
-    //Thread.sleep(10000);
+
+    DatabaseJdbc database = Controller.getDb();
+    User user = DatabaseJdbc.getUser(database, "User", "105222900313734280075");
+    oldSavings = user.getSavings();
+    
     this.base = new URL("http://localhost:" + port + "/confirm");
 
     HttpHeaders headers = new HttpHeaders();
@@ -222,92 +243,89 @@ public class ControllerIntegrationTest {
         entity, String.class);
 
     System.out.println("\nconfirm valid item\n" + response.getBody() + "\n");
-
-    /*
+    
+    DatabaseJdbc updatedDatabase = Controller.getDb(); 
+    User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075"); 
+    newSavings = updatedUser.getSavings(); 
+    
+    System.out.println("Old savings :" + oldSavings);
+    System.out.println("New savings :" + newSavings);
+    
+    double diff = newSavings - oldSavings;
+    assert (diff > 0); 
+    
     JsonObject jsonObject = new JsonParser().parse(response.getBody())
         .getAsJsonObject();
 
     assertEquals(jsonObject.get("code").toString(), "200");
-    */
+    
   }
 
-  // doesnt work for some reason
-  /*
-   * @Test
-   * 
-   * @Order(9) public void confirmationYesSaving() throws SQLException {
-   * 
-   * DatabaseJdbc database = Controller.getDb(); User user =
-   * DatabaseJdbc.getUser(database, "User", "105222900313734280075"); newSavings
-   * = user.getSavings(); double diff = newSavings - oldSavings;
-   * 
-   * assertEquals(diff, 0.3999999999999999); }
-   */
-
-  /*
-  @Test
-  @Order(11)
-  public void reconfirmValidItemName() throws Exception {
-    this.base = new URL("http://localhost:" + port + "/confirm");
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-    Map<String, Object> map = new HashMap<>();
-    // map.put("item_number", "87525200015");
-
-    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
-    ResponseEntity<String> response = template.postForEntity(base.toString(),
-        entity, String.class);
-
-    JsonObject jsonObject = new JsonParser().parse(response.getBody())
-        .getAsJsonObject();
-
-    assertEquals(jsonObject.get("code").toString(), "202");
-  }
-  */
-
-  @Test
-  @Order(12)
-  public void testNoAlternative() throws Exception {
-    this.base = new URL("http://localhost:" + port + "/no_alternative");
-
-    ResponseEntity<String> response = template.getForEntity(base.toString(),
-        String.class);
-
-    JsonObject jsonObject = new JsonParser().parse(response.getBody())
-        .getAsJsonObject();
-
-    assertEquals(jsonObject.get("code").toString(), "200");
-  }
-
-  // what should be the behavior? Postman returning 500 internal server error
-
-  @Test
-  @Order(13)
-  public void searchTestInvalidItemName() throws Exception {
-
-    //Thread.sleep(10000);
-    this.base = new URL("http://localhost:" + port + "/search");
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-    Map<String, Object> map = new HashMap<>();
-    map.put("item", "asdfdsafdsa");
-    map.put("lat", "37.7510");
-    map.put("lon", "-97.8220");
-    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
-
-    ResponseEntity<String> response = template.postForEntity(base.toString(),
-        entity, String.class);
-
-    //JsonObject jsonObject = new JsonParser().parse(response.getBody())
-        //.getAsJsonObject();
-
-    //assertEquals(jsonObject.get("status").toString(), "500");
-  }
+//
+//  /*
+//  @Test
+//  @Order(11)
+//  public void reconfirmValidItemName() throws Exception {
+//    this.base = new URL("http://localhost:" + port + "/confirm");
+//
+//    HttpHeaders headers = new HttpHeaders();
+//    headers.setContentType(MediaType.APPLICATION_JSON);
+//    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//
+//    Map<String, Object> map = new HashMap<>();
+//    // map.put("item_number", "87525200015");
+//
+//    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
+//    ResponseEntity<String> response = template.postForEntity(base.toString(),
+//        entity, String.class);
+//
+//    JsonObject jsonObject = new JsonParser().parse(response.getBody())
+//        .getAsJsonObject();
+//
+//    assertEquals(jsonObject.get("code").toString(), "202");
+//  }
+//  */
+//
+//  @Test
+//  @Order(12)
+//  public void testNoAlternative() throws Exception {
+//    this.base = new URL("http://localhost:" + port + "/no_alternative");
+//
+//    ResponseEntity<String> response = template.getForEntity(base.toString(),
+//        String.class);
+//
+//    JsonObject jsonObject = new JsonParser().parse(response.getBody())
+//        .getAsJsonObject();
+//
+//    assertEquals(jsonObject.get("code").toString(), "200");
+//  }
+//
+//  // what should be the behavior? Postman returning 500 internal server error
+//
+//  @Test
+//  @Order(13)
+//  public void searchTestInvalidItemName() throws Exception {
+//
+//    //Thread.sleep(10000);
+//    this.base = new URL("http://localhost:" + port + "/search");
+//
+//    HttpHeaders headers = new HttpHeaders();
+//    headers.setContentType(MediaType.APPLICATION_JSON);
+//    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//
+//    Map<String, Object> map = new HashMap<>();
+//    map.put("item", "asdfdsafdsa");
+//    map.put("lat", "37.7510");
+//    map.put("lon", "-97.8220");
+//    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
+//
+//    ResponseEntity<String> response = template.postForEntity(base.toString(),
+//        entity, String.class);
+//
+//    //JsonObject jsonObject = new JsonParser().parse(response.getBody())
+//        //.getAsJsonObject();
+//
+//    //assertEquals(jsonObject.get("status").toString(), "500");
+//  }
 
 }
