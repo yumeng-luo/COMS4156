@@ -2,6 +2,8 @@ package savings.tracker;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -478,6 +480,7 @@ public class Controller {
     try {
       task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
       // remove after demo - dummy value
+      /*
       if (barcode.equals("100")) {
         finalItem.setName("final item");
         finalItem.setBarcode("100");
@@ -488,7 +491,10 @@ public class Controller {
       } else {
         finalItem = DatabaseJdbc.getItem(database, "Item", barcode,
             Double.valueOf(lat), Double.valueOf(lon));
-      }
+      }*/
+      
+      finalItem = DatabaseJdbc.getItem(database, "Item", barcode,
+          Double.valueOf(lat), Double.valueOf(lon));
     } catch (SQLException e1) {
       e1.printStackTrace();
     }
@@ -562,6 +568,13 @@ public class Controller {
       DatabaseJdbc.addTask(database, "Task", task);
       user.setSavings(user.getSavings() + saving);
       DatabaseJdbc.updatesUser(database, "User", user);
+      
+      LocalDate currentDate = LocalDate.now();
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+      String strCurrentDate = currentDate.format(formatter);
+      DatabaseJdbc.addPurchaseData(database, "Purchase", finalItem, user.getUserId(), 
+          saving, strCurrentDate);
+     
     } catch (SQLException e) {
       e.printStackTrace();
     }
