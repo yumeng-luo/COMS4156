@@ -8,13 +8,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import savings.tracker.util.DatabaseJdbc;
 import savings.tracker.util.Item;
 import savings.tracker.util.OngoingTask;
+import savings.tracker.util.PurchaseRecord;
 import savings.tracker.util.Store;
 import savings.tracker.util.User;
 
@@ -55,6 +61,7 @@ public class DatabaseTest {
     DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest",
         "ItemTest");
     DatabaseJdbc.createStoreTable(jdbc, "StoreTest");
+    DatabaseJdbc.createPurchaseTable(jdbc, "RecordTest");
 
   }
 
@@ -73,12 +80,14 @@ public class DatabaseTest {
       DatabaseJdbc.createTaskTable(jdbc, "TaskTest", "UserTest", "SearchTest",
           "ItemTest");
       DatabaseJdbc.createStoreTable(jdbc, "StoreTest");
+      DatabaseJdbc.createPurchaseTable(jdbc, "RecordTest");
 
       DatabaseJdbc.deleteTable(jdbc, "TaskTest");
       DatabaseJdbc.deleteTable(jdbc, "SearchTest");
       DatabaseJdbc.deleteTable(jdbc, "ItemTest");
       DatabaseJdbc.deleteTable(jdbc, "UserTest");
       DatabaseJdbc.deleteTable(jdbc, "StoreTest");
+      DatabaseJdbc.deleteTable(jdbc, "RecordTest");
     } catch (SQLException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -860,6 +869,163 @@ public class DatabaseTest {
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
+    }
+
+  }
+  
+  /*
+   * Test insert Item
+   * 
+   */
+  @Test
+  @Order(20)
+  public void testInsertPurchase() {
+    System.out.println("========TESTING INSERT PURCHASE ========");
+    Item item = new Item("FUJI APPLE", "001", 7.1, "COSTCO", 41.5, 34.1);
+
+    try {
+      DatabaseJdbc.createPurchaseTable(jdbc, "PurchaseTest");
+      //Thread.sleep(1000);
+
+      DatabaseJdbc.addPurchaseData(jdbc, "PurchaseTest", item, "100", 1.00, "2020-11-11");
+
+    } catch (SQLException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+    Statement stmt = null;
+    Connection c = jdbc.createConnection();
+
+    try {
+      c.setAutoCommit(false);
+      stmt = c.createStatement();
+      String sql = "SELECT * FROM PurchaseTest WHERE USER_ID = 100;";
+
+      ResultSet rs = stmt.executeQuery(sql);
+      while (rs.next()) {
+        String id = rs.getString("user_id");
+        assertEquals(id, "100");
+
+        String name = rs.getString("item_name");
+        assertEquals(name, "FUJI APPLE");
+
+        double price = rs.getDouble("price");
+        assertEquals(price, 7.1);
+        
+        double saving = rs.getDouble("savings");
+        assertEquals(saving, 1.00);
+
+        String date = rs.getString("date");
+        assertEquals(date, "2020-11-11");
+
+      }
+      
+      stmt.close();
+      c.commit();
+      c.close();
+      DatabaseJdbc.deleteTable(jdbc, "PurchaseTest");
+    } catch (Exception e) {
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      assertEquals(1, 0);
+    }
+
+  }
+  
+  @Test
+  @Order(21)
+  public void testGetPurchase() {
+    System.out.println("========TESTING GET PURCHASE ========");
+
+    Item item = new Item("FUJI APPLE", "001", 7.1, "COSTCO", 41.5, 34.1);
+    List<PurchaseRecord> testList;
+
+    try {
+      DatabaseJdbc.createPurchaseTable(jdbc, "PurchaseTest");
+      DatabaseJdbc.addPurchaseData(jdbc, "PurchaseTest", item, "300", 1.00, "2020-11-11");
+      
+      testList = DatabaseJdbc.getPurchaseData(jdbc, "PurchaseTest", "300");
+      
+      assertEquals(testList.size(), 1);
+      
+      PurchaseRecord testRecord = testList.get(0);
+      
+      assertEquals(testRecord.getDate(), "2020-11-11");
+      assertEquals(testRecord.getPrice(), 7.1);
+      assertEquals(testRecord.getItem(), "FUJI APPLE");
+      assertEquals(testRecord.getSaving(), 1.00);
+      
+      DatabaseJdbc.deleteTable(jdbc, "PurchaseTest");
+
+    } catch (SQLException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+  }
+  
+  @Test
+  @Order(22)
+  public void testGetTooOldWeekSaving() {
+    System.out.println("========TESTING GET TOO OLD WEEK SAVING ========");
+
+    Item item = new Item("FUJI APPLE", "001", 7.1, "COSTCO", 41.5, 34.1);
+    List<PurchaseRecord> testList;
+
+    try {
+      DatabaseJdbc.createPurchaseTable(jdbc, "PurchaseTest");
+      DatabaseJdbc.addPurchaseData(jdbc, "PurchaseTest", item, "300", 1.00, "2019-11-11");
+      
+      testList = DatabaseJdbc.getPurchaseData(jdbc, "PurchaseTest", "300");
+      
+      double saving = DatabaseJdbc.getWeekSavings(testList);
+      
+      assertEquals(saving, 0);
+      
+      DatabaseJdbc.deleteTable(jdbc, "PurchaseTest");
+      
+
+    } catch (SQLException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+  }
+  
+  @Test
+  @Order(23)
+  public void testGetWeekSaving() {
+    System.out.println("========TESTING GET WEEK SAVING ========");
+
+    Item item = new Item("FUJI APPLE", "001", 7.1, "COSTCO", 41.5, 34.1);
+    List<PurchaseRecord> testList;
+    
+    LocalDate currentDate = LocalDate.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    String testDate = currentDate.format(formatter);
+    
+//    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+//    
+//    Calendar recordCal = Calendar.getInstance();
+//    recordCal.add(Calendar.DATE, -1); 
+//    Date dateObj = recordCal.getTime();
+//    String testDate = format1.format(dateObj);
+
+    System.out.println("Input date: " + testDate);
+    
+    try {
+      DatabaseJdbc.createPurchaseTable(jdbc, "PurchaseTest");
+      DatabaseJdbc.addPurchaseData(jdbc, "PurchaseTest", item, "300", 7.00, testDate);
+      
+      testList = DatabaseJdbc.getPurchaseData(jdbc, "PurchaseTest", "300");
+      
+      double saving = DatabaseJdbc.getWeekSavings(testList);
+      
+      assertEquals(saving, 7);
+      
+      DatabaseJdbc.deleteTable(jdbc, "PurchaseTest");
+      
+
+    } catch (SQLException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
     }
 
   }

@@ -58,6 +58,7 @@ public class Application extends WebSecurityConfigurerAdapter {
       DatabaseJdbc.createTaskTable(database, "Task", "User", "Search", "Item");
       // DatabaseJdbc.deleteTable(database, "Store");
       DatabaseJdbc.createStoreTable(database, "Store");
+      DatabaseJdbc.createPurchaseTable(database, "Purchase");
 
       /*
        * // can skip this to save time List<Store> stores =

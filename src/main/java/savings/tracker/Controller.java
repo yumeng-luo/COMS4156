@@ -2,6 +2,8 @@ package savings.tracker;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -279,6 +281,12 @@ public class Controller {
     WegmanApi.setMustbecloser(closer);
     WegmanApi.setMustbesameitem(same);
 
+    try {
+      Thread.sleep(3000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     String id;
     if (principal != null) {
       id = principal.getAttribute("sub");
@@ -290,7 +298,7 @@ public class Controller {
 //    System.out.println("\n zip " + zip + "\n");
 //    System.out.flush();
 
-    int zip = TargetApi.getZip(lat, lon);
+    //int zip = TargetApi.getZip(lat, lon);
     List<Item> targetList;
     List<Item> result = new ArrayList<Item>();
 
@@ -318,12 +326,13 @@ public class Controller {
     // get task info from table
     OngoingTask currentTask = new OngoingTask();
     try {
+      
       currentTask = DatabaseJdbc.getTask(database, "Task", "Search", "Item",
           id);
     } catch (SQLException e1) {
       e1.printStackTrace();
     }
-//    dummy_result = currentTask.getAlternativeItem();
+    //dummy_result = currentTask.getAlternativeItem();
 
     // save to on going task
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -331,7 +340,7 @@ public class Controller {
     if (currentTask.getInitialItem().getBarcode() == null) {
       System.out.println("\n no initial barcode\n");
       System.out.flush();
-      return result;
+      return dummy_result;
     }
     currentTask.setFinalItem(new Item());
     currentTask.setFinalLat(0);
@@ -366,6 +375,12 @@ public class Controller {
           currentTask.getInitialItem());
     }
 
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     // save to ongoing task
     currentTask.setAlternativeItem(result);
     try {
@@ -381,7 +396,9 @@ public class Controller {
 //    System.out.flush();
     // return result;
 
+   
     return currentTask.getAlternativeItem();
+    //return dummy_result;
   }
 
   /**
@@ -463,6 +480,7 @@ public class Controller {
     try {
       task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
       // remove after demo - dummy value
+      /*
       if (barcode.equals("100")) {
         finalItem.setName("final item");
         finalItem.setBarcode("100");
@@ -473,7 +491,10 @@ public class Controller {
       } else {
         finalItem = DatabaseJdbc.getItem(database, "Item", barcode,
             Double.valueOf(lat), Double.valueOf(lon));
-      }
+      }*/
+      
+      finalItem = DatabaseJdbc.getItem(database, "Item", barcode,
+          Double.valueOf(lat), Double.valueOf(lon));
     } catch (SQLException e1) {
       e1.printStackTrace();
     }
@@ -547,6 +568,13 @@ public class Controller {
       DatabaseJdbc.addTask(database, "Task", task);
       user.setSavings(user.getSavings() + saving);
       DatabaseJdbc.updatesUser(database, "User", user);
+      
+      LocalDate currentDate = LocalDate.now();
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+      String strCurrentDate = currentDate.format(formatter);
+      DatabaseJdbc.addPurchaseData(database, "Purchase", finalItem, user.getUserId(), 
+          saving, strCurrentDate);
+     
     } catch (SQLException e) {
       e.printStackTrace();
     }
