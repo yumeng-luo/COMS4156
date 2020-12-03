@@ -77,3 +77,7 @@ function confirm_purchase() {
   // }  
 } 
 
+// DO NOT REMOVE
+module.exports = { init_search: init_search, select_search: select_search, 
+   request_alternatives: request_alternatives, select_alternative: select_alternative, 
+   confirm_purchase: confirm_purchase}
