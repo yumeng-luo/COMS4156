@@ -1,6 +1,7 @@
 package savings.tracker;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class TargetApiTest {
   
   @Test
   @Order(2)
-  public void invalZip() throws UnirestException {
+  public  void invalZip() throws UnirestException {
     double invalZip = 05;
 
     List<Store> storeList = TargetApi.getStoreIdList(invalZip);
@@ -53,7 +54,7 @@ public class TargetApiTest {
   @Order(4)
   public void validZipSecList() throws UnirestException {
 
-    double validZip = 10025;
+    int validZip = 10025;
     int locationId = 1263;
     
     List<Store> storeList = TargetApi.getSecStoreIdList(validZip);
@@ -120,7 +121,7 @@ public class TargetApiTest {
     
     List<Item> alterItems = TargetApi.getItemList(storeList, itemList);
     
-    assert (alterItems.size() != 3);
+    assertNotEquals(alterItems.size(), 0);
   }
   
   @Test
@@ -132,6 +133,17 @@ public class TargetApiTest {
     int zip = TargetApi.getZip(lat, lon);
        
     assertEquals(zip, 94043);
+  }
+  
+  @Test
+  @Order(9)
+  public void invalidCoords() throws UnirestException {
+    double lat = 0;
+    double lon = -181;
+
+    int zip = TargetApi.getZip(lat, lon);
+       
+    assertEquals(zip, -1);
   }
   
 
