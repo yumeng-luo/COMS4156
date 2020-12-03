@@ -7,11 +7,22 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -76,23 +87,41 @@ public class ControllerIntegrationTest {
     //Thread.sleep(20000);
     this.base = new URL("http://localhost:" + port + "/search");
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//    HttpHeaders headers = new HttpHeaders();
+//    headers.setContentType(MediaType.APPLICATION_JSON);
+//    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//
+//    Map<String, Object> map = new HashMap<>();
+//    map.put("item", "whole milk");
+//    map.put("lat", "43.663");
+//    map.put("lon", "-72.368");
+//    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
+//
+//    ResponseEntity<String> response = template.postForEntity(base.toString(),
+//        entity, String.class);
+//
+//    JSONArray firstArray = new JSONArray(response.getBody());
+//    JSONObject firstObject = firstArray.getJSONObject(0);
+//
+//    assert (firstObject.get("name").toString() != null);
+    
+    HttpClient httpclient = HttpClients.createDefault();
+    HttpPost httppost = new HttpPost("http://localhost:" + port + "/search");
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>(2);
+    params.add(new BasicNameValuePair("item", "apple"));
+    params.add(new BasicNameValuePair("lat", "43.663"));
+    params.add(new BasicNameValuePair("lon", "-72.368"));
+    httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
-    Map<String, Object> map = new HashMap<>();
-    map.put("item", "whole milk");
-    map.put("lat", "43.663");
-    map.put("lon", "-72.368");
-    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
+    //Execute and get the response.
+    HttpResponse response = httpclient.execute(httppost);
+    org.apache.http.HttpEntity entity = response.getEntity();
 
-    ResponseEntity<String> response = template.postForEntity(base.toString(),
-        entity, String.class);
-
-    JSONArray firstArray = new JSONArray(response.getBody());
-    JSONObject firstObject = firstArray.getJSONObject(0);
-
-    assert (firstObject.get("name").toString() != null);
+    if (entity != null) {
+      String result = EntityUtils.toString(entity);
+      System.out.println(result);
+    }
   }
   
   @Test
@@ -181,43 +210,62 @@ public class ControllerIntegrationTest {
     oldSavings = user.getSavings();
     
     this.base = new URL("http://localhost:" + port + "/select_purchase");
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-    Map<String, Object> map = new HashMap<>();
-    map.put("upc", "7880005592");
-    map.put("lat", "42.06996");
-    map.put("lon", "-80.1919");
-
-    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
-    ResponseEntity<String> response = template.postForEntity(base.toString(),
-        entity, String.class);
-
-    JsonObject jsonObject = new JsonParser().parse(response.getBody())
-        .getAsJsonObject();
-
-    System.out.println("\n purchase\n" + response.getBody() + "\n");
     
-    DatabaseJdbc updatedDatabase = Controller.getDb(); 
-    User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075"); 
-    newSavings = updatedUser.getSavings(); 
-    
-    System.out.println("Old savings :" + oldSavings);
-    System.out.println("New savings :" + newSavings);
-    
-    double diff = newSavings - oldSavings;
-    assertEquals (diff, 0); 
-    assertEquals(jsonObject.get("code").toString(), "200");
-    
-    Item chosenItem = DatabaseJdbc.getItem(updatedDatabase, "Item", "7880005592",
-        42.06996, -80.1919);
-    OngoingTask task = DatabaseJdbc.getTask(updatedDatabase, "Task", "Search", "Item",
-        "105222900313734280075");
-    
-    System.out.println("\nchosen item: " + chosenItem.getName() + "\n");
-    System.out.println("\nFinal Chosen Item : " + task.getFinalItem().getName() + "\n");
+    HttpClient httpclient = HttpClients.createDefault();
+    HttpPost httppost = new HttpPost("http://localhost:" + port + "/select_purchase");
+
+    // Request parameters and other properties.
+    List<NameValuePair> params = new ArrayList<NameValuePair>(2);
+    params.add(new BasicNameValuePair("upc", "7880005592"));
+    params.add(new BasicNameValuePair("lat", "42.06996"));
+    params.add(new BasicNameValuePair("lon", "-80.1919"));
+    httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+
+    //Execute and get the response.
+    HttpResponse response = httpclient.execute(httppost);
+    org.apache.http.HttpEntity entity = response.getEntity();
+
+    if (entity != null) {
+      String result = EntityUtils.toString(entity);
+      System.out.println(result);
+    }
+
+//    HttpHeaders headers = new HttpHeaders();
+//    headers.setContentType(MediaType.APPLICATION_JSON);
+//    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//
+//    Map<String, Object> map = new HashMap<>();
+//    map.put("upc", "7880005592");
+//    map.put("lat", "42.06996");
+//    map.put("lon", "-80.1919");
+//
+//    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
+//    ResponseEntity<String> response = template.postForEntity(base.toString(),
+//        entity, String.class);
+
+//    JsonObject jsonObject = new JsonParser().parse(entity.getBody())
+//        .getAsJsonObject();
+//
+//    System.out.println("\n purchase\n" + response.getBody() + "\n");
+//    
+//    DatabaseJdbc updatedDatabase = Controller.getDb(); 
+//    User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075"); 
+//    newSavings = updatedUser.getSavings(); 
+//    
+//    System.out.println("Old savings :" + oldSavings);
+//    System.out.println("New savings :" + newSavings);
+//    
+//    double diff = newSavings - oldSavings;
+//    assertEquals (diff, 0); 
+//    assertEquals(jsonObject.get("code").toString(), "200");
+//    
+//    Item chosenItem = DatabaseJdbc.getItem(updatedDatabase, "Item", "7880005592",
+//        42.06996, -80.1919);
+//    OngoingTask task = DatabaseJdbc.getTask(updatedDatabase, "Task", "Search", "Item",
+//        "105222900313734280075");
+//    
+//    System.out.println("\nchosen item: " + chosenItem.getName() + "\n");
+//    System.out.println("\nFinal Chosen Item : " + task.getFinalItem().getName() + "\n");
   }
 
 
