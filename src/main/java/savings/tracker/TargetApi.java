@@ -141,7 +141,8 @@ public class TargetApi {
     
     JSONArray firstArray = new JSONArray(response);
     JSONObject firstObject = firstArray.getJSONObject(0);
-    
+    System.out.println("\n" + response + "\n");
+    System.out.flush();
     //API determines its not a valid zipcode
     if (firstObject.has("errors")) {
       JSONArray errorArray = firstObject.getJSONArray("errors");
@@ -171,7 +172,7 @@ public class TargetApi {
       store.setName("Target");
       store.setNumber(location.getInt("location_id"));
       
-      JSONObject geographic = location.getJSONObject("geographic_specification");
+      JSONObject geographic = location.getJSONObject("geographic_specifications");
       store.setLon(geographic.getDouble("longitude"));
       store.setLat(geographic.getDouble("latitude"));
       

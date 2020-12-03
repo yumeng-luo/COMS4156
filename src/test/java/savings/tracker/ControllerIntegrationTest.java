@@ -297,7 +297,7 @@ public class ControllerIntegrationTest {
 
     // Request parameters and other properties.
     List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-    params.add(new BasicNameValuePair("upc", "7880005592"));
+    params.add(new BasicNameValuePair("upc", "7630184504"));
     params.add(new BasicNameValuePair("lat", "42.06996"));
     params.add(new BasicNameValuePair("lon", "-80.1919"));
     httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
@@ -353,10 +353,10 @@ public class ControllerIntegrationTest {
 
     // Request parameters and other properties.
     List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-    params.add(new BasicNameValuePair("upc", "7880005592"));
-    params.add(new BasicNameValuePair("lat", "42.06996"));
-    params.add(new BasicNameValuePair("lon", "-80.1919"));
-    httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+//    params.add(new BasicNameValuePair("upc", "1397100385"));
+//    params.add(new BasicNameValuePair("lat", "42.06996"));
+//    params.add(new BasicNameValuePair("lon", "-80.1919"));
+//    httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
     //Execute and get the response.
     HttpResponse response = httpclient.execute(httppost);
