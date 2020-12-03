@@ -448,25 +448,4 @@ describe('createGoogleMapsMock', () => {
     GoogleMapsModule.getNearbyPlaces();
     expect(google.maps.places.PlacesService).toHaveBeenCalledTimes(1);
   });
-
-  // test('test nearbyCallback()', () => {
-  //   GoogleMapsModule.nearbyCallback();
-  //   expect(google.maps.Map).toHaveBeenCalledTimes(1);
-  //   expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
-  //   expect(google.maps.LatLngBounds).toHaveBeenCalledTimes(1);
-  // });
-
-  // test('test createMarkers()', () => {
-  //   GoogleMapsModule.createMarkers();
-  //   expect(google.maps.Map).toHaveBeenCalledTimes(1);
-  //   expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
-  //   expect(google.maps.LatLngBounds).toHaveBeenCalledTimes(1);
-  // });
-
-  // test('test showDetails()', () => {
-  //   GoogleMapsModule.showDetails();
-  //   expect(google.maps.Map).toHaveBeenCalledTimes(1);
-  //   expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
-  //   expect(google.maps.LatLngBounds).toHaveBeenCalledTimes(1);
-  // });
 });
