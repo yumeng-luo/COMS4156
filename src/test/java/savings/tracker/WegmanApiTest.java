@@ -71,18 +71,6 @@ public class WegmanApiTest {
   @Order(6)
   public void testGetItems() throws InterruptedException  {
 
-    try {
-      Thread.sleep(20000);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    try {
-      Thread.sleep(20000);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
     List<List<Item>> list = WegmanApi.getItems(database, "Store", "whole milk", 43.663,
         -72.368);
     
@@ -104,17 +92,12 @@ public class WegmanApiTest {
   @Test
   @Order(8)
   public void testGetAlternatives()  {
-    try {
-      Thread.sleep(10000);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+
 
     List<Item> list = WegmanApi.getAlternativeItems(database, "Store",
         "whole milk", 43.663, -72.368, 20);
     
-    //assert (list.size() > 0);
+    assert (list.size() > 0);
   }
   @Test
   @Order(9)
@@ -126,5 +109,57 @@ public class WegmanApiTest {
       e.printStackTrace();
     }
   }
+  
+  @Test
+  @Order(10)
+  public void testInvalidGetItems() throws InterruptedException  {
+
+ 
+    List<List<Item>> list = WegmanApi.getItems(database, "Store", "!!&[]", -99,
+        -190);
+    
+    assertEquals(list.size(), 0);
+    //assert (list.get(0).size() > 0);
+    //assert (list.get(1).size() > 0);
+  }
+  
+  @Test
+  @Order(11)
+  public void testInvalidDistanceCalc()  {
+
+    double dist = WegmanApi.getDistance(-999,-999,-100,-200);
+
+    assert (dist == -1);
+  }
+  
+  @Test
+  @Order(12)
+  public void testGetInvalidNearestStore() throws Exception {
+    List<Store> nearestStores = WegmanApi.getNearestStores(database, "Store", -99,
+        -999, "!!!!");
+    
+    assert (nearestStores.size() == 0);
+  }
+  
+  @Test
+  @Order(13)
+  public void testGetInvalidSecNearestStore() throws Exception {
+    List<Store> nearestStores = WegmanApi.getSecNearestStores(database, "Store", -99,
+        -999, "!!!!");
+    
+    assert (nearestStores.size() == 0);
+  }
+
+  @Test
+  @Order(14)
+  public void testGetInvalidAlternatives()  {
+
+
+    List<Item> list = WegmanApi.getAlternativeItems(database, "Store",
+        "!!!", -99, -999, -1);
+    
+    assert (list.size() == 0);
+  }
+  
   
 }

@@ -62,6 +62,21 @@ public class WegmanApi {
   public static List<List<Item>> getItems(DatabaseJdbc jdbc, String tableName,
       String name, double lat, double lon) throws InterruptedException {
     
+    if (lat > 90 || lat < -90 || lon > 180 || lon < -180) {
+      return new ArrayList<List<Item>>();
+    }
+    boolean found = false;
+    for (char ch: name.toCharArray()) {
+      if (Character.isDigit(ch) || Character.isLetter(ch)) {
+        found = true;
+        break;
+      }
+    }
+    if (found == false) {
+      return new ArrayList<List<Item>>();
+    }
+    
+    
     System.out.println("\n starting wegmans get items call\n");
     System.out.flush();
     
@@ -234,6 +249,13 @@ public class WegmanApi {
    */
   public static double getDistance(double lat1, double lon1, double lat2,
       double lon2) {
+    if (lat1 > 90 || lat1 < -90 || lon1 > 180 || lon1 < -180) {
+      return -1;
+    }
+    if (lat2 > 90 || lat2 < -90 || lon2 > 180 || lon2 < -180) {
+      return -1;
+    }
+    
     if ((lat1 == lat2) && (lon1 == lon2)) {
       return 0;
     } else {
@@ -262,6 +284,22 @@ public class WegmanApi {
    */
   public static List<Store> getNearestStores(DatabaseJdbc jdbc,
       String tableName, double lat, double lon, String type) {
+    
+    if (lat > 90 || lat < -90 || lon > 180 || lon < -180) {
+      return new ArrayList<Store>();
+    }
+    boolean found = false;
+    for (char ch: type.toCharArray()) {
+      if (Character.isDigit(ch) || Character.isLetter(ch)) {
+        found = true;
+        break;
+      }
+    }
+    if (found == false) {
+      return new ArrayList<Store>();
+    }
+    
+    
     List<Store> allList = new ArrayList<Store>();
     List<Store> shortList = new ArrayList<Store>();
     // get all stores
@@ -304,6 +342,21 @@ public class WegmanApi {
    */
   public static List<Store> getSecNearestStores(DatabaseJdbc jdbc,
       String tableName, double lat, double lon, String type) {
+    
+    if (lat > 90 || lat < -90 || lon > 180 || lon < -180) {
+      return new ArrayList<Store>();
+    }
+    boolean found = false;
+    for (char ch: type.toCharArray()) {
+      if (Character.isDigit(ch) || Character.isLetter(ch)) {
+        found = true;
+        break;
+      }
+    }
+    if (found == false) {
+      return new ArrayList<Store>();
+    }
+    
     List<Store> allList = new ArrayList<Store>();
     List<Store> shortList = new ArrayList<Store>();
     // get all stores
@@ -350,6 +403,21 @@ public class WegmanApi {
   public static List<Item> getAlternativeItems(DatabaseJdbc jdbc,
       String tableName, String name, double lat, double lon,
       double initialPrice) {
+    
+    if (lat > 90 || lat < -90 || lon > 180 || lon < -180 || initialPrice <0) {
+      return new ArrayList<Item>();
+    }
+    boolean found = false;
+    for (char ch: name.toCharArray()) {
+      if (Character.isDigit(ch) || Character.isLetter(ch)) {
+        found = true;
+        break;
+      }
+    }
+    if (found == false) {
+      return new ArrayList<Item>();
+    }
+    
     HttpResponse<String> response = Unirest
         .get("https://api.wegmans.io/products/search?query=" + name
             + "&api-version=2018-10-18")
