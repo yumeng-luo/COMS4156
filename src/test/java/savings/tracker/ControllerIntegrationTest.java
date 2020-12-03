@@ -2,6 +2,7 @@ package savings.tracker;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -238,7 +239,7 @@ public class ControllerIntegrationTest {
       System.out.println("New savings :" + newSavings);
 
       double diff = newSavings - oldSavings;
-      assertEquals(diff, 0);
+      assertNotEquals(diff, 0);
       assert (jsonArray.length() > 0);
       assert (jsonObject.get("name") != null);
     }
@@ -251,46 +252,10 @@ public class ControllerIntegrationTest {
   @Order(9)
   public void purchaseValidItemNameAndStillNoSavings() throws Exception {
     System.out.println("\nTesting purchase item\n");
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.setContentType(MediaType.APPLICATION_JSON);
-//    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//
-//    Map<String, Object> map = new HashMap<>();
-//    map.put("upc", "7880005592");
-//    map.put("lat", "42.06996");
-//    map.put("lon", "-80.1919");
-//
-//    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
-//    ResponseEntity<String> response = template.postForEntity(base.toString(),
-//        entity, String.class);
-
-//    JsonObject jsonObject = new JsonParser().parse(entity.getBody())
-//        .getAsJsonObject();
-//
-//    System.out.println("\n purchase\n" + response.getBody() + "\n");
-//    
-//    DatabaseJdbc updatedDatabase = Controller.getDb(); 
-//    User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "123"); 
-//    newSavings = updatedUser.getSavings(); 
-//    
-//    System.out.println("Old savings :" + oldSavings);
-//    System.out.println("New savings :" + newSavings);
-//    
-//    double diff = newSavings - oldSavings;
-//    assertEquals (diff, 0); 
-//    assertEquals(jsonObject.get("code").toString(), "200");
-//    
-//    Item chosenItem = DatabaseJdbc.getItem(updatedDatabase, "Item", "7880005592",
-//        42.06996, -80.1919);
-//    OngoingTask task = DatabaseJdbc.getTask(updatedDatabase, "Task", "Search", "Item",
-//        "123");
-//    
-//    System.out.println("\nchosen item: " + chosenItem.getName() + "\n");
-//    System.out.println("\nFinal Chosen Item : " + task.getFinalItem().getName() + "\n");
 
     Thread.sleep(3000);
     DatabaseJdbc database = Controller.getDb();
-    User user = DatabaseJdbc.getUser(database, "User", "123");
+    User user = DatabaseJdbc.getUser(database, "User", "105222900313734280075");
     oldSavings = user.getSavings();
 
     HttpClient httpclient = HttpClients.createDefault();
@@ -299,9 +264,9 @@ public class ControllerIntegrationTest {
 
     // Request parameters and other properties.
     List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-    params.add(new BasicNameValuePair("upc", "2500004483"));
-    params.add(new BasicNameValuePair("lat", "42.06996"));
-    params.add(new BasicNameValuePair("lon", "-80.1919"));
+    params.add(new BasicNameValuePair("upc", "2529300099"));
+    params.add(new BasicNameValuePair("lat", "42.0602"));
+    params.add(new BasicNameValuePair("lon", "-80.0907"));
     httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
     // Execute and get the response.

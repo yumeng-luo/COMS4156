@@ -18,13 +18,13 @@ public class TargetApiTest {
   
   @Test
   @Order(1)
-  public void emptyZip() throws UnirestException {
+  public void nonEmptyZip() throws UnirestException {
 
-    int emptyZip = 05001;
+    int nonEmptyZip = 05001;
     
-    List<Store> storeList = TargetApi.getStoreIdList(emptyZip);
+    List<Store> storeList = TargetApi.getStoreIdList(nonEmptyZip);
     
-    assertEquals(storeList, null);
+    assertNotEquals(storeList, null);
   }
   
   @Test

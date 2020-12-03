@@ -52,9 +52,9 @@ public class TargetApi {
     JsonNode body = response.getBody();
     JSONObject bodyJson = body.getObject();
 
-    // if (bodyJson.get("postcode") == null) {
-    // return -1;
-    // }
+    if (bodyJson.get("postcode") == null) {
+      return -1;
+    }
     int zip = bodyJson.getInt("postcode");
     System.out.println(zip);
 

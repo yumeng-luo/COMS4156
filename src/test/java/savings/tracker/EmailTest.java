@@ -33,7 +33,7 @@ public class EmailTest {
   public void sendEmailTest() throws IOException {
     
     Mail mail = SendGridEmailer.buildDynamicTemplate("ASE.email.api@gmail.com");
-    assertEquals(SendGridEmailer.send(mail, System.getenv("SENDGRID_API_KEY")), true);
+    assertEquals(SendGridEmailer.send(mail, "SG.bxNhOT"), true);
   }
   
   @Test
@@ -41,7 +41,7 @@ public class EmailTest {
   public void sendEmailInputNoNullTest() throws IOException {
     
     Mail mail = SendGridEmailer.buildDynamicTemplate("ASE.email.api@gmail.com");
-    assertEquals(SendGridEmailer.send(mail, System.getenv("SENDGRID_API_KEY")), true);
+    assertEquals(SendGridEmailer.send(mail, "SG.bxNhOTUbQM"), true);
   }
   
   @Test
@@ -49,28 +49,28 @@ public class EmailTest {
   public void sendEmailInputNullTest() throws IOException {
     
     Mail mail = SendGridEmailer.buildDynamicTemplate("ASE.email.api@gmail.com");
-    assertEquals(SendGridEmailer.send(null, System.getenv("SENDGRID_API_KEY")), false);
+    assertEquals(SendGridEmailer.send(null, "SG.bxNhOTU"), false);
   }
   
   @Test
   @Order(5)
   public void sendEmailAPIKeyEmptyTest() throws IOException {
     Mail mail = SendGridEmailer.buildDynamicTemplate("ASE.email.api@gmail.com");
-    assertEquals(SendGridEmailer.send(mail, System.getenv("")), false);
+    assertEquals(SendGridEmailer.send(mail, ""), false);
   }
   
   @Test
   @Order(6)
   public void sendEmailAPIKeyInvalidTest() throws IOException {
     Mail mail = SendGridEmailer.buildDynamicTemplate("ASE.email.api@gmail.com");
-    assertEquals(SendGridEmailer.send(mail, System.getenv("123343rgasd")), false);
+    assertEquals(SendGridEmailer.send(mail, "123343rgasd"), false);
   }
   
   @Test
   @Order(7)
   public void sendEmailAPIKeyValidTest() throws IOException {
     Mail mail = SendGridEmailer.buildDynamicTemplate("ASE.email.api@gmail.com");
-    assertEquals(SendGridEmailer.send(mail, System.getenv("SG.38487ddsaf")), true);
+    assertEquals(SendGridEmailer.send(mail, "SG.38487ddsaf"), true);
   }
   
   @Test
@@ -81,7 +81,7 @@ public class EmailTest {
     for (int i = 0; i < 51; i++) {
       longString += "a";
     }
-    assertEquals(SendGridEmailer.send(mail, System.getenv(longString)), false);
+    assertEquals(SendGridEmailer.send(mail, longString), false);
   }
   
   @Test
@@ -109,9 +109,10 @@ public class EmailTest {
   @Order(12)
   public void buildDynamicTemplateEmailLongTest() throws IOException {
     String longMail = "";
-    for (int i = 0; i < 254; i++) {
+    for (int i = 0; i < 240; i++) {
       longMail += "a";
     }
+    longMail += "@mail";
     Mail mail = SendGridEmailer.buildDynamicTemplate(longMail);
     assertNotNull(mail);
   }
@@ -126,8 +127,7 @@ public class EmailTest {
   @Test
   @Order(14)
   public void sendDynamicEmailEmailValidTest() throws IOException {
-    String emptyMail = "";
-    assertEquals(SendGridEmailer.sendDynamicEmail("abc@abc.com"), false);
+    assertEquals(SendGridEmailer.sendDynamicEmail("123@123.com"), true);
   }
   
   @Test

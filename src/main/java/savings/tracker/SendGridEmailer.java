@@ -18,6 +18,9 @@ public class SendGridEmailer {
    * @throws IOException exception
    */
   public static boolean send(final Mail mail, String apiKey) throws IOException {
+    if (mail == null || apiKey == "" || apiKey.startsWith("SG")==false) {
+      return false;
+    }
     final SendGrid sg = new SendGrid(apiKey);
     sg.addRequestHeader("X-Mock", "true");
     final Request request = new Request();
@@ -45,6 +48,9 @@ public class SendGridEmailer {
    * @return mail object
    */
   public static Mail buildDynamicTemplate(String email) {
+    if (email == "" || email.length() <= 5 || email.length()>=254 || email.contains("@")==false) {
+      return null;
+    }
     Mail mail = new Mail();
 
     Email fromEmail = new Email();
@@ -72,7 +78,7 @@ public class SendGridEmailer {
    */
   public static boolean sendDynamicEmail(String email) throws IOException {
     final Mail dynamicTemplate = buildDynamicTemplate(email);
-    return send(dynamicTemplate, System.getenv("SENDGRID_API_KEY"));
+    return send(dynamicTemplate, "SG.bxNhOTUbQM6ASjoi6-kHyg.dBD");
   }
   
   /**

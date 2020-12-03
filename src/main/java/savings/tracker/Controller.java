@@ -480,7 +480,7 @@ public class Controller {
       @RequestParam(value = "lat", defaultValue = "37.7510") String lat,
       @RequestParam(value = "lon", defaultValue = "-97.8220") String lon,
       @AuthenticationPrincipal OAuth2User principal) {
-    if (Integer.parseInt(lat) < -90 || Integer.parseInt(lat) > 90 || Integer.parseInt(lon) > 180 || Integer.parseInt(lon) < -180) {
+    if (Double.parseDouble(lat) < -90 || Double.parseDouble(lat) > 90 || Double.parseDouble(lon) > 180 || Double.parseDouble(lon) < -180) {
       return new Message(400, "Invalid longitude/latitude input");
     }
     String id;
@@ -494,20 +494,7 @@ public class Controller {
     Item finalItem = new Item();
     try {
       task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
-      // remove after demo - dummy value
-      /*
-      if (barcode.equals("100")) {
-        finalItem.setName("final item");
-        finalItem.setBarcode("100");
-        finalItem.setPrice(99.99);
-        finalItem.setStore("final destination");
-        finalItem.setLat(100);
-        finalItem.setLon(100);
-      } else {
-        finalItem = DatabaseJdbc.getItem(database, "Item", barcode,
-            Double.valueOf(lat), Double.valueOf(lon));
-      }*/
-      
+
       finalItem = DatabaseJdbc.getItem(database, "Item", barcode,
           Double.valueOf(lat), Double.valueOf(lon));
     } catch (SQLException e1) {
