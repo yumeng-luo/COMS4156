@@ -432,4 +432,48 @@ describe('createGoogleMapsMock', () => {
     expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
     expect(google.maps.LatLngBounds).toHaveBeenCalledTimes(1);
   });
+
+  test('test handleLocationError(true)', () => {
+    let infoWindow = new google.maps.InfoWindow;
+    GoogleMapsModule.handleLocationError(true, infoWindow);
+    expect(googleMaps.Map.maps.InfoWindow.setPosition).toHaveBeenCalledTimes(1);
+    expect(google.maps.InfoWindow.setContent()).toHaveBeenCalledTimes(1);
+    expect(google.maps.InfoWindow.open()).toHaveBeenCalledTimes(1);
+  });
+
+  // test('test handleLocationError(false)', () => {
+  //   infoWindow = new google.maps.InfoWindow;
+  //   GoogleMapsModule.handleLocationError(infoWindow, false);
+  //   expect(google.maps.Map).toHaveBeenCalledTimes(1);
+  //   expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
+  //   expect(google.maps.LatLngBounds).toHaveBeenCalledTimes(1);
+  // });
+
+  // test('test getNearbyPlaces()', () => {
+  //   GoogleMapsModule.getNearbyPlaces();
+  //   expect(google.maps.Map).toHaveBeenCalledTimes(1);
+  //   expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
+  //   expect(google.maps.LatLngBounds).toHaveBeenCalledTimes(1);
+  // });
+
+  // test('test nearbyCallback()', () => {
+  //   GoogleMapsModule.nearbyCallback();
+  //   expect(google.maps.Map).toHaveBeenCalledTimes(1);
+  //   expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
+  //   expect(google.maps.LatLngBounds).toHaveBeenCalledTimes(1);
+  // });
+
+  // test('test createMarkers()', () => {
+  //   GoogleMapsModule.createMarkers();
+  //   expect(google.maps.Map).toHaveBeenCalledTimes(1);
+  //   expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
+  //   expect(google.maps.LatLngBounds).toHaveBeenCalledTimes(1);
+  // });
+
+  // test('test showDetails()', () => {
+  //   GoogleMapsModule.showDetails();
+  //   expect(google.maps.Map).toHaveBeenCalledTimes(1);
+  //   expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
+  //   expect(google.maps.LatLngBounds).toHaveBeenCalledTimes(1);
+  // });
 });
