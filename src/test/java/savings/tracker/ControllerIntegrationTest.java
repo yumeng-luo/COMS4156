@@ -231,7 +231,7 @@ public class ControllerIntegrationTest {
       assert (jsonObject.get("name").toString() != null);
 
       DatabaseJdbc updatedDatabase = Controller.getDb();
-      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "123");
+      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075");
       newSavings = updatedUser.getSavings();
 
       System.out.println("Old savings :" + oldSavings);
@@ -299,7 +299,7 @@ public class ControllerIntegrationTest {
 
     // Request parameters and other properties.
     List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-    params.add(new BasicNameValuePair("upc", "7880005592"));
+    params.add(new BasicNameValuePair("upc", "2500004483"));
     params.add(new BasicNameValuePair("lat", "42.06996"));
     params.add(new BasicNameValuePair("lon", "-80.1919"));
     httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
@@ -315,7 +315,7 @@ public class ControllerIntegrationTest {
       JSONObject jsonObject = new JSONObject(result);
 
       DatabaseJdbc updatedDatabase = Controller.getDb();
-      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "123");
+      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075");
       newSavings = updatedUser.getSavings();
 
       System.out.println("Old savings :" + oldSavings);
@@ -351,7 +351,7 @@ public class ControllerIntegrationTest {
 
     HttpClient httpclient = HttpClients.createDefault();
     HttpPost httppost = new HttpPost(
-        "http://localhost:" + port + "/select_purchase");
+        "http://localhost:" + port + "/confirm");
 
     // Request parameters and other properties.
     List<NameValuePair> params = new ArrayList<NameValuePair>(2);
