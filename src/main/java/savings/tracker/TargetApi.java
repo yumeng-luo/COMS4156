@@ -70,7 +70,7 @@ public class TargetApi {
     int count = 0;
     
     String response = Unirest.get("https://target1.p.rapidapi.com/stores/list?zipcode=" + zipcode)
-        .header("x-rapidapi-key", System.getenv("RAPID_API_KEY"))
+        .header("x-rapidapi-key", "d742520193mshd93d24a0e93b9adp152d18jsncdffefd389e9")
         .header("x-rapidapi-host", "target1.p.rapidapi.com")
         .asString().getBody();
 
@@ -128,14 +128,14 @@ public class TargetApi {
    * @param zipcode zipcode 
    * @return location id
    */
-  public static List<Store> getSecStoreIdList(double zipcode) throws 
+  public static List<Store> getSecStoreIdList(int zipcode) throws 
       UnirestException {
     
     List<Store> list = new ArrayList<Store>();
     int count = 0;
     
     String response = Unirest.get("https://target1.p.rapidapi.com/stores/list?zipcode=" + zipcode)
-        .header("x-rapidapi-key", System.getenv("RAPID_API_KEY"))
+        .header("x-rapidapi-key", "d742520193mshd93d24a0e93b9adp152d18jsncdffefd389e9")
         .header("x-rapidapi-host", "target1.p.rapidapi.com")
         .asString().getBody();
     
@@ -171,7 +171,7 @@ public class TargetApi {
       store.setName("Target");
       store.setNumber(location.getInt("location_id"));
       
-      JSONObject geographic = location.getJSONObject("geographic_specification");
+      JSONObject geographic = location.getJSONObject("geographic_specifications");
       store.setLon(geographic.getDouble("longitude"));
       store.setLat(geographic.getDouble("latitude"));
       
@@ -197,7 +197,7 @@ public class TargetApi {
     HttpResponse<JsonNode> response = Unirest.get(
         "https://target1.p.rapidapi.com/products/get-details?tcin="
         + tcin + "&store_id=" + storeId)
-        .header("x-rapidapi-key", System.getenv("RAPID_API_KEY"))
+        .header("x-rapidapi-key","d742520193mshd93d24a0e93b9adp152d18jsncdffefd389e9")
         .header("x-rapidapi-host", "target1.p.rapidapi.com")
         .asJson();
     
@@ -292,7 +292,7 @@ public class TargetApi {
    * @throws UnirestException exception
    * @throws InvalUserInputException exception
    */
-  public static List<Item> getSecTargetAlternatives(double zip, List<Item> orgList) 
+  public static List<Item> getSecTargetAlternatives(int zip, List<Item> orgList) 
       throws UnirestException {
     
     List<Store> storeList = getSecStoreIdList(zip);
