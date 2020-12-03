@@ -169,6 +169,14 @@ public class ControllerTest {
         .post("/select_purchase?lat=91&lon=181").accept(MediaType.APPLICATION_JSON))
         .andExpect(content().json("{'code':400}", false));
   }
+  
+  @Test
+  public void postSelectPurchaseInvalidBoundaryCondition7() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/select_purchase?lat=-900&lon=-900").accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{'code':400}", false));
+  }
 
   /*
    * @Test public void postAlternatives() throws Exception {
