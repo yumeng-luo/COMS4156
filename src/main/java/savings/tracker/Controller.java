@@ -464,9 +464,9 @@ public class Controller {
   @PostMapping("/select_purchase")
   @ResponseBody
   public Message selectPurchase(
-      @RequestParam(value = "upc", defaultValue = "0") String barcode,
-      @RequestParam(value = "lat", defaultValue = "37.7510") String lat,
-      @RequestParam(value = "lon", defaultValue = "-97.8220") String lon,
+      @RequestParam(value = "upc", defaultValue = "7880005592") String barcode,
+      @RequestParam(value = "lat", defaultValue = "42.06996") String lat,
+      @RequestParam(value = "lon", defaultValue = "-80.1919") String lon,
       @AuthenticationPrincipal OAuth2User principal) {
     String id;
     if (principal != null) {
