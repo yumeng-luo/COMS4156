@@ -107,8 +107,8 @@ public class Application extends WebSecurityConfigurerAdapter {
         // oauth login quota
         a -> a
             .antMatchers("/frontend", "/", "/error", "/webjars/**", "/search",
-                "/select_item", "/select_purchase", "/no_alternative",
-                "/login")
+                "/select_item", "/select_purchase", "/no_alternative", 
+                "/alternatives", "/confirm", "/login")
             // if there are any authentication problems, first try uncommenting either of the two and using the other
             .permitAll().anyRequest().authenticated())
             //.authenticated())
