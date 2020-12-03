@@ -436,9 +436,7 @@ describe('createGoogleMapsMock', () => {
   test('test handleLocationError(true)', () => {
     let infoWindow = new google.maps.InfoWindow;
     GoogleMapsModule.handleLocationError(true, infoWindow);
-    expect(googleMaps.Map.maps.InfoWindow.setPosition).toHaveBeenCalledTimes(1);
-    expect(google.maps.InfoWindow.setContent()).toHaveBeenCalledTimes(1);
-    expect(google.maps.InfoWindow.open()).toHaveBeenCalledTimes(1);
+    expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
   });
 
   // test('test handleLocationError(false)', () => {
