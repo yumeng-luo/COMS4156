@@ -39,7 +39,7 @@ public class TargetApiTest {
   
   @Test
   @Order(3)
-  public void validZip() throws UnirestException {
+  public void validZipList() throws UnirestException {
 
     double validZip = 10025;
     int locationId = 1263;

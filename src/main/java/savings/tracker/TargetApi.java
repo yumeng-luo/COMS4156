@@ -141,7 +141,8 @@ public class TargetApi {
     
     JSONArray firstArray = new JSONArray(response);
     JSONObject firstObject = firstArray.getJSONObject(0);
-    
+    System.out.println("\n" + response + "\n");
+    System.out.flush();
     //API determines its not a valid zipcode
     if (firstObject.has("errors")) {
       JSONArray errorArray = firstObject.getJSONArray("errors");
