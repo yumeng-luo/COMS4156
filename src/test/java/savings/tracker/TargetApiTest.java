@@ -135,5 +135,16 @@ public class TargetApiTest {
     assertEquals(zip, 94043);
   }
   
+  @Test
+  @Order(9)
+  public void invalidCoords() throws UnirestException {
+    double lat = 0;
+    double lon = -181;
+
+    int zip = TargetApi.getZip(lat, lon);
+       
+    assertEquals(zip, -1);
+  }
+  
 
 }

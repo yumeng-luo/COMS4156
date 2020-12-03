@@ -42,6 +42,9 @@ public class TargetApi {
    * @return zipcode
    */
   public static int getZip(double lat, double lon) {
+    if (lat >90 || lat < -90 || lon >180 || lon <-180) {
+      return -1;
+    }
     
     HttpResponse<JsonNode> response = Unirest.get("https://api.bigdatacloud.net/data/reverse-geocode-client?"
         + "latitude=" + lat + "&longitude=" + lon + "&localityLanguage=en")

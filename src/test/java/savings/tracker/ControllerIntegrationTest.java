@@ -370,7 +370,7 @@ public class ControllerIntegrationTest {
       JSONObject jsonObject = new JSONObject(result);
 
       DatabaseJdbc updatedDatabase = Controller.getDb();
-      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "123");
+      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075");
       newSavings = updatedUser.getSavings();
 
       System.out.println("Old savings :" + oldSavings);
