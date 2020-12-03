@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.net.URL;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,7 +84,7 @@ public class ControllerIntegrationTest {
   @Test
   @Order(4)
   public void searchValidItemName() throws Exception {
-
+    System.out.println("\nTesting seach valid item\n");
     //Thread.sleep(20000);
     this.base = new URL("http://localhost:" + port + "/search");
 
@@ -120,6 +121,10 @@ public class ControllerIntegrationTest {
 
     if (entity != null) {
       String result = EntityUtils.toString(entity);
+      JSONArray jsonArray = new JSONArray(result);
+      JSONObject jsonObject = jsonArray.getJSONObject(0);
+      assert (jsonObject.get("name").toString() != null);
+      
       System.out.println(result);
     }
   }
@@ -134,91 +139,31 @@ public class ControllerIntegrationTest {
   @Test
   @Order(6)
   public void selectValidItemName() throws Exception {
-
+    System.out.println("\nTesting select valid item\n");
     //Thread.sleep(2000);
-    this.base = new URL("http://localhost:" + port + "/select_item");
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-    Map<String, Object> map = new HashMap<>();
-    map.put("item_number", "1");
-
-    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
-    ResponseEntity<String> response = template.postForEntity(base.toString(),
-        entity, String.class);
-
-    JsonObject jsonObject = new JsonParser().parse(response.getBody())
-        .getAsJsonObject();
-
-    assertEquals(jsonObject.get("code").toString(), "200");
-  }
-
-  // Confirms the first alternative for prior selected item is as expected
-  // need to test what happens if cheaper is set to false
-  // need to test what happens if there are no alternatives
-  @Test
-  @Order(7)
-  public void alternativeValidItemNameAndNoSavings() throws Exception {
-
-    DatabaseJdbc database = Controller.getDb();
-    User user = DatabaseJdbc.getUser(database, "User", "105222900313734280075");
-    oldSavings = user.getSavings();
-
-    this.base = new URL("http://localhost:" + port + "/alternatives");
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-    Map<String, Object> map = new HashMap<>();
-    map.put("lat", "37.7510");
-    map.put("lon", "-97.8220");
-
-    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
-    ResponseEntity<String> response = template.postForEntity(base.toString(),
-        entity, String.class);
-    System.out.println("\nALTERNATIVE HEADER\n" + response + "\n");
-    System.out.println("\nALTERNATIVE BODY\n" + response.getBody() + "\n");
-    JSONArray firstArray = new JSONArray(response.getBody());
-    JSONObject firstObject = firstArray.getJSONObject(0);
-
-    DatabaseJdbc updatedDatabase = Controller.getDb(); 
-    User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075"); 
-    newSavings = updatedUser.getSavings(); 
-    
-    System.out.println("Old savings :" + oldSavings);
-    System.out.println("New savings :" + newSavings);
-    
-    double diff = newSavings - oldSavings;
-    assertEquals(diff, 0); 
-    assert (firstArray.length() > 0);
-    assert (firstObject.get("name") != null);
-  }
-  
-  
-  // Tests that the tested alternative above is properly chosen as purchased
-  // item
-  @Test
-  @Order(9)
-  public void purchaseValidItemNameAndStillNoSavings() throws Exception {
-    
-    Thread.sleep(3000);
-    DatabaseJdbc database = Controller.getDb();
-    User user = DatabaseJdbc.getUser(database, "User", "105222900313734280075");
-    oldSavings = user.getSavings();
-    
-    this.base = new URL("http://localhost:" + port + "/select_purchase");
+//    this.base = new URL("http://localhost:" + port + "/select_item");
+//
+//    HttpHeaders headers = new HttpHeaders();
+//    headers.setContentType(MediaType.APPLICATION_JSON);
+//    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//
+//    Map<String, Object> map = new HashMap<>();
+//    map.put("item_number", "1");
+//
+//    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
+//    ResponseEntity<String> response = template.postForEntity(base.toString(),
+//        entity, String.class);
+//
+//    JsonObject jsonObject = new JsonParser().parse(response.getBody())
+//        .getAsJsonObject();
+//
+//    assertEquals(jsonObject.get("code").toString(), "200");
     
     HttpClient httpclient = HttpClients.createDefault();
-    HttpPost httppost = new HttpPost("http://localhost:" + port + "/select_purchase");
-
-    // Request parameters and other properties.
+    HttpPost httppost = new HttpPost("http://localhost:" + port + "/select_item");
+    
     List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-    params.add(new BasicNameValuePair("upc", "7880005592"));
-    params.add(new BasicNameValuePair("lat", "42.06996"));
-    params.add(new BasicNameValuePair("lon", "-80.1919"));
+    params.add(new BasicNameValuePair("item_number", "1"));
     httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
     //Execute and get the response.
@@ -227,9 +172,84 @@ public class ControllerIntegrationTest {
 
     if (entity != null) {
       String result = EntityUtils.toString(entity);
-      System.out.println(result);
+      JSONObject jsonObject = new JSONObject(result);
+      assertEquals(jsonObject.get("code").toString(), "200");
+      
+      System.out.println("\nresult: " + result);
+    }
+  }
+
+  // Confirms the first alternative for prior selected item is as expected
+  // need to test what happens if cheaper is set to false
+  // need to test what happens if there are no alternatives
+  @Test
+  @Order(7)
+  public void alternativeValidItemNameAndNoSavings() throws Exception {
+    System.out.println("\nTesting alternative item\n");
+    DatabaseJdbc database = Controller.getDb();
+    User user = DatabaseJdbc.getUser(database, "User", "123");
+    oldSavings = user.getSavings();
+
+//    this.base = new URL("http://localhost:" + port + "/alternatives");
+
+//    HttpHeaders headers = new HttpHeaders();
+//    headers.setContentType(MediaType.APPLICATION_JSON);
+//    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//
+//    Map<String, Object> map = new HashMap<>();
+//    map.put("lat", "37.7510");
+//    map.put("lon", "-97.8220");
+//
+//    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
+//    ResponseEntity<String> response = template.postForEntity(base.toString(),
+//        entity, String.class);
+    
+//    System.out.println("\nALTERNATIVE HEADER\n" + response + "\n");
+//    System.out.println("\nALTERNATIVE BODY\n" + response.getBody() + "\n");
+//    JSONArray firstArray = new JSONArray(response.getBody());
+//    JSONObject firstObject = firstArray.getJSONObject(0);
+    
+    HttpClient httpclient = HttpClients.createDefault();
+    HttpPost httppost = new HttpPost("http://localhost:" + port + "/alternatives");
+    
+    List<NameValuePair> params = new ArrayList<NameValuePair>(2);
+    params.add(new BasicNameValuePair("lat", "37.7510"));
+    params.add(new BasicNameValuePair("lon", "-97.8220"));
+    httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+
+    //Execute and get the response.
+    HttpResponse response = httpclient.execute(httppost);
+    org.apache.http.HttpEntity entity = response.getEntity();
+    System.out.println ("\nAlternative response1: " + response);
+    if (entity != null) {
+      String result = EntityUtils.toString(entity);
+      System.out.println ("\nAlternative response2: " + result);
+      JSONArray jsonArray = new JSONArray(result);
+      JSONObject jsonObject = jsonArray.getJSONObject(0);
+      assert (jsonObject.get("name").toString() != null);
+      
+      DatabaseJdbc updatedDatabase = Controller.getDb(); 
+      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "123"); 
+      newSavings = updatedUser.getSavings(); 
+      
+      System.out.println("Old savings :" + oldSavings);
+      System.out.println("New savings :" + newSavings);
+      
+      double diff = newSavings - oldSavings;
+      assertEquals(diff, 0); 
+      assert (jsonArray.length() > 0);
+      assert (jsonObject.get("name") != null);
     }
 
+  }
+  
+  
+  // Tests that the tested alternative above is properly chosen as purchased
+  // item
+  @Test
+  @Order(9)
+  public void purchaseValidItemNameAndStillNoSavings() throws Exception {
+    System.out.println("\nTesting purchase item\n");
 //    HttpHeaders headers = new HttpHeaders();
 //    headers.setContentType(MediaType.APPLICATION_JSON);
 //    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -249,7 +269,7 @@ public class ControllerIntegrationTest {
 //    System.out.println("\n purchase\n" + response.getBody() + "\n");
 //    
 //    DatabaseJdbc updatedDatabase = Controller.getDb(); 
-//    User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075"); 
+//    User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "123"); 
 //    newSavings = updatedUser.getSavings(); 
 //    
 //    System.out.println("Old savings :" + oldSavings);
@@ -262,50 +282,103 @@ public class ControllerIntegrationTest {
 //    Item chosenItem = DatabaseJdbc.getItem(updatedDatabase, "Item", "7880005592",
 //        42.06996, -80.1919);
 //    OngoingTask task = DatabaseJdbc.getTask(updatedDatabase, "Task", "Search", "Item",
-//        "105222900313734280075");
+//        "123");
 //    
 //    System.out.println("\nchosen item: " + chosenItem.getName() + "\n");
 //    System.out.println("\nFinal Chosen Item : " + task.getFinalItem().getName() + "\n");
+    
+    Thread.sleep(3000);
+    DatabaseJdbc database = Controller.getDb();
+    User user = DatabaseJdbc.getUser(database, "User", "123");
+    oldSavings = user.getSavings();
+    
+    HttpClient httpclient = HttpClients.createDefault();
+    HttpPost httppost = new HttpPost("http://localhost:" + port + "/select_purchase");
+
+    // Request parameters and other properties.
+    List<NameValuePair> params = new ArrayList<NameValuePair>(2);
+    params.add(new BasicNameValuePair("upc", "7880005592"));
+    params.add(new BasicNameValuePair("lat", "42.06996"));
+    params.add(new BasicNameValuePair("lon", "-80.1919"));
+    httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+
+    //Execute and get the response.
+    HttpResponse response = httpclient.execute(httppost);
+    org.apache.http.HttpEntity entity = response.getEntity();
+
+    if (entity != null) {
+      String result = EntityUtils.toString(entity);
+      System.out.println("\npurchase result: " + result);
+      
+      JSONObject jsonObject = new JSONObject(result);
+      
+      DatabaseJdbc updatedDatabase = Controller.getDb(); 
+      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "123"); 
+      newSavings = updatedUser.getSavings(); 
+      
+      System.out.println("Old savings :" + oldSavings);
+      System.out.println("New savings :" + newSavings);
+      
+      double diff = newSavings - oldSavings;
+      assertEquals (diff, 0); 
+      assertEquals(jsonObject.get("code").toString(), "200");
+      
+    }
   }
 
 
   @Test
   @Order(10)
   public void confirmValidItemName() throws Exception {
-
+    System.out.println("\nTesting confirm item\n");
     DatabaseJdbc database = Controller.getDb();
-    User user = DatabaseJdbc.getUser(database, "User", "105222900313734280075");
+    User user = DatabaseJdbc.getUser(database, "User", "123");
     oldSavings = user.getSavings();
     
-    this.base = new URL("http://localhost:" + port + "/confirm");
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-    Map<String, Object> map = new HashMap<>();
-    // map.put("item_number", "87525200015");
-
-    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
-    ResponseEntity<String> response = template.postForEntity(base.toString(),
-        entity, String.class);
-
-    System.out.println("\nconfirm valid item\n" + response.getBody() + "\n");
+//    this.base = new URL("http://localhost:" + port + "/confirm");
+//
+//    HttpHeaders headers = new HttpHeaders();
+//    headers.setContentType(MediaType.APPLICATION_JSON);
+//    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//
+//    Map<String, Object> map = new HashMap<>();
+//    // map.put("item_number", "87525200015");
+//
+//    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
+//    ResponseEntity<String> response = template.postForEntity(base.toString(),
+//        entity, String.class);
     
-    DatabaseJdbc updatedDatabase = Controller.getDb(); 
-    User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075"); 
-    newSavings = updatedUser.getSavings(); 
-    
-    System.out.println("Old savings :" + oldSavings);
-    System.out.println("New savings :" + newSavings);
-    
-    double diff = newSavings - oldSavings;
-    assert (diff > 0); 
-    
-    JsonObject jsonObject = new JsonParser().parse(response.getBody())
-        .getAsJsonObject();
+    HttpClient httpclient = HttpClients.createDefault();
+    HttpPost httppost = new HttpPost("http://localhost:" + port + "/select_purchase");
 
-    assertEquals(jsonObject.get("code").toString(), "200");
+    // Request parameters and other properties.
+    List<NameValuePair> params = new ArrayList<NameValuePair>(2);
+    params.add(new BasicNameValuePair("upc", "7880005592"));
+    params.add(new BasicNameValuePair("lat", "42.06996"));
+    params.add(new BasicNameValuePair("lon", "-80.1919"));
+    httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+
+    //Execute and get the response.
+    HttpResponse response = httpclient.execute(httppost);
+    org.apache.http.HttpEntity entity = response.getEntity();
+
+    if (entity != null) {
+      String result = EntityUtils.toString(entity);
+      System.out.println("\nconfirm result: " + result);
+      JSONObject jsonObject = new JSONObject(result);
+      
+      DatabaseJdbc updatedDatabase = Controller.getDb(); 
+      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "123"); 
+      newSavings = updatedUser.getSavings(); 
+      
+      System.out.println("Old savings :" + oldSavings);
+      System.out.println("New savings :" + newSavings);
+      
+      double diff = newSavings - oldSavings;
+      //assert (diff > 0); 
+      assertEquals(jsonObject.get("code").toString(), "200");
+      
+    }
     
   }
 
