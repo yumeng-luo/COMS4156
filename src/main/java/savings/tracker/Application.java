@@ -51,6 +51,7 @@ public class Application extends WebSecurityConfigurerAdapter {
        * DatabaseJdbc.deleteTable(database, "Item"); // end here
        * 
        */
+      //DatabaseJdbc.deleteTable(database, "Purchase");
 
       DatabaseJdbc.createLoginTable(database, "User");
       DatabaseJdbc.createItemTable(database, "Item");
@@ -134,5 +135,6 @@ public class Application extends WebSecurityConfigurerAdapter {
     source.registerCorsConfiguration("/**", configuration);
     return source;
   }
+  
 
 }

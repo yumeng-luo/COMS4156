@@ -23,7 +23,7 @@ public class EmailTest {
     fromEmail.setName("Savings Tracker Team");
     fromEmail.setEmail("ASE.email.api@gmail.com");
     
-    assertEquals(SendGridEmailer.buildDynamicTemplate().getFrom(), fromEmail);
+    assertEquals(SendGridEmailer.buildDynamicTemplate("ASE.email.api@gmail.com").getFrom(), fromEmail);
   }
   
   
@@ -31,7 +31,7 @@ public class EmailTest {
   @Order(2)
   public void sendEmailTest() throws IOException {
     
-    Mail mail = SendGridEmailer.buildDynamicTemplate();
+    Mail mail = SendGridEmailer.buildDynamicTemplate("ASE.email.api@gmail.com");
     assertEquals(SendGridEmailer.send(mail, System.getenv("SENDGRID_API_KEY")), true);
   }
   

@@ -96,7 +96,7 @@ public class DatabaseJdbc {
     try {
       String sql = String.format(
           "CREATE TABLE IF NOT EXISTS %s (%s, %s, %s, %s, %s)", tableName,
-          "USER_ID text PRIMARY KEY", "DATE TEXT", "ITEM_NAME TEXT", "PRICE DOUBLE",
+          "USER_ID text", "DATE TEXT", "ITEM_NAME TEXT", "PRICE DOUBLE",
           "SAVINGS DOUBLE");
       stmt = c.prepareStatement(sql);
 
