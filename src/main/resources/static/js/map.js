@@ -85,7 +85,7 @@ function nearbyCallback(results, status) {
 }
 
 // Set markers at the location of each place result
-	function createMarkers(places) {
+function createMarkers(places) {
   	places.forEach(place => {
         let marker = new google.maps.Marker({
            	position: place.geometry.location,
