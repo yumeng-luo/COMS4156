@@ -28,6 +28,243 @@
 	<!-- MDB core JavaScript -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
     <script type="text/javascript">
+let pos;
+let map;
+let bounds;
+let infoWindow;
+let currentInfoWindow;
+let service;
+let infoPane;
+function initMap() {
+    bounds = new google.maps.LatLngBounds();
+    infoWindow = new google.maps.InfoWindow;
+    currentInfoWindow = infoWindow;
+    infoPane = document.getElementById('panel');
+
+    if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+        pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+        };
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: pos,
+            zoom: 15
+        });
+        bounds.extend(pos);
+
+        infoWindow.setPosition(pos);
+        infoWindow.setContent('Location found.');
+        infoWindow.open(map);
+        map.setCenter(pos);
+        getNearbyPlaces(pos);
+    }, () => {
+        handleLocationError(true, infoWindow);
+    });
+    } else {
+        handleLocationError(false, infoWindow);
+    }
+}
+
+function handleLocationError(browserHasGeolocation, infoWindow) {
+        pos = {lat: -33.856, lng: 151.215};
+        map = new google.maps.Map(document.getElementById('map'), {
+        center: pos,
+        zoom: 15
+    });
+
+    infoWindow.setPosition(pos);
+    infoWindow.setContent(browserHasGeolocation ?
+    'Geolocation permissions denied. Using default location.' :
+    'Error: Your browser doesn\'t support geolocation.');
+    infoWindow.open(map);
+    currentInfoWindow = infoWindow;
+
+    getNearbyPlaces(pos);
+}
+function getNearbyPlaces(position) {
+    let request = {
+        location: position,
+        rankBy: google.maps.places.RankBy.DISTANCE,
+        keyword: 'WalMart Target'
+    };
+
+    service = new google.maps.places.PlacesService(map);
+    service.nearbySearch(request, nearbyCallback);
+}
+
+function nearbyCallback(results, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+      	createMarkers(results);
+      	results.forEach(place => {
+    	var paragraph = document.getElementById("list");
+        	paragraph.innerHTML += place.name;
+        	paragraph.innerHTML += "<br />"
+      	})
+    }
+}
+
+	function createMarkers(places) {
+  	places.forEach(place => {
+        let marker = new google.maps.Marker({
+           	position: place.geometry.location,
+            map: map,
+            title: place.name
+        });
+
+        google.maps.event.addListener(marker, 'click', () => {
+            let request = {
+            placeId: place.place_id,
+            fields: ['name', 'formatted_address', 'geometry', 'rating',
+                'website', 'photos']
+            };
+            service.getDetails(request, (placeResult, status) => {
+            showDetails(placeResult, marker, status)
+            });
+    	});
+
+      	bounds.extend(place.geometry.location);
+      	});
+    map.fitBounds(bounds);
+	}
+
+function showDetails(placeResult, marker, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+     	let placeInfowindow = new google.maps.InfoWindow();
+      	placeInfowindow.setContent('<div><strong>' + placeResult.name +
+          	'</strong><br>' + 'Rating: ' + placeResult.rating + '</div>');
+      	placeInfowindow.open(marker.map, marker);
+      	currentInfoWindow.close();
+      	currentInfoWindow = placeInfowindow;
+      	showPanel(placeResult);
+    } else {
+      	console.log('showDetails failed: ' + status);
+    }
+}
+
+let items_list;
+let search_ind;
+let alt_list;
+function generate_searched(items) {
+  document.getElementById("map").style.display="none";
+  document.getElementById("alt_name").innerHTML="";
+  results=document.getElementById('results');
+  item_list=items;
+  let n=items.length;
+  let bt;
+  let i;
+
+  results.innerHTML='';
+
+  for (i =0; i<n; ++i) {
+    bt=document.createElement("button");
+    bt.type="button";
+    bt.setAttribute("onclick","select_search("+i+")");
+    bt.setAttribute("class", "list-group-item list-group-item-action")
+    bt.innerHTML = items[i].name+" $"+items[i].price;
+    results.appendChild(bt);
+  }
+}
+function show_alt(item_index) {
+  item=item_list[item_index];
+  search_ind=item_index;
+  document.getElementById('results').innerHTML="";
+  document.getElementById("alt_name").innerHTML="You chose "+item.name+" $"+item.price+", <br /> here are some alternatives:";
+  document.getElementById("map").style.display="block";
+  request_alternatives();
+}
+
+function show_confirm(item_index) {
+  fin_item=alt_list[item_index];
+  ori_item=item_list[search_ind];
+  document.getElementById('alt_results').innerHTML="";
+  document.getElementById('alt_name').innerHTML="";
+  document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You haved saved $"+(ori_item.price-fin_item.price);
+  confirm_purchase();
+}
+
+function generate_alt(items) {
+  console.log(items);
+  alt_list=items;
+  results=document.getElementById('alt_results');
+  let n=items.length;
+  let bt;
+  let i;
+
+  results.innerHTML='';
+
+  for (i =0; i<n; ++i) {
+    bt=document.createElement("button");
+    bt.type="button";
+    bt.setAttribute("onclick","select_alternative("+items[i].barcode+","+i+")");
+    bt.setAttribute("class", "list-group-item list-group-item-action")
+    bt.innerHTML = items[i].name+" $"+items[i].price;
+    results.appendChild(bt);
+  }
+}
+async function init_search() {
+
+      searched_item=document.getElementById("search_bar").value
+
+      const response = await fetch("/search", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'item='+searched_item+'&lat=37.7510&lon=-97.8220'
+      });
+      generate_searched(await response.json());
+  }
+
+function select_search(item_index) {
+    console.log(item_index);
+    const response = fetch ("/select_item", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'item_number='+item_index
+    });
+    show_alt(item_index);
+} 
+
+async function request_alternatives() {
+  const response = await fetch ("/alternatives", {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: 'lat=37.7510&lon=-97.8220&CHEAPER=false&CLOSER=false&SAME=false'
+  });
+  generate_alt(await response.json());
+}
+
+function select_alternative(upc,item_index) {
+    var xhttp = new XMLHttpRequest(); 
+    xhttp.onreadystatechange = function() { 
+      if (this.readyState == 4 && this.status == 200) { 
+        var Data = JSON.parse(this.responseText);
+        localStorage.setItem("final_selection", Data.message);
+      }
+    };
+    xhttp.open("POST", "/select_purchase", true);
+    xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhttp.send('upc='+upc);
+    show_confirm(item_index);
+}
+
+function confirm_purchase() {
+    var xhttp = new XMLHttpRequest(); 
+    xhttp.onreadystatechange = function() { 
+      if (this.readyState == 4 && this.status == 200) { 
+        alert("Success! Great job.")
+      }
+    };
+    xhttp.open("POST", "/confirm", true);
+    xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhttp.send();
+} 
+
 	    $.get("/user", function(data) {
 	        $("#user").html(data.name);
 	        $(".unauthenticated").hide()
@@ -57,7 +294,6 @@
 		        || settings.type == 'DELETE') {
 		      if (!(/^http:.*/.test(settings.url) || /^https:.*/
 		        .test(settings.url))) {
-		        // Only send the token to relative URLs i.e. locally.
 		        xhr.setRequestHeader("X-XSRF-TOKEN",
 		          Cookies.get('XSRF-TOKEN'));
 		      }
@@ -86,7 +322,7 @@
 	</div>
 	<div class="container unauthenticated">
 	  <div>
-	    With Google: <a href="oauth2/authorization/google">click here</a>
+	    With Google: <a href="/oauth2/authorization/google">click here</a>
 	  </div>
 	</div>
 	<div class="container authenticated" style="display:none">
@@ -114,154 +350,16 @@
 	<div class="container" id="alt_name"></div>
 	<div class="container" id="confirm_mesg"></div>
 
-	<div class="container">
-		<div id='alt_results' class="list-group"></div>
-	</div>
-
 	<div class="container" id="map" style="display:none">
 		<script type="text/javascript" >
-			let pos;
-			let map;
-			let bounds;
-			let infoWindow;
-			let currentInfoWindow;
-			let service;
-			let infoPane;
-			function initMap() {
-			    bounds = new google.maps.LatLngBounds();
-			    infoWindow = new google.maps.InfoWindow;
-			    currentInfoWindow = infoWindow;
-			    infoPane = document.getElementById('panel');
-			
-			    if (navigator.geolocation) {
-			    navigator.geolocation.getCurrentPosition(position => {
-			        pos = {
-			            lat: position.coords.latitude,
-			            lng: position.coords.longitude
-			        };
-			        map = new google.maps.Map(document.getElementById('map'), {
-			            center: pos,
-			            zoom: 15
-			        });
-			        bounds.extend(pos);
-			
-			        infoWindow.setPosition(pos);
-			        infoWindow.setContent('Location found.');
-			        infoWindow.open(map);
-			        map.setCenter(pos);
-			
-			        // Call Places Nearby Search on user's location
-			        getNearbyPlaces(pos);
-			    }, () => {
-			        // Browser supports geolocation, but user has denied permission
-			        handleLocationError(true, infoWindow);
-			    });
-			    } else {
-			        // Browser doesn't support geolocation
-			        handleLocationError(false, infoWindow);
-			    }
-			}
-			
-			// Handle a geolocation error
-			function handleLocationError(browserHasGeolocation, infoWindow) {
-			    // Set default location to Sydney, Australia
-			        pos = {lat: -33.856, lng: 151.215};
-			        map = new google.maps.Map(document.getElementById('map'), {
-			        center: pos,
-			        zoom: 15
-			    });
-			
-			    // Display an InfoWindow at the map center
-			    infoWindow.setPosition(pos);
-			    infoWindow.setContent(browserHasGeolocation ?
-			    'Geolocation permissions denied. Using default location.' :
-			    'Error: Your browser doesn\'t support geolocation.');
-			    infoWindow.open(map);
-			    currentInfoWindow = infoWindow;
-			
-			    // Call Places Nearby Search on the default location
-			    getNearbyPlaces(pos);
-			}
-			function getNearbyPlaces(position) {
-			    let request = {
-			        location: position,
-			        rankBy: google.maps.places.RankBy.DISTANCE,
-			        keyword: 'WalMart Target'
-			    };
-			
-			    service = new google.maps.places.PlacesService(map);
-			    service.nearbySearch(request, nearbyCallback);
-			}
-			
-			// Handle the results (up to 20) of the Nearby Search
-			function nearbyCallback(results, status) {
-			    if (status == google.maps.places.PlacesServiceStatus.OK) {
-			      	createMarkers(results);
-			      	// output status
-			      	results.forEach(place => {
-			    	var paragraph = document.getElementById("list");
-			        	paragraph.innerHTML += place.name;
-			        	paragraph.innerHTML += "<br />"
-			      	})
-			    }
-			}
-			
-			// Set markers at the location of each place result
-				function createMarkers(places) {
-			  	places.forEach(place => {
-			        let marker = new google.maps.Marker({
-			           	position: place.geometry.location,
-			            map: map,
-			            title: place.name
-			        });
-			
-			        // Add click listener to each marker
-			        google.maps.event.addListener(marker, 'click', () => {
-			            let request = {
-			            placeId: place.place_id,
-			            fields: ['name', 'formatted_address', 'geometry', 'rating',
-			                'website', 'photos']
-			            };
-			
-			            /* Only fetch the details of a place when the user clicks on a marker.
-			            * If we fetch the details for all place results as soon as we get
-			            * the search response, we will hit API rate limits. */
-			            service.getDetails(request, (placeResult, status) => {
-			            showDetails(placeResult, marker, status)
-			            });
-			    	});
-			
-			    	// Adjust the map bounds to include the location of this marker
-			      	bounds.extend(place.geometry.location);
-			      	});
-			  	/* Once all the markers have been placed, adjust the bounds of the map to
-			     * show all the markers within the visible area. */
-			    map.fitBounds(bounds);
-				}
-			
-			// Builds an InfoWindow to display details above the marker
-			function showDetails(placeResult, marker, status) {
-			    if (status == google.maps.places.PlacesServiceStatus.OK) {
-			     	let placeInfowindow = new google.maps.InfoWindow();
-			      	placeInfowindow.setContent('<div><strong>' + placeResult.name +
-			          	'</strong><br>' + 'Rating: ' + placeResult.rating + '</div>');
-			      	placeInfowindow.open(marker.map, marker);
-			      	currentInfoWindow.close();
-			      	currentInfoWindow = placeInfowindow;
-			      	showPanel(placeResult);
-			    } else {
-			      	console.log('showDetails failed: ' + status);
-			    }
-			}
-			
-			//module.exports = { initMap: initMap, handleLocationError: handleLocationError, 
-			//    getNearbyPlaces: getNearbyPlaces, nearbyCallback: nearbyCallback, createMarkers: createMarkers, 
-			//    showDetails: showDetails, pos: pos, map: map, bounds: bounds, infoWindow: infoWindow,
-			//    currentInfoWindow: currentInfoWindow, service: service, infoPane: infoPane }
+
 		</script>
 		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPs4HhHB9JaJOfOAERq9sxdwZuxj6KbaM&libraries=places&callback=initMap">
 		</script>
 	</div>
 
+	<div class="container">
+		<div id='alt_results' class="list-group"></div>
+	</div>
 </body>
 </html>

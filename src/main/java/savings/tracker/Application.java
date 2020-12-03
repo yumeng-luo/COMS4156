@@ -61,13 +61,14 @@ public class Application extends WebSecurityConfigurerAdapter {
       DatabaseJdbc.createStoreTable(database, "Store");
       DatabaseJdbc.createPurchaseTable(database, "Purchase");
 
+      
+      // can skip this to save time 
       /*
-       * // can skip this to save time List<Store> stores =
-       * WegmanApi.getStores();
-       * 
-       * for (int i = 0; i < stores.size(); i++) {
-       * DatabaseJdbc.addStore(database, "Store", stores.get(i)); }
-       */
+      List<Store> stores = WegmanApi.getStores();
+       
+      for (int i = 0; i < stores.size(); i++) {
+      DatabaseJdbc.addStore(database, "Store", stores.get(i)); }
+      */
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
