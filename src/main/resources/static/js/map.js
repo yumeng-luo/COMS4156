@@ -115,7 +115,7 @@ function createMarkers(places) {
   	/* Once all the markers have been placed, adjust the bounds of the map to
      * show all the markers within the visible area. */
     map.fitBounds(bounds);
-	}
+}
 
 // Builds an InfoWindow to display details above the marker
 function showDetails(placeResult, marker, status) {
