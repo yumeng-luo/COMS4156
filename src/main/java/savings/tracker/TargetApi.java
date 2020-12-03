@@ -67,7 +67,7 @@ public class TargetApi {
    * @param zipcode zipcode 
    * @return location id
    */
-  public static List<Store> getStoreIdList(double zipcode) throws UnirestException {
+  public static List<Store> getStoreIdList(int zipcode) throws UnirestException {
     
     List<Store> list = new ArrayList<Store>();
     int count = 0;
@@ -271,7 +271,7 @@ public class TargetApi {
    * @throws UnirestException exception
    * @throws InvalUserInputException exception
    */
-  public static List<Item> getTargetAlternatives(double zip, List<Item> orgList) 
+  public static List<Item> getTargetAlternatives(int zip, List<Item> orgList) 
       throws UnirestException {
     
     List<Store> storeList = getStoreIdList(zip);

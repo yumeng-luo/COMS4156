@@ -20,7 +20,7 @@ public class TargetApiTest {
   @Order(1)
   public void emptyZip() throws UnirestException {
 
-    double emptyZip = 05001;
+    int emptyZip = 05001;
     
     List<Store> storeList = TargetApi.getStoreIdList(emptyZip);
     
@@ -30,7 +30,7 @@ public class TargetApiTest {
   @Test
   @Order(2)
   public  void invalZip() throws UnirestException {
-    double invalZip = 05;
+    int invalZip = -5;
 
     List<Store> storeList = TargetApi.getStoreIdList(invalZip);
     
@@ -41,7 +41,7 @@ public class TargetApiTest {
   @Order(3)
   public void validZipList() throws UnirestException {
 
-    double validZip = 10025;
+     int validZip = 10025;
     int locationId = 1263;
     
     List<Store> storeList = TargetApi.getStoreIdList(validZip);
@@ -67,8 +67,8 @@ public class TargetApiTest {
   @Test
   @Order(5)
   public void invalidTcin() throws UnirestException {
-    int locationId = 1263;
-    String invalidTcin = "06";
+    int locationId = -1263;
+    String invalidTcin = "-06";
 
     Item item = TargetApi.getItem(locationId, invalidTcin);
     
@@ -144,6 +144,60 @@ public class TargetApiTest {
     int zip = TargetApi.getZip(lat, lon);
        
     assertEquals(zip, -1);
+  }
+  
+  @Test
+  @Order(10)
+  public void invalidZipSecList() throws UnirestException {
+
+    int validZip = -10;
+    int locationId = 1263;
+    
+    List<Store> storeList = TargetApi.getSecStoreIdList(validZip);
+    
+    assert (storeList == null);
+    
+  }
+  
+  
+  @Test
+  @Order(11)
+  public void getEmptyItemList() throws UnirestException {
+   
+    List<Item> itemList = new ArrayList<Item>();
+    List<Store> storeList = new ArrayList<Store>();
+    
+    List<Item> alterItems = TargetApi.getItemList(storeList, itemList);
+    
+    assertNotEquals(alterItems,null);
+  }
+  
+  @Test
+  @Order(12)
+  public void getInvalidAlternativeList() throws UnirestException {
+   
+    int validZip = -10;
+    List<Item> itemList = new ArrayList<Item>();
+    
+    List<Item> alterItems = TargetApi.getTargetAlternatives(validZip, itemList);
+    
+    assertEquals(alterItems,null);
+  }
+  
+  @Test
+  @Order(13)
+  public void getValidAlternativeList() throws UnirestException {
+   
+    int validZip = 10025;
+    Item item1 = new Item();
+    item1.setTcin("54191097");
+    List<Item> itemList = new ArrayList<Item>();
+    itemList.add(item1);
+    
+    
+    List<Item> alterItems = TargetApi.getTargetAlternatives(validZip, itemList);
+    
+    assertNotEquals(alterItems,null);
   }
   
 
