@@ -282,6 +282,11 @@ public class Controller {
 
     System.out.println("\nstarting alter\n");
     System.out.flush();
+    
+    if ((cheaper != false && cheaper != true) || (closer != false && closer != true) || (same != false && same != true)) {
+      List<Item> itemList = new ArrayList<Item>();
+      return itemList;
+    }
 
     // chaneg switches accordingly
     WegmanApi.setMustbecheaper(cheaper);
@@ -475,6 +480,9 @@ public class Controller {
       @RequestParam(value = "lat", defaultValue = "37.7510") String lat,
       @RequestParam(value = "lon", defaultValue = "-97.8220") String lon,
       @AuthenticationPrincipal OAuth2User principal) {
+    if (Integer.parseInt(lat) < -90 || Integer.parseInt(lat) > 90 || Integer.parseInt(lon) > 180 || Integer.parseInt(lon) < -180) {
+      return new Message(400, "Invalid longitude/latitude input");
+    }
     String id;
     if (principal != null) {
       id = principal.getAttribute("sub");

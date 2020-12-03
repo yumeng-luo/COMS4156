@@ -66,6 +66,110 @@ public class ControllerTest {
         .andExpect(content().string(equalTo("{\"code\":400,\"message\":\"Negative index numbers are not allowed.\"}")));
   }
 
+  @Test
+  public void postalternativesValid() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/alternatives").accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  public void postalternativesInvalid() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/alternatives?CHEAPER=39?CLOSER=2?SAME=10").accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+  
+  @Test
+  public void postSelectPurchaseValidBoundaryCondition1() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/select_purchase?lat=0&lon=0").accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{'code':200}", false));
+  }
+  
+  @Test
+  public void postSelectPurchaseValidBoundaryCondition2() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/select_purchase?lat=-90&lon=-180").accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{'code':200}", false));
+  }
+  
+  @Test
+  public void postSelectPurchaseValidBoundaryCondition3() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/select_purchase?lat=90&lon=-180").accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{'code':200}", false));
+  }
+  
+  @Test
+  public void postSelectPurchaseValidBoundaryCondition4() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/select_purchase?lat=-90&lon=180").accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{'code':200}", false));
+  }
+  
+  @Test
+  public void postSelectPurchaseValidBoundaryCondition5() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/select_purchase?lat=90&lon=180").accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{'code':200}", false));
+  }
+  
+  @Test
+  public void postSelectPurchaseInvalidBoundaryCondition1() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/select_purchase?lat=-91&lon=0").accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{'code':400}", false));
+  }
+  
+  @Test
+  public void postSelectPurchaseInvalidBoundaryCondition2() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/select_purchase?lat=0&lon=-181").accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{'code':400}", false));
+  }
+  
+  @Test
+  public void postSelectPurchaseInvalidBoundaryCondition3() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/select_purchase?lat=-91&lon=-181").accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{'code':400}", false));
+  }
+  
+  @Test
+  public void postSelectPurchaseInvalidBoundaryCondition4() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/select_purchase?lat=91&lon=0").accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{'code':400}", false));
+  }
+  
+  @Test
+  public void postSelectPurchaseInvalidBoundaryCondition5() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/select_purchase?lat=0&lon=181").accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{'code':400}", false));
+  }
+  
+  @Test
+  public void postSelectPurchaseInvalidBoundaryCondition6() throws Exception {
+    Thread.sleep(2000);
+    mvc.perform(MockMvcRequestBuilders
+        .post("/select_purchase?lat=91&lon=181").accept(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("{'code':400}", false));
+  }
+
   /*
    * @Test public void postAlternatives() throws Exception {
    * mvc.perform(MockMvcRequestBuilders
