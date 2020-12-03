@@ -368,28 +368,27 @@ const createGoogleMapsMock = (libraries = []) => {
       ik: 3,
     },
     places: {
-	  AutocompleteService: () => {},
-	  PlacesServiceStatus: {
-        INVALID_REQUEST: 'INVALID_REQUEST',
-	    NOT_FOUND: 'NOT_FOUND',
-        OK: 'OK',
-        OVER_QUERY_LIMIT: 'OVER_QUERY_LIMIT',
-	    REQUEST_DENIED: 'REQUEST_DENIED',
-        UNKNOWN_ERROR: 'UNKNOWN_ERROR',
-	    ZERO_RESULTS: 'ZERO_RESULTS',
-	  },
-	  setMap: function() {},
-	  PlacesService: jest.fn().mockImplementation(function(mapDiv) {
-		this.mapDiv = mapDiv;
-		createMVCObject(this);
-		createMockFuncsFromArray(this, [
-			'nearbySearch',
-		]);
-	  }),
-	  RankBy: {
-	  	DISTANCE: 'distance',
-	  },
-      
+  	  AutocompleteService: () => {},
+  	  PlacesServiceStatus: {
+          INVALID_REQUEST: 'INVALID_REQUEST',
+  	    NOT_FOUND: 'NOT_FOUND',
+          OK: 'OK',
+          OVER_QUERY_LIMIT: 'OVER_QUERY_LIMIT',
+  	    REQUEST_DENIED: 'REQUEST_DENIED',
+          UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+  	    ZERO_RESULTS: 'ZERO_RESULTS',
+  	  },
+  	  setMap: function() {},
+  	  PlacesService: jest.fn().mockImplementation(function(mapDiv) {
+    		this.mapDiv = mapDiv;
+    		createMVCObject(this);
+    		createMockFuncsFromArray(this, [
+    			'nearbySearch',
+    		]);
+  	  }),
+  	  RankBy: {
+  	  	DISTANCE: 'distance',
+  	  },
 	},
     __gjsload__: function() {},
     event: {
@@ -439,20 +438,16 @@ describe('createGoogleMapsMock', () => {
     expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
   });
 
-  // test('test handleLocationError(false)', () => {
-  //   infoWindow = new google.maps.InfoWindow;
-  //   GoogleMapsModule.handleLocationError(infoWindow, false);
-  //   expect(google.maps.Map).toHaveBeenCalledTimes(1);
-  //   expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
-  //   expect(google.maps.LatLngBounds).toHaveBeenCalledTimes(1);
-  // });
+  test('test handleLocationError(true)', () => {
+    let infoWindow = new google.maps.InfoWindow;
+    GoogleMapsModule.handleLocationError(false, infoWindow);
+    expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
+  });
 
-  // test('test getNearbyPlaces()', () => {
-  //   GoogleMapsModule.getNearbyPlaces();
-  //   expect(google.maps.Map).toHaveBeenCalledTimes(1);
-  //   expect(google.maps.InfoWindow).toHaveBeenCalledTimes(1);
-  //   expect(google.maps.LatLngBounds).toHaveBeenCalledTimes(1);
-  // });
+  test('test getNearbyPlaces()', () => {
+    GoogleMapsModule.getNearbyPlaces();
+    expect(google.maps.places.PlacesService).toHaveBeenCalledTimes(1);
+  });
 
   // test('test nearbyCallback()', () => {
   //   GoogleMapsModule.nearbyCallback();
