@@ -44,7 +44,7 @@ public class SendGridEmailer {
    * builds mail class.
    * @return mail object
    */
-  public static Mail buildDynamicTemplate() {
+  public static Mail buildDynamicTemplate(String email) {
     Mail mail = new Mail();
 
     Email fromEmail = new Email();
@@ -55,7 +55,7 @@ public class SendGridEmailer {
     mail.setTemplateId("d-8bbecf6e66154f6596466202edb71ccf");
 
     Personalization personalization = new Personalization();
-    personalization.addTo(new Email("jch2169@columbia.edu"));
+    personalization.addTo(new Email(email));
     personalization.addDynamicTemplateData("weekly-total",
         "This week you saved $5.00."); 
     personalization.addDynamicTemplateData("cumul-total",
@@ -69,8 +69,8 @@ public class SendGridEmailer {
    * helper function that creates and sends email.
    * @throws IOException exception
    */
-  public static void sendDynamicEmail() throws IOException {
-    final Mail dynamicTemplate = buildDynamicTemplate();
+  public static void sendDynamicEmail(String email) throws IOException {
+    final Mail dynamicTemplate = buildDynamicTemplate(email);
     send(dynamicTemplate, System.getenv("SENDGRID_API_KEY"));
   }
   
@@ -81,7 +81,7 @@ public class SendGridEmailer {
    */
   public static void main(String[] args) throws IOException {
     
-    sendDynamicEmail();
+    sendDynamicEmail("ASE.email.api@gmail.com");
 
   }
 }
