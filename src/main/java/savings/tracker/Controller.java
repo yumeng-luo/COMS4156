@@ -126,6 +126,10 @@ public class Controller {
      * subsequent /search calls. Also, reduce database operations (taking too
      * long on the frontend).
      */
+    if (item.length() > 50) {
+      List<Item> itemList = new ArrayList<Item>();
+      return itemList;
+    }
     String id;
     if (principal != null) {
       id = principal.getAttribute("sub");
@@ -211,6 +215,9 @@ public class Controller {
       @RequestParam(value = "item_number", defaultValue = "0") int itemNumber,
       @AuthenticationPrincipal OAuth2User principal) {
     String id;
+    if (itemNumber < 0) {
+      return new Message(400, "Negative index numbers are not allowed.");
+    }
     if (principal != null) {
       id = principal.getAttribute("sub");
     } else {
