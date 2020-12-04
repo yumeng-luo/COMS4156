@@ -18,7 +18,7 @@ public class TargetApiTest {
   
   @Test
   @Order(1)
-  public void nonEmptyZip() throws UnirestException {
+  public void nonEmptyZip() {
 
     int nonEmptyZip = 05001;
     

@@ -48,27 +48,28 @@ public class TargetApi {
         .get("https://api.bigdatacloud.net/data/reverse-geocode-client?"
             + "latitude=" + lat + "&longitude=" + lon + "&localityLanguage=en")
         .asJson();
+    
 
     JsonNode body = response.getBody();
-    
+
     System.out.println("\nGet zip api response body\n");
     System.out.println(body);
-    
+
     JSONObject bodyJson = body.getObject();
-    
+
     // Work around for travis ci
-    if (bodyJson.getInt("status") == 402) {
+    if (bodyJson.has("status") && bodyJson.getInt("status") == 402) {
       return 94043;
     }
 
-    if (! bodyJson.has("postcode") ) {
+    if (!bodyJson.has("postcode")) {
       return -1;
-    }else {
+    } else {
       int zip = bodyJson.getInt("postcode");
       System.out.println(zip);
       return zip;
     }
-    
+
   }
 
   /**
@@ -87,7 +88,7 @@ public class TargetApi {
     String response = Unirest
         .get("https://target1.p.rapidapi.com/stores/list?zipcode=" + zipcode)
         .header("x-rapidapi-key",
-            "d742520193mshd93d24a0e93b9adp152d18jsncdffefd389e9")
+            "90edf87601msheef53f51133c0f9p149c70jsn62c12b7d797b")
         .header("x-rapidapi-host", "target1.p.rapidapi.com").asString()
         .getBody();
 
@@ -157,7 +158,7 @@ public class TargetApi {
     String response = Unirest
         .get("https://target1.p.rapidapi.com/stores/list?zipcode=" + zipcode)
         .header("x-rapidapi-key",
-            "d742520193mshd93d24a0e93b9adp152d18jsncdffefd389e9")
+            "90edf87601msheef53f51133c0f9p149c70jsn62c12b7d797b")
         .header("x-rapidapi-host", "target1.p.rapidapi.com").asString()
         .getBody();
 
@@ -221,7 +222,7 @@ public class TargetApi {
         .get("https://target1.p.rapidapi.com/products/get-details?tcin=" + tcin
             + "&store_id=" + storeId)
         .header("x-rapidapi-key",
-            "d742520193mshd93d24a0e93b9adp152d18jsncdffefd389e9")
+            "90edf87601msheef53f51133c0f9p149c70jsn62c12b7d797b")
         .header("x-rapidapi-host", "target1.p.rapidapi.com").asJson();
 
     JsonNode body = response.getBody();
