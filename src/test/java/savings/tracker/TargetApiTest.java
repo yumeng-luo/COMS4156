@@ -127,6 +127,9 @@ public class TargetApiTest {
   @Test
   @Order(8)
   public void validCoords() throws UnirestException {
+    
+    System.out.println("\n starting valid coords test \n");
+    
     double lat = 37.42158889770508;
     double lon = -122.08370208740234;
 

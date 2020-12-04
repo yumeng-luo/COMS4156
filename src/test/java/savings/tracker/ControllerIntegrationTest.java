@@ -86,26 +86,6 @@ public class ControllerIntegrationTest {
   @Order(4)
   public void searchValidItemName() throws Exception {
     System.out.println("\nTesting seach valid item\n");
-    // Thread.sleep(20000);
-    this.base = new URL("http://localhost:" + port + "/search");
-
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.setContentType(MediaType.APPLICATION_JSON);
-//    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//
-//    Map<String, Object> map = new HashMap<>();
-//    map.put("item", "whole milk");
-//    map.put("lat", "43.663");
-//    map.put("lon", "-72.368");
-//    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
-//
-//    ResponseEntity<String> response = template.postForEntity(base.toString(),
-//        entity, String.class);
-//
-//    JSONArray firstArray = new JSONArray(response.getBody());
-//    JSONObject firstObject = firstArray.getJSONObject(0);
-//
-//    assert (firstObject.get("name").toString() != null);
 
     HttpClient httpclient = HttpClients.createDefault();
     HttpPost httppost = new HttpPost("http://localhost:" + port + "/search");
@@ -141,24 +121,6 @@ public class ControllerIntegrationTest {
   @Order(6)
   public void selectValidItemName() throws Exception {
     System.out.println("\nTesting select valid item\n");
-    // Thread.sleep(2000);
-//    this.base = new URL("http://localhost:" + port + "/select_item");
-//
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.setContentType(MediaType.APPLICATION_JSON);
-//    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//
-//    Map<String, Object> map = new HashMap<>();
-//    map.put("item_number", "1");
-//
-//    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
-//    ResponseEntity<String> response = template.postForEntity(base.toString(),
-//        entity, String.class);
-//
-//    JsonObject jsonObject = new JsonParser().parse(response.getBody())
-//        .getAsJsonObject();
-//
-//    assertEquals(jsonObject.get("code").toString(), "200");
 
     HttpClient httpclient = HttpClients.createDefault();
     HttpPost httppost = new HttpPost(
@@ -191,25 +153,6 @@ public class ControllerIntegrationTest {
     DatabaseJdbc database = Controller.getDb();
     User user = DatabaseJdbc.getUser(database, "User", "123");
     oldSavings = user.getSavings();
-
-//    this.base = new URL("http://localhost:" + port + "/alternatives");
-
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.setContentType(MediaType.APPLICATION_JSON);
-//    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//
-//    Map<String, Object> map = new HashMap<>();
-//    map.put("lat", "37.7510");
-//    map.put("lon", "-97.8220");
-//
-//    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
-//    ResponseEntity<String> response = template.postForEntity(base.toString(),
-//        entity, String.class);
-
-//    System.out.println("\nALTERNATIVE HEADER\n" + response + "\n");
-//    System.out.println("\nALTERNATIVE BODY\n" + response.getBody() + "\n");
-//    JSONArray firstArray = new JSONArray(response.getBody());
-//    JSONObject firstObject = firstArray.getJSONObject(0);
 
     HttpClient httpclient = HttpClients.createDefault();
     HttpPost httppost = new HttpPost(
@@ -300,19 +243,6 @@ public class ControllerIntegrationTest {
     DatabaseJdbc database = Controller.getDb();
     User user = DatabaseJdbc.getUser(database, "User", "123");
     oldSavings = user.getSavings();
-
-//    this.base = new URL("http://localhost:" + port + "/confirm");
-//
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.setContentType(MediaType.APPLICATION_JSON);
-//    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//
-//    Map<String, Object> map = new HashMap<>();
-//    // map.put("item_number", "87525200015");
-//
-//    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
-//    ResponseEntity<String> response = template.postForEntity(base.toString(),
-//        entity, String.class);
 
     HttpClient httpclient = HttpClients.createDefault();
     HttpPost httppost = new HttpPost(

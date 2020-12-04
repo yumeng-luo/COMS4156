@@ -50,6 +50,10 @@ public class TargetApi {
         .asJson();
 
     JsonNode body = response.getBody();
+    
+    System.out.println("\nGet zip api response body\n");
+    System.out.println(body);
+    
     JSONObject bodyJson = body.getObject();
 
     if (bodyJson.get("postcode") == null) {
