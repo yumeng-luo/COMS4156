@@ -56,13 +56,14 @@ public class TargetApi {
     
     JSONObject bodyJson = body.getObject();
 
-    if (bodyJson.get("postcode") == null) {
+    if (! bodyJson.has("postcode") ) {
       return -1;
+    }else {
+      int zip = bodyJson.getInt("postcode");
+      System.out.println(zip);
+      return zip;
     }
-    int zip = bodyJson.getInt("postcode");
-    System.out.println(zip);
-
-    return zip;
+    
   }
 
   /**
