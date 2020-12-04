@@ -48,7 +48,6 @@ public class TargetApi {
         .get("https://api.bigdatacloud.net/data/reverse-geocode-client?"
             + "latitude=" + lat + "&longitude=" + lon + "&localityLanguage=en")
         .asJson();
-    
 
     JsonNode body = response.getBody();
 

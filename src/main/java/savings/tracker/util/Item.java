@@ -25,7 +25,7 @@ public class Item {
     this.lat = lat;
     this.lon = lon;
   }
-  
+
   /**
    * Construct from existing item. make a copy
    * 
@@ -51,8 +51,8 @@ public class Item {
    * Construct from input.
    * 
    */
-  public Item(String name, String barcode, double price, String store, double lat,
-      double lon, String tcin, String sku, String image) {
+  public Item(String name, String barcode, double price, String store,
+      double lat, double lon, String tcin, String sku, String image) {
     this.name = name;
     this.barcode = barcode;
     this.price = price;
@@ -135,5 +135,5 @@ public class Item {
   public void setImage(String image) {
     this.image = image;
   }
-  
+
 }

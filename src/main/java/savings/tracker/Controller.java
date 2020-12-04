@@ -282,8 +282,10 @@ public class Controller {
 
     System.out.println("\nstarting alter\n");
     System.out.flush();
-    
-    if ((cheaper != false && cheaper != true) || (closer != false && closer != true) || (same != false && same != true)) {
+
+    if ((cheaper != false && cheaper != true)
+        || (closer != false && closer != true)
+        || (same != false && same != true)) {
       List<Item> itemList = new ArrayList<Item>();
       return itemList;
     }
@@ -310,7 +312,7 @@ public class Controller {
 //    System.out.println("\n zip " + zip + "\n");
 //    System.out.flush();
 
-    //int zip = TargetApi.getZip(lat, lon);
+    // int zip = TargetApi.getZip(lat, lon);
     List<Item> targetList;
     List<Item> result = new ArrayList<Item>();
 
@@ -338,13 +340,13 @@ public class Controller {
     // get task info from table
     OngoingTask currentTask = new OngoingTask();
     try {
-      
+
       currentTask = DatabaseJdbc.getTask(database, "Task", "Search", "Item",
           id);
     } catch (SQLException e1) {
       e1.printStackTrace();
     }
-    //dummy_result = currentTask.getAlternativeItem();
+    // dummy_result = currentTask.getAlternativeItem();
 
     // save to on going task
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -408,9 +410,8 @@ public class Controller {
 //    System.out.flush();
     // return result;
 
-   
     return currentTask.getAlternativeItem();
-    //return dummy_result;
+    // return dummy_result;
   }
 
   /**
@@ -480,7 +481,8 @@ public class Controller {
       @RequestParam(value = "lat", defaultValue = "37.7510") String lat,
       @RequestParam(value = "lon", defaultValue = "-97.8220") String lon,
       @AuthenticationPrincipal OAuth2User principal) {
-    if (Double.parseDouble(lat) < -90 || Double.parseDouble(lat) > 90 || Double.parseDouble(lon) > 180 || Double.parseDouble(lon) < -180) {
+    if (Double.parseDouble(lat) < -90 || Double.parseDouble(lat) > 90
+        || Double.parseDouble(lon) > 180 || Double.parseDouble(lon) < -180) {
       return new Message(400, "Invalid longitude/latitude input");
     }
     String id;
@@ -570,13 +572,13 @@ public class Controller {
       DatabaseJdbc.addTask(database, "Task", task);
       user.setSavings(user.getSavings() + saving);
       DatabaseJdbc.updatesUser(database, "User", user);
-      
+
       LocalDate currentDate = LocalDate.now();
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
       String strCurrentDate = currentDate.format(formatter);
-      DatabaseJdbc.addPurchaseData(database, "Purchase", finalItem, user.getUserId(), 
-          saving, strCurrentDate);
-     
+      DatabaseJdbc.addPurchaseData(database, "Purchase", finalItem,
+          user.getUserId(), saving, strCurrentDate);
+
     } catch (SQLException e) {
       e.printStackTrace();
     }

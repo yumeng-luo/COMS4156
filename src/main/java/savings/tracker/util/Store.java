@@ -8,9 +8,9 @@ public class Store {
   private double lon;
 
   public Store() {
-    
+
   }
-  
+
   /**
    * Construct from input.
    * 
