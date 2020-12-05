@@ -290,8 +290,7 @@ public class TargetApi {
           item.setStore("Target");
           item.setPrice(temp.getPrice());
           item.setTcin(temp.getTcin());
-          item.setImage(
-              "https://1000logos.net/wp-content/uploads/2017/06/Target-Logo.png");
+          item.setImage(temp.getImage());
           item.setLat(storeList.get(j).getLat());
           item.setLon(storeList.get(j).getLon());
   
