@@ -62,16 +62,34 @@ function generate_searched(items) {
   let bt;
   let i;
 
-  results.innerHTML='';
+  //results.innerHTML='<div class="row">'+
+'	    <div class="col-12">'+
+'	      <h6 class="text-muted">Please Select An Item Below:</h6> '+
+'	      '+
+'	      <ul class="list-group ">';
+  var x = '';
+  //var element = document.getElementById("myvar");
 
   for (i =0; i<n; ++i) {
-    bt=document.createElement("button");
-    bt.type="button";
-    bt.setAttribute("onclick","select_search("+i+")");
-    bt.setAttribute("class", "list-group-item list-group-item-action")
-    bt.innerHTML = items[i].name+", $"+items[i].price+", "+storeDist(items[i].lat,items[i].lon)+" km";
-    results.appendChild(bt);
+    x = x+ 
+'	        <button onclick = "select_search('+i+')" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
+'	          <div class="column" >'+
+'	    		<h5>'+items[i].name+'</h5>'+
+'	    		<p>Price: $'+items[i].price+'</p>'+
+'	    		<small>Store Name: '+items[i].store+'</small>'+
+'	  		  </div>'+
+'	  		  <div class="column" >'+
+'	    		<small>'+storeDist(items[i].lat,items[i].lon)+' km</small>'+
+'	    		<div class="image-parent">'+
+'	        		<img src="'+items[i].image+'" class="img-fluid" alt="item_image" width="100" height="100">'+
+'	     		</div>'+
+'	   		  </div>'+
+'	  	    </button>';
   }
+  results.innerHTML = x +
+'	      </ul>'+
+'	    </div>'+
+'	  </div>';
 }
 //switches to the view for alternate items
 function show_alt(item_index) {
