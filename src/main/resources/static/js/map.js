@@ -41,8 +41,8 @@ function initMap() {
 
 // Handle a geolocation error
 function handleLocationError(browserHasGeolocation, infoWindow) {
-    // Set default location to Sydney, Australia
-        pos = {lat: -33.856, lng: 151.215};
+    // Set default location to campus
+        pos = {lat: 40.8106604, lng: -73.9573358};
         map = new google.maps.Map(document.getElementById('map'), {
         center: pos,
         zoom: 15

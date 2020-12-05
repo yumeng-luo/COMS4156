@@ -53,7 +53,6 @@ public class EndPointHelper {
   public static List<Item> searchItemHelper(DatabaseJdbc database, String item,
       String id, double lat, double lon) throws InterruptedException {
 
-
     // updates user location data
     try {
       User user = DatabaseJdbc.getUser(database, "User", id);
@@ -99,8 +98,23 @@ public class EndPointHelper {
       System.out.flush();
 
     } else {
-      currentTask.setSearchItems(list.get(0));
-      currentTask.setAlternativeItem(list.get(1));
+      List<Item> walmart = Walmart.getItems(database, "Store", list.get(0), lat,
+          lon, "Walmart");
+      List<Item> trader = Walmart.getItems(database, "Store", list.get(0), lat,
+          lon, "Trader Joes");
+      list.get(0).addAll(walmart);
+      list.get(0).addAll(trader);
+      List<Item> sorted = Walmart.sortItemByDistance(lat, lon, list.get(0));
+      currentTask.setSearchItems(sorted);
+      
+      List<Item> walmart2 = Walmart.getItems(database, "Store", list.get(0),
+          lat, lon, "Walmart");
+      List<Item> trader2 = Walmart.getItems(database, "Store", list.get(0), lat,
+          lon, "Trader Joes");
+      list.get(1).addAll(walmart2);
+      list.get(1).addAll(trader2);
+      List<Item> sorted2 = Walmart.sortItemByDistance(lat, lon, list.get(1));
+      currentTask.setAlternativeItem(sorted2);
     }
     try {
       DatabaseJdbc.removeSearch(database, "Search", id + "1");
@@ -203,12 +217,13 @@ public class EndPointHelper {
 
     // adding target searches for those in alternative here
 
-    //    targetList = TargetApi.getTargetAlternatives(zip, currentTask.getAlternativeItem());
-    //    if (targetList != null) {
-    //      for (int i = 0; i < targetList.size(); i++) {
-    //        result.add(targetList.get(i));
-    //      }
-    //    }
+    // targetList = TargetApi.getTargetAlternatives(zip,
+    // currentTask.getAlternativeItem());
+    // if (targetList != null) {
+    // for (int i = 0; i < targetList.size(); i++) {
+    // result.add(targetList.get(i));
+    // }
+    // }
 
     result = filterAlternativeItem(lat, lon, currentTask.getAlternativeItem(),
         currentTask.getInitialItem());
@@ -218,14 +233,28 @@ public class EndPointHelper {
       result = WegmanApi.getAlternativeItems(database, "Store",
           currentTask.getSearchString(), lat, lon,
           currentTask.getInitialItem().getPrice());
+      List<Item> walmart = new ArrayList<Item>();
+      List<Item>  trader = new ArrayList<Item>();
+      try {
+        walmart = Walmart.getItems(database, "Store", result,
+            lat, lon, "Walmart");
+        trader = Walmart.getItems(database, "Store", result, lat,
+            lon, "Trader Joes");
 
-      //      targetList = TargetApi.getSecTargetAlternatives(zip, result);
-      //      if (targetList != null) {
-      //        for (int i = 0; i < targetList.size(); i++) {
-      //          result.add(targetList.get(i));
-      //        }
+        result.addAll(walmart);
+        result.addAll(trader);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
+      // targetList = TargetApi.getSecTargetAlternatives(zip, result);
+      // if (targetList != null) {
+      // for (int i = 0; i < targetList.size(); i++) {
+      // result.add(targetList.get(i));
+      // }
       //
-      //      }
+      // }
       result = filterAlternativeItem(lat, lon, result,
           currentTask.getInitialItem());
     }
@@ -237,10 +266,11 @@ public class EndPointHelper {
       e.printStackTrace();
     }
     // save to ongoing task
-    currentTask.setAlternativeItem(result);
+    List<Item> sorted = Walmart.sortItemByDistance(lat, lon, result);
+    currentTask.setAlternativeItem(sorted);
     try {
       DatabaseJdbc.removeSearch(database, "Search", id + "2");
-      DatabaseJdbc.addSearch(database, "Search", "Item", result, id + "2");
+      DatabaseJdbc.addSearch(database, "Search", "Item", sorted, id + "2");
       DatabaseJdbc.addTask(database, "Task", currentTask);
     } catch (SQLException e) {
       // TODO Auto-generated catch block

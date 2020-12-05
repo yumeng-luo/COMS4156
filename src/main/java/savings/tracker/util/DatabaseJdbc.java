@@ -542,14 +542,15 @@ public class DatabaseJdbc {
     Item result = new Item();
     try {
       c.setAutoCommit(false);
-      System.out.println("Opened database successfully for get");
+      System.out.println("SELECT * FROM " + tableName + " WHERE ID " + " = \""
+          + itemId + "\" and lat  = " + lat + " and lon = " + lon + ";");
 
       stmt = c.createStatement();
       rs = stmt
           .executeQuery("SELECT * FROM " + tableName + " WHERE ID " + " = \""
               + itemId + "\" and lat  = " + lat + " and lon = " + lon + ";");
 
-      if (rs.next()) {
+      if (rs.isBeforeFirst()) {
         result.setBarcode(rs.getString("ID"));
         result.setName(rs.getString("name"));
         result.setPrice(rs.getDouble("price"));
@@ -1562,4 +1563,73 @@ public class DatabaseJdbc {
 
     return savings;
   }
+
+  /**
+   * Return all stores given type with selection.
+   * 
+   * @param jdbc      the database
+   * @param tableName the table name
+   * @param type      store type "Walmart" "Trader Joes"
+   * @param lat       user lat
+   * @param lon       user lon
+   * @return True or False
+   * @throws SQLException exception
+   */
+  public static List<Store> getFilterStore(DatabaseJdbc jdbc, String tableName,
+      String type, double lat, double lon) throws SQLException {
+    Statement stmt = null;
+    ResultSet rs = null;
+    Connection c = jdbc.createConnection();
+    List<Store> result = new ArrayList<Store>();
+    try {
+      c.setAutoCommit(false);
+      System.out.println("Opened database successfully for User");
+
+      stmt = c.createStatement();
+      System.out.println("SELECT * FROM " + tableName + " WHERE TYPE = \""
+          + type + "\" and lat < " + String.valueOf(lat + 1) + " and lat > "
+          + String.valueOf(lat - 1) + " and lon < " + String.valueOf(lon + 1)
+          + " and lon > " + String.valueOf(lon - 1) + ";");
+      rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE TYPE = \""
+          + type + "\" and lat < " + String.valueOf(lat + 1) + " and lat > "
+          + String.valueOf(lat - 1) + " and lon < " + String.valueOf(lon + 1)
+          + " and lon > " + String.valueOf(lon - 1) + ";");
+
+      while (rs.next()) {
+        String name = rs.getString("NAME");
+        String number = rs.getString("NUMBER");
+        String lat1 = rs.getString("LAT");
+        String lon1 = rs.getString("LON");
+
+        Store current = new Store();
+        current.setLat(Double.valueOf(lat1));
+        current.setLon(Double.valueOf(lon1));
+        current.setNumber(Integer.valueOf(number));
+        current.setName(name);
+        current.setType(type);
+        result.add(current);
+      }
+
+      rs.close();
+      stmt.close();
+
+    } catch (Exception e) {
+      if (stmt != null) {
+        stmt.close();
+      }
+      if (rs != null) {
+        rs.close();
+      }
+      System.err.println(e.getClass().getName() + ": " + e.getMessage());
+      return result;
+    }
+
+    try {
+      c.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return result;
+  }
+
 }
