@@ -30,7 +30,6 @@ async function request_alternatives(cheaper,closer,same) {
     },
     body: 'lat='+pos.lat+'&lon='+pos.lng+'&CHEAPER='+cheaper+'&CLOSER='+closer+'&SAME='+same
   });
-  console.log('&CHEAPER='+cheaper+'&CLOSER='+closer+'&SAME='+same);
   generate_alt(await response.json());
 // }
 }
