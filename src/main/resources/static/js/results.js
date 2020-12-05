@@ -40,6 +40,7 @@ function show_confirm(item_index) {
   document.getElementById('alt_name').innerHTML="";
   document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You haved saved $"+(ori_item.price-fin_item.price);
   document.getElementById("map").style.display="block";
+  drawRoute(fin_item.lat,fin_item.lon);
   confirm_purchase();
 }
 

@@ -1,22 +1,17 @@
-async function init_search() {
-  // if (navigator.geolocation) {
-  //   navigator.geolocation.getCurrentPosition(position => {
-  //       pos = {
-  //           lat: position.coords.latitude,
-  //           lng: position.coords.longitude
-  //       };
-  //     });
-      searched_item=document.getElementById("search_bar").value
+var cheaper=false;
+var closer=false;
+var same=false;
 
-      const response = await fetch("/search", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'item='+searched_item+'&lat=37.7510&lon=-97.8220'
-      });
-      generate_searched(await response.json());
-    // }	
+async function init_search() {   
+    searched_item=document.getElementById("search_bar").value;
+    const response = await fetch("/search", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'item='+searched_item+'&lat='+pos.lat+'&lon='+pos.lng
+    });
+    generate_searched(await response.json());
   }
 
 function select_search(item_index) {
@@ -38,7 +33,7 @@ async function request_alternatives() {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    body: 'lat=37.7510&lon=-97.8220&CHEAPER=false&CLOSER=false&SAME=false'
+    body: 'lat='+pos.lat+'&lon='+pos.lng+'&CHEAPER=false&CLOSER=false&SAME=false'
   });
   generate_alt(await response.json());
 // }
