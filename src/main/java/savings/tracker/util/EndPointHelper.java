@@ -1,14 +1,19 @@
 package savings.tracker.util;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import savings.tracker.util.DatabaseJdbc;
 import savings.tracker.Item;
 import savings.tracker.Message;
 import savings.tracker.OngoingTask;
+import savings.tracker.PurchaseRecord;
 import savings.tracker.User;
 
 public class EndPointHelper {
@@ -430,5 +435,49 @@ public class EndPointHelper {
             + ". \n Good Job! You saved $" + String.valueOf(saving)
             + " on this purchase! \n You have accumulated $" + user.getSavings()
             + " so far!");
+  }
+  
+ public static Message sendEmailHelper(DatabaseJdbc database, String id, String email) { 
+    
+    String totalSavings = "0";
+    String weeklySavings = "0";
+    boolean res = false;
+    
+    try {
+      User user = DatabaseJdbc.getUser(database, "user", id);
+      System.out.println("user id = " + user.getUserId());
+      double totalSavingsDouble = user.getSavings();
+      List<PurchaseRecord> list = DatabaseJdbc.getPurchaseData(database, "Purchase", id);
+      double weeklySavingsDouble = DatabaseJdbc.getWeekSavings(list);
+      
+      System.out.println("list size: " + list.size());
+      
+      for (int i = 0; i < list.size(); i++) {
+        System.out.println(list.get(i).getSaving());
+      }
+      
+      NumberFormat formatter = NumberFormat.getCurrencyInstance();
+      
+      totalSavings = formatter.format(totalSavingsDouble);
+      weeklySavings = formatter.format(weeklySavingsDouble);
+      
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    
+
+    try {
+      res = SendGridEmailer.sendDynamicEmail(email, weeklySavings, totalSavings);
+      
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
+    
+    if (res) {
+      return new Message(200, "Email successfully sent to " + email);
+    }
+    
+    return new Message (202, "Email couldn't be sent");
   }
 }

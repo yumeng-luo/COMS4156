@@ -1117,11 +1117,12 @@ public class DatabaseJdbc {
       System.out.println("Opened database successfully for getPurchaseData");
 
       stmt = c.createStatement();
-      String sql = "SELECT * FROM " + tableName + " WHERE USER_ID = " + userId
-          + ";";
-      rs = stmt.executeQuery(sql);
+      
+      rs = stmt.executeQuery(
+          "SELECT * FROM " + tableName + " WHERE USER_ID = \"" + userId + "\";");
 
       while (rs.next()) {
+        System.out.println("Got purchase records");
         PurchaseRecord record = new PurchaseRecord();
         record.setUserId(rs.getString("user_id"));
         record.setDate(rs.getString("date"));
@@ -1152,7 +1153,7 @@ public class DatabaseJdbc {
       e.printStackTrace();
     }
 
-    System.out.println("Got purchase records");
+    System.out.println("End of purchase records");
     return purchaseList;
   }
 
@@ -1531,10 +1532,6 @@ public class DatabaseJdbc {
    */
   public static double getWeekSavings(List<PurchaseRecord> purchaseList) {
 
-    // Calendar currentCal = Calendar.getInstance();
-    // Calendar weekCal = Calendar.getInstance();
-    // weekCal.add(Calendar.DATE, -7);
-    // SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
     double savings = 0;
 
     LocalDate currentDate = LocalDate.now();
@@ -1542,16 +1539,12 @@ public class DatabaseJdbc {
 
     for (int i = 0; i < purchaseList.size(); i++) {
       PurchaseRecord record = purchaseList.get(i);
-      // Date dateObj;
 
       LocalDate recordDate = LocalDate.parse(record.getDate());
 
       System.out.println("Current time: " + currentDate);
       System.out.println("recorded time: " + recordDate);
       System.out.println("week ago time: " + weekDate);
-      //
-      // System.out.println("before" + recordCal.before(currentCal.getTime()));
-      // System.out.println("after" + recordCal.after(weekCal.getTime()));
 
       if (!recordDate.isAfter(currentDate) && recordDate.isAfter(weekDate)) {
 
