@@ -8,4 +8,11 @@ spring:
             clientSecret: e464c8e1b6fd0658a6d766a8baf57468ac5d4b3d
           google:
             client-id: 567161309655-rp7k5ndpu716t21gg6tts7c7b23ddrat.apps.googleusercontent.com
-            client-secret: yUNYEV3cFjoiOexQeuXTuQa7
+            client-secret: w-p7x2HQtAkurfMdIp3spr15
+server:
+  ssl:
+    key-store: classpath:dev.localhost.com.p12
+    key-store-password: passphrase
+    key-store-type: pkcs12
+    key-password: passphrase
+  port: 8443
