@@ -189,8 +189,8 @@ public class EndPointHelper {
   public static List<Item> searchAlternativeItemHelper(DatabaseJdbc database,
       String id, double lat, double lon) {
 
-    // int zip = TargetApi.getZip(lat, lon);
-    // List<Item> targetList;
+    int zip = TargetApi.getZip(lat, lon);
+    List<Item> targetList;
     List<Item> result = new ArrayList<Item>();
 
     // get task info from table
@@ -215,16 +215,6 @@ public class EndPointHelper {
     currentTask.setFinalLat(0);
     currentTask.setFinalLon(0);
 
-    // adding target searches for those in alternative here
-
-    // targetList = TargetApi.getTargetAlternatives(zip,
-    // currentTask.getAlternativeItem());
-    // if (targetList != null) {
-    // for (int i = 0; i < targetList.size(); i++) {
-    // result.add(targetList.get(i));
-    // }
-    // }
-
     result = filterAlternativeItem(lat, lon, currentTask.getAlternativeItem(),
         currentTask.getInitialItem());
     if (result.size() < ALTERNATIVE_NUMBER) {
@@ -235,14 +225,17 @@ public class EndPointHelper {
           currentTask.getInitialItem().getPrice());
       List<Item> walmart = new ArrayList<Item>();
       List<Item>  trader = new ArrayList<Item>();
+      List<Item> target = new ArrayList<Item>();
       try {
         walmart = Walmart.getItems(database, "Store", result,
             lat, lon, "Walmart");
         trader = Walmart.getItems(database, "Store", result, lat,
             lon, "Trader Joes");
-
+        target = TargetApi.getTargetAlternatives(zip, result);
+        
         result.addAll(walmart);
         result.addAll(trader);
+        result.addAll(target);
       } catch (InterruptedException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();

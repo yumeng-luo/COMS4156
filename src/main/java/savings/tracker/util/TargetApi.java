@@ -1,7 +1,10 @@
 package savings.tracker.util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -87,7 +90,7 @@ public class TargetApi {
     String response = Unirest
         .get("https://target1.p.rapidapi.com/stores/list?zipcode=" + zipcode)
         .header("x-rapidapi-key",
-            "90edf87601msheef53f51133c0f9p149c70jsn62c12b7d797b")
+            System.getenv("TARGET_API_KEY"))
         .header("x-rapidapi-host", "target1.p.rapidapi.com").asString()
         .getBody();
 
@@ -157,7 +160,7 @@ public class TargetApi {
     String response = Unirest
         .get("https://target1.p.rapidapi.com/stores/list?zipcode=" + zipcode)
         .header("x-rapidapi-key",
-            "90edf87601msheef53f51133c0f9p149c70jsn62c12b7d797b")
+            System.getenv("TARGET_API_KEY"))
         .header("x-rapidapi-host", "target1.p.rapidapi.com").asString()
         .getBody();
 
@@ -221,7 +224,7 @@ public class TargetApi {
         .get("https://target1.p.rapidapi.com/products/get-details?tcin=" + tcin
             + "&store_id=" + storeId)
         .header("x-rapidapi-key",
-            "90edf87601msheef53f51133c0f9p149c70jsn62c12b7d797b")
+            System.getenv("TARGET_API_KEY"))
         .header("x-rapidapi-host", "target1.p.rapidapi.com").asJson();
 
     JsonNode body = response.getBody();
@@ -264,17 +267,36 @@ public class TargetApi {
       List<Item> orgList) throws UnirestException {
 
     List<Item> itemList = new ArrayList<Item>();
+ 
+    
+    for (int i = 0; i < orgList.size(); i++) {
+      System.out.println(orgList.get(i).getName());
+      System.out.flush();
+    }
 
     for (int i = 0; i < orgList.size(); i++) {
+      Set<String> set = new HashSet<>();
       for (int j = 0; j < storeList.size(); j++) {
-        Item item = getItem(storeList.get(j).getNumber(),
-            orgList.get(i).getTcin());
-
-        if (item != null) {
+        //Item item = getItem(storeList.get(j).getNumber(),
+        //    orgList.get(i).getTcin());
+        Item temp = orgList.get(i);
+        if (!set.contains(temp.getName())) {
+          System.out.println("In adding a store");
+          System.out.flush();
+          
+          Item item = new Item();
+          
+          item.setName(temp.getName());
+          item.setStore("Target");
+          item.setPrice(temp.getPrice());
+          item.setTcin(temp.getTcin());
+          item.setImage(
+              "https://1000logos.net/wp-content/uploads/2017/06/Target-Logo.png");
           item.setLat(storeList.get(j).getLat());
           item.setLon(storeList.get(j).getLon());
-
+  
           itemList.add(item);
+          set.add(item.getName());
         }
       }
     }
@@ -299,12 +321,26 @@ public class TargetApi {
 
     List<Store> storeList = getStoreIdList(zip);
     if (storeList == null) {
+      System.out.println("\n null store list\n");
       return null;
+    }
+    
+    for (int i = 0; i < storeList.size(); i++) {
+      System.out.println(storeList.get(i).getName());
     }
 
     List<Item> itemList = getItemList(storeList, orgList);
     if (itemList == null) {
+      System.out.println("\n Null item list\n");
       return null;
+    }
+    
+    if (itemList.size() == 0) {
+      System.out.println("\n Empty item list\n");
+    }
+    
+    for (int i = 0; i < itemList.size(); i++) {
+      System.out.println(itemList.get(i).getName());
     }
 
     return itemList;
@@ -325,10 +361,28 @@ public class TargetApi {
 
     List<Store> storeList = getSecStoreIdList(zip);
     if (storeList == null) {
+      System.out.println("\n null store list2\n");
       return null;
     }
+    if (storeList.size() == 0) {
+      System.out.println("\n Empty store list2\n");
+    }
+    
+    for (int i = 0; i < storeList.size(); i++) {
+      System.out.println(storeList.get(i).getName());
+    }
+
+    
 
     List<Item> itemList = getItemList(storeList, orgList);
+    if (itemList.size() == 0) {
+      System.out.println("\n Empty item list2\n");
+    }
+    
+    for (int i = 0; i < itemList.size(); i++) {
+      System.out.println(storeList.get(i).getName());
+    }
+
     if (itemList == null) {
       return null;
     }
