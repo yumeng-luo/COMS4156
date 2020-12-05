@@ -4,19 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.net.URL;
-
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -25,7 +17,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -34,9 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import savings.tracker.util.DatabaseJdbc;
 
@@ -172,7 +160,8 @@ public class ControllerIntegrationTest {
       assert (jsonObject.get("name").toString() != null);
 
       DatabaseJdbc updatedDatabase = Controller.getDb();
-      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075");
+      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User",
+          "105222900313734280075");
       newSavings = updatedUser.getSavings();
 
       System.out.println("Old savings :" + oldSavings);
@@ -220,7 +209,8 @@ public class ControllerIntegrationTest {
       JSONObject jsonObject = new JSONObject(result);
 
       DatabaseJdbc updatedDatabase = Controller.getDb();
-      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075");
+      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User",
+          "105222900313734280075");
       newSavings = updatedUser.getSavings();
 
       System.out.println("Old savings :" + oldSavings);
@@ -242,8 +232,7 @@ public class ControllerIntegrationTest {
     oldSavings = user.getSavings();
 
     HttpClient httpclient = HttpClients.createDefault();
-    HttpPost httppost = new HttpPost(
-        "http://localhost:" + port + "/confirm");
+    HttpPost httppost = new HttpPost("http://localhost:" + port + "/confirm");
 
     // Request parameters and other properties.
     List<NameValuePair> params = new ArrayList<NameValuePair>(2);
@@ -262,7 +251,8 @@ public class ControllerIntegrationTest {
       JSONObject jsonObject = new JSONObject(result);
 
       DatabaseJdbc updatedDatabase = Controller.getDb();
-      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User", "105222900313734280075");
+      User updatedUser = DatabaseJdbc.getUser(updatedDatabase, "User",
+          "105222900313734280075");
       newSavings = updatedUser.getSavings();
 
       System.out.println("Old savings :" + oldSavings);
