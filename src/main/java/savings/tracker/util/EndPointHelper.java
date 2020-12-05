@@ -372,6 +372,13 @@ public class EndPointHelper {
    */
   public static Message confirmPurchaseHelper(DatabaseJdbc database,
       String id) {
+    //sleep for 5s to prevent race condition
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
     User user = new User();
     OngoingTask task = new OngoingTask();

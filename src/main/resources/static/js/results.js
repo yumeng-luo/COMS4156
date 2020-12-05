@@ -62,13 +62,14 @@ function generate_searched(items) {
   let bt;
   let i;
 
-  //results.innerHTML='<div class="row">'+
+  //results.innerHTML='';
+  var x = '<div class="row">'+
 '	    <div class="col-12">'+
 '	      <h6 class="text-muted">Please Select An Item Below:</h6> '+
 '	      '+
 '	      <ul class="list-group ">';
-  var x = '';
-  //var element = document.getElementById("myvar");
+var element = document.getElementById("myvar");
+element.innerHTML='Check here to filter our alternative searches';
 
   for (i =0; i<n; ++i) {
     x = x+ 
@@ -95,20 +96,41 @@ function generate_searched(items) {
 function show_alt(item_index) {
   item=ori_list[item_index];
   search_ind=item_index;
+  var element = document.getElementById("myvar");
+element.innerHTML='';
   document.getElementById('results').innerHTML="";
-  document.getElementById("alt_name").innerHTML="You chose "+item.name+", $"+(Math.round(item.price * 100) / 100)+" <br /> here are some alternatives:";
+  document.getElementById("alt_name").innerHTML="You chose: "+
+  '	        <button onclick = "select_alternative('+item.barcode+','+item.lat+', '+item.lon+',-1)" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
+'	          <div class="column" >'+
+'	    		<h5>'+item.name+'</h5>'+
+'	    		<p>Price: $'+item.price+'</p>'+
+'	    		<small>Store Name: '+item.store+'</small>'+
+'	  		  </div>'+
+'	  		  <div class="column" >'+
+'	    		<small>'+storeDist(item.lat,item.lon)+' km</small>'+
+'	    		<div class="image-parent">'+
+'	        		<img src="'+item.image+'" class="img-fluid" alt="item_image" width="100" height="100">'+
+'	     		</div>'+
+'	   		  </div>'+
+'	  	    </button>'+" <br /> here are some alternatives:";
   request_alternatives(cheaper,closer,same);
 }
 
 //use api endpoint to get saved value
 function show_confirm(item_index) {
-  fin_item=alt_list[item_index];
   ori_item=ori_list[search_ind];
   document.getElementById('alt_results').innerHTML="";
   document.getElementById('alt_name').innerHTML="";
-  document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You haved saved $"+(ori_item.price-fin_item.price);
+  if (item_index == -1){
+  	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+ori_item.name+" $"+ori_item.price+" <br /> You haved spent $"+ori_item.price;
+  	drawRoute(ori_item.lat,ori_item.lon);
+  } else{
+  	fin_item=alt_list[item_index];
+  	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You haved saved $"+Math.min(ori_item.price-fin_item.price,0);
+  	drawRoute(fin_item.lat,fin_item.lon);
+  }
   document.getElementById("map").style.display="block";
-  drawRoute(fin_item.lat,fin_item.lon);
+  
   confirm_purchase();
 }
 
@@ -120,14 +142,31 @@ function generate_alt(items) {
   let bt;
   let i;
 
-  results.innerHTML='';
+//  results.innerHTML='';
+  var x = '<div class="row">'+
+'	    <div class="col-12">'+
+'	      '+
+'	      <ul class="list-group ">';
 
   for (i =0; i<n; ++i) {
-    bt=document.createElement("button");
-    bt.type="button";
-    bt.setAttribute("onclick","select_alternative("+items[i].barcode+","+i+")");
-    bt.setAttribute("class", "list-group-item list-group-item-action")
-    bt.innerHTML = items[i].name+", $"+items[i].price+", "+storeDist(items[i].lat,items[i].lon)+" km";;
-    results.appendChild(bt);
+    x = x+ 
+'	        <button onclick = "select_alternative('+items[i].barcode+','+items[i].lat+', '+items[i].lon+','+i+')" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
+'	          <div class="column" >'+
+'	    		<h5>'+items[i].name+'</h5>'+
+'	    		<p>Price: $'+items[i].price+'</p>'+
+'	    		<small>Store Name: '+items[i].store+'</small>'+
+'	  		  </div>'+
+'	  		  <div class="column" >'+
+'	    		<small>'+storeDist(items[i].lat,items[i].lon)+' km</small>'+
+'	    		<div class="image-parent">'+
+'	        		<img src="'+items[i].image+'" class="img-fluid" alt="item_image" width="100" height="100">'+
+'	     		</div>'+
+'	   		  </div>'+
+'	  	    </button>';
   }
+  results.innerHTML = x +
+'	      </ul>'+
+'	    </div>'+
+'	  </div>';
+
 }
