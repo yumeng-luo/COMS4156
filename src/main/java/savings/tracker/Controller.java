@@ -1,7 +1,9 @@
 package savings.tracker;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import savings.tracker.util.DatabaseJdbc;
 import savings.tracker.util.Item;
 import savings.tracker.util.Message;
 import savings.tracker.util.OngoingTask;
+import savings.tracker.util.PurchaseRecord;
 import savings.tracker.util.User;
 
 @RestController
@@ -67,6 +70,64 @@ public class Controller {
     System.out.print(principal);
 
     return Collections.singletonMap("name", principal.getAttribute("name"));
+  }
+  
+  /**
+   * Sends email.
+   * @param principal
+   * @return a message object
+   */
+  @GetMapping("/send_email")
+  public Message sendEmail(@AuthenticationPrincipal OAuth2User principal) {
+    String email;
+    String id;
+    String totalSavings = "0";
+    String weeklySavings = "0";
+    
+    if (principal == null) {
+      email = "jch2169@columbia.edu";
+      id = "105222900313734280075";
+    } else {
+      email = principal.getAttribute("email");
+      id = principal.getAttribute("sub");
+    }
+    
+    try {
+      User user = DatabaseJdbc.getUser(database, "user", id);
+      System.out.println("user id = " + user.getUserId());
+      double totalSavingsDouble = user.getSavings();
+      List<PurchaseRecord> list = DatabaseJdbc.getPurchaseData(database, "Purchase", id);
+      double weeklySavingsDouble = DatabaseJdbc.getWeekSavings(list);
+      
+      System.out.println("list size: " + list.size());
+      
+      for (int i = 0; i < list.size(); i++) {
+        System.out.println(list.get(0).getSaving());
+      }
+      
+      NumberFormat formatter = NumberFormat.getCurrencyInstance();
+      
+      totalSavings = formatter.format(totalSavingsDouble);
+      weeklySavings = formatter.format(weeklySavingsDouble);
+      
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    
+    boolean res = false;
+    try {
+      res = SendGridEmailer.sendDynamicEmail(email, weeklySavings, totalSavings);
+      
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
+    
+    if (res) {
+      return new Message(200, "Email successfully sent to " + email);
+    }
+    
+    return new Message (202, "Email couldn't be sent");
   }
 
   /**
