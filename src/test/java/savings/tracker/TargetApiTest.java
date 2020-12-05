@@ -10,8 +10,7 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import savings.tracker.util.Item;
-import savings.tracker.util.Store;
+import savings.tracker.util.TargetApi;
 
 @TestMethodOrder(OrderAnnotation.class)
 public class TargetApiTest {
@@ -55,7 +54,6 @@ public class TargetApiTest {
   public void validZipSecList() throws UnirestException {
 
     int validZip = 10025;
-    int locationId = 1263;
 
     List<Store> storeList = TargetApi.getSecStoreIdList(validZip);
 
@@ -85,7 +83,7 @@ public class TargetApiTest {
 
     assertEquals(item.getPrice(), price);
   }
-  
+
   @Test
   @Order(7)
   public void sleepToAvoidlimit() {
@@ -118,22 +116,19 @@ public class TargetApiTest {
     item4.setTcin("54191097");
 
     List<Item> itemList = new ArrayList<Item>();
-    List<Store> storeList = new ArrayList<Store>();
-
     itemList.add(item1);
     itemList.add(item3);
     itemList.add(item4);
-
+    
+    List<Store> storeList = new ArrayList<Store>();
     storeList.add(store1);
     storeList.add(store2);
     storeList.add(store3);
 
-    //List<Item> alterItems = TargetApi.getItemList(storeList, itemList);
+    // List<Item> alterItems = TargetApi.getItemList(storeList, itemList);
 
-    //assertNotEquals(alterItems.size(), 0);
+    // assertNotEquals(alterItems.size(), 0);
   }
-
-
 
   @Test
   @Order(9)

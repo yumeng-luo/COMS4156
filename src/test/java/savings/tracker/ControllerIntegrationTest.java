@@ -39,9 +39,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import savings.tracker.util.DatabaseJdbc;
-import savings.tracker.util.Item;
-import savings.tracker.util.OngoingTask;
-import savings.tracker.util.User;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)

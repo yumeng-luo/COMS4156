@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import savings.tracker.util.DatabaseJdbc;
-import savings.tracker.util.Item;
-import savings.tracker.util.Store;
+import savings.tracker.util.WegmanApi;
 
 @TestMethodOrder(OrderAnnotation.class)
 public class WegmanApiTest {

@@ -1,4 +1,4 @@
-package savings.tracker;
+package savings.tracker.util;
 
 import com.sendgrid.Method;
 import com.sendgrid.Request;
@@ -78,8 +78,8 @@ public class SendGridEmailer {
   /**
    * helper function that creates and sends email.
    * 
-   * @throws IOException exception
    * @return true if successful
+   * @throws IOException exception
    */
   public static boolean sendDynamicEmail(String email) throws IOException {
     final Mail dynamicTemplate = buildDynamicTemplate(email);
