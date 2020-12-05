@@ -550,7 +550,7 @@ public class DatabaseJdbc {
           .executeQuery("SELECT * FROM " + tableName + " WHERE ID " + " = \""
               + itemId + "\" and lat  = " + lat + " and lon = " + lon + ";");
 
-      if (rs.isBeforeFirst()) {
+      if (rs.next()) {
         result.setBarcode(rs.getString("ID"));
         result.setName(rs.getString("name"));
         result.setPrice(rs.getDouble("price"));
