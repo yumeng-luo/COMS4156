@@ -57,16 +57,16 @@ public class WegmanApi {
    * @param lat       user location
    * @param lon       user location
    * @return price as string
-   * @throws InterruptedException 
+   * @throws InterruptedException
    */
   public static List<List<Item>> getItems(DatabaseJdbc jdbc, String tableName,
       String name, double lat, double lon) throws InterruptedException {
-    
+
     if (lat > 90 || lat < -90 || lon > 180 || lon < -180) {
       return new ArrayList<List<Item>>();
     }
     boolean found = false;
-    for (char ch: name.toCharArray()) {
+    for (char ch : name.toCharArray()) {
       if (Character.isDigit(ch) || Character.isLetter(ch)) {
         found = true;
         break;
@@ -75,11 +75,10 @@ public class WegmanApi {
     if (found == false) {
       return new ArrayList<List<Item>>();
     }
-    
-    
+
     System.out.println("\n starting wegmans get items call\n");
     System.out.flush();
-    
+
     HttpResponse<String> response = Unirest
         .get("https://api.wegmans.io/products/search?query=" + name
             + "&api-version=2018-10-18")
@@ -89,21 +88,22 @@ public class WegmanApi {
     String body = response.getBody();
     System.out.println("\n wegmen get item response" + body + "\n");
     System.out.flush();
-    
+
     JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
     JsonObject errorObject;
-    if ((errorObject = jsonObject.getAsJsonObject("error")) != null ) {
+    if ((errorObject = jsonObject.getAsJsonObject("error")) != null) {
       System.out.println("\n wegmans inside error\n");
       System.out.println("\n code is: " + errorObject.get("code") + "\n");
       System.out.flush();
       if (errorObject.get("code").toString().contains("TooManyRequests")) {
-        System.out.println("\n wegmans get items call failed, sleeping and redoing\n");
+        System.out.println(
+            "\n wegmans get items call failed, sleeping and redoing\n");
         System.out.flush();
         Thread.sleep(10000);
         return getItems(jdbc, tableName, name, lat, lon);
       }
     }
-    
+
     if (jsonObject.get("results") == null) {
       return new ArrayList<List<Item>>();
     }
@@ -204,12 +204,13 @@ public class WegmanApi {
     String body = response.getBody();
     JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
     JsonObject errorObject;
-    if ((errorObject = jsonObject.getAsJsonObject("error")) != null ) {
+    if ((errorObject = jsonObject.getAsJsonObject("error")) != null) {
       System.out.println("\n wegmans inside error\n");
       System.out.println("\n code is: " + errorObject.get("code") + "\n");
       System.out.flush();
       if (errorObject.get("code").toString().contains("TooManyRequests")) {
-        System.out.println("\n wegmans get stores call failed, sleeping and redoing\n");
+        System.out.println(
+            "\n wegmans get stores call failed, sleeping and redoing\n");
         System.out.flush();
         try {
           Thread.sleep(10000);
@@ -255,7 +256,7 @@ public class WegmanApi {
     if (lat2 > 90 || lat2 < -90 || lon2 > 180 || lon2 < -180) {
       return -1;
     }
-    
+
     if ((lat1 == lat2) && (lon1 == lon2)) {
       return 0;
     } else {
@@ -284,12 +285,12 @@ public class WegmanApi {
    */
   public static List<Store> getNearestStores(DatabaseJdbc jdbc,
       String tableName, double lat, double lon, String type) {
-    
+
     if (lat > 90 || lat < -90 || lon > 180 || lon < -180) {
       return new ArrayList<Store>();
     }
     boolean found = false;
-    for (char ch: type.toCharArray()) {
+    for (char ch : type.toCharArray()) {
       if (Character.isDigit(ch) || Character.isLetter(ch)) {
         found = true;
         break;
@@ -298,8 +299,7 @@ public class WegmanApi {
     if (found == false) {
       return new ArrayList<Store>();
     }
-    
-    
+
     List<Store> allList = new ArrayList<Store>();
     List<Store> shortList = new ArrayList<Store>();
     // get all stores
@@ -342,12 +342,12 @@ public class WegmanApi {
    */
   public static List<Store> getSecNearestStores(DatabaseJdbc jdbc,
       String tableName, double lat, double lon, String type) {
-    
+
     if (lat > 90 || lat < -90 || lon > 180 || lon < -180) {
       return new ArrayList<Store>();
     }
     boolean found = false;
-    for (char ch: type.toCharArray()) {
+    for (char ch : type.toCharArray()) {
       if (Character.isDigit(ch) || Character.isLetter(ch)) {
         found = true;
         break;
@@ -356,7 +356,7 @@ public class WegmanApi {
     if (found == false) {
       return new ArrayList<Store>();
     }
-    
+
     List<Store> allList = new ArrayList<Store>();
     List<Store> shortList = new ArrayList<Store>();
     // get all stores
@@ -403,12 +403,12 @@ public class WegmanApi {
   public static List<Item> getAlternativeItems(DatabaseJdbc jdbc,
       String tableName, String name, double lat, double lon,
       double initialPrice) {
-    
-    if (lat > 90 || lat < -90 || lon > 180 || lon < -180 || initialPrice <0) {
+
+    if (lat > 90 || lat < -90 || lon > 180 || lon < -180 || initialPrice < 0) {
       return new ArrayList<Item>();
     }
     boolean found = false;
-    for (char ch: name.toCharArray()) {
+    for (char ch : name.toCharArray()) {
       if (Character.isDigit(ch) || Character.isLetter(ch)) {
         found = true;
         break;
@@ -417,7 +417,7 @@ public class WegmanApi {
     if (found == false) {
       return new ArrayList<Item>();
     }
-    
+
     HttpResponse<String> response = Unirest
         .get("https://api.wegmans.io/products/search?query=" + name
             + "&api-version=2018-10-18")
@@ -427,12 +427,13 @@ public class WegmanApi {
     String body = response.getBody();
     JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
     JsonObject errorObject;
-    if ((errorObject = jsonObject.getAsJsonObject("error")) != null ) {
+    if ((errorObject = jsonObject.getAsJsonObject("error")) != null) {
       System.out.println("\n wegmans inside error\n");
       System.out.println("\n code is: " + errorObject.get("code") + "\n");
       System.out.flush();
       if (errorObject.get("code").toString().contains("TooManyRequests")) {
-        System.out.println("\n wegmans get alternative items call failed, sleeping and redoing\n");
+        System.out.println(
+            "\n wegmans get alternative items call failed, sleeping and redoing\n");
         System.out.flush();
         try {
           Thread.sleep(10000);
@@ -440,7 +441,8 @@ public class WegmanApi {
           // TODO Auto-generated catch block
           e.printStackTrace();
         }
-        return getAlternativeItems(jdbc,tableName,name,lat,lon,initialPrice);
+        return getAlternativeItems(jdbc, tableName, name, lat, lon,
+            initialPrice);
       }
     }
     if (jsonObject.get("results") == null) {

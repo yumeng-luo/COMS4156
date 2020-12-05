@@ -51,7 +51,7 @@ public class Application extends WebSecurityConfigurerAdapter {
        * DatabaseJdbc.deleteTable(database, "Item"); // end here
        * 
        */
-      //DatabaseJdbc.deleteTable(database, "Purchase");
+      // DatabaseJdbc.deleteTable(database, "Purchase");
 
       DatabaseJdbc.createLoginTable(database, "User");
       DatabaseJdbc.createItemTable(database, "Item");
@@ -61,14 +61,13 @@ public class Application extends WebSecurityConfigurerAdapter {
       DatabaseJdbc.createStoreTable(database, "Store");
       DatabaseJdbc.createPurchaseTable(database, "Purchase");
 
-      
-      // can skip this to save time 
+      // can skip this to save time
       /*
-      List<Store> stores = WegmanApi.getStores();
-       
-      for (int i = 0; i < stores.size(); i++) {
-      DatabaseJdbc.addStore(database, "Store", stores.get(i)); }
-      */
+       * List<Store> stores = WegmanApi.getStores();
+       * 
+       * for (int i = 0; i < stores.size(); i++) {
+       * DatabaseJdbc.addStore(database, "Store", stores.get(i)); }
+       */
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -109,9 +108,10 @@ public class Application extends WebSecurityConfigurerAdapter {
             .antMatchers("/frontend", "/", "/error", "/webjars/**", "/search",
                 "/select_item", "/select_purchase", "/no_alternative",
                 "/alternatives", "/confirm", "/login")
-            // if there are any authentication problems, first try uncommenting either of the two and using the other
+            // if there are any authentication problems, first try uncommenting
+            // either of the two and using the other
             .permitAll().anyRequest().authenticated())
-            //.authenticated())
+        // .authenticated())
         .exceptionHandling(e -> e.authenticationEntryPoint(
             new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
         .csrf(c -> c
@@ -121,8 +121,7 @@ public class Application extends WebSecurityConfigurerAdapter {
           request.getSession().setAttribute("error.message",
               exception.getMessage());
           // handler.onAuthenticationFailure(request, response, exception);
-        })
-        .defaultSuccessUrl("http://localhost:8080/",true));
+        }).defaultSuccessUrl("http://localhost:8080/", true));
     http.cors().and().csrf().disable();
   }
 
@@ -137,6 +136,5 @@ public class Application extends WebSecurityConfigurerAdapter {
     source.registerCorsConfiguration("/**", configuration);
     return source;
   }
-  
 
 }
