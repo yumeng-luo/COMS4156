@@ -215,8 +215,7 @@ public class EndPointHelper {
     currentTask.setFinalLat(0);
     currentTask.setFinalLon(0);
 
-    result = filterAlternativeItem(lat, lon, currentTask.getAlternativeItem(),
-        currentTask.getInitialItem());
+    result =currentTask.getAlternativeItem();
     if (result.size() < ALTERNATIVE_NUMBER) {
       // search for more item
       // TODO implement this part after rapid api
@@ -231,11 +230,11 @@ public class EndPointHelper {
             lat, lon, "Walmart");
         trader = Walmart.getItems(database, "Store", result, lat,
             lon, "Trader Joes");
-        target = TargetApi.getTargetAlternatives(zip, result);
+       // target = TargetApi.getTargetAlternatives(zip, result);
         
         result.addAll(walmart);
         result.addAll(trader);
-        result.addAll(target);
+        //result.addAll(target);
       } catch (InterruptedException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -248,8 +247,6 @@ public class EndPointHelper {
       // }
       //
       // }
-      result = filterAlternativeItem(lat, lon, result,
-          currentTask.getInitialItem());
     }
 
     try {
@@ -259,11 +256,10 @@ public class EndPointHelper {
       e.printStackTrace();
     }
     // save to ongoing task
-    List<Item> sorted = Walmart.sortItemByDistance(lat, lon, result);
-    currentTask.setAlternativeItem(sorted);
+    currentTask.setAlternativeItem(result);
     try {
       DatabaseJdbc.removeSearch(database, "Search", id + "2");
-      DatabaseJdbc.addSearch(database, "Search", "Item", sorted, id + "2");
+      DatabaseJdbc.addSearch(database, "Search", "Item", result, id + "2");
       DatabaseJdbc.addTask(database, "Task", currentTask);
     } catch (SQLException e) {
       // TODO Auto-generated catch block
@@ -322,7 +318,7 @@ public class EndPointHelper {
       }
     }
 
-    return result;
+    return Walmart.sortItemByDistance(lat, lon, result);
   }
 
   /**

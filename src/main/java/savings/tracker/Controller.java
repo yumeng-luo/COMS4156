@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import savings.tracker.util.DatabaseJdbc;
 import savings.tracker.util.EndPointHelper;
+import savings.tracker.util.Walmart;
 import savings.tracker.util.WegmanApi;
 
 @RestController
@@ -153,25 +154,16 @@ public class Controller {
   public List<Item> searchAlternativeItem(
       @AuthenticationPrincipal OAuth2User principal,
       @RequestParam(value = "lat", defaultValue = "37.7510") double lat,
-      @RequestParam(value = "lon", defaultValue = "-97.8220") double lon,
-      @RequestParam(value = "CHEAPER", defaultValue = "false") boolean cheaper,
-      @RequestParam(value = "CLOSER", defaultValue = "false") boolean closer,
-      @RequestParam(value = "SAME", defaultValue = "false") boolean same) {
+      @RequestParam(value = "lon", defaultValue = "-97.8220") double lon) {
 
     System.out.println("\nstarting alter\n");
     System.out.flush();
 
-    if ((cheaper != false && cheaper != true)
-        || (closer != false && closer != true)
-        || (same != false && same != true)) {
-      List<Item> itemList = new ArrayList<Item>();
-      return itemList;
-    }
 
     // chaneg switches accordingly
-    WegmanApi.setMustbecheaper(cheaper);
-    WegmanApi.setMustbecloser(closer);
-    WegmanApi.setMustbesameitem(same);
+    // WegmanApi.setMustbecheaper(cheaper);
+    // WegmanApi.setMustbecloser(closer);
+    // WegmanApi.setMustbesameitem(same);
 
     try {
       Thread.sleep(3000);
@@ -186,7 +178,61 @@ public class Controller {
       id = "105222900313734280075";
     }
 
-    return EndPointHelper.searchAlternativeItemHelper(database, id, lat, lon);
+    List<Item> alt = EndPointHelper.searchAlternativeItemHelper(database, id, lat, lon);
+    return Walmart.sortItemByDistance(lat, lon, alt);
+  }
+
+  /**
+   * Filter alternatives by swicthes
+   * 
+   * @param lat of user
+   * @param lon of user
+   * @throws SQLException Exception
+   */
+  @PostMapping("/filter")
+  @ResponseBody
+  public List<Item> filterAlternatives(
+      @AuthenticationPrincipal OAuth2User principal,
+      @RequestParam(value = "lat", defaultValue = "37.7510") double lat,
+      @RequestParam(value = "lon", defaultValue = "-97.8220") double lon,
+      @RequestParam(value = "CHEAPER", defaultValue = "false") boolean cheaper,
+      @RequestParam(value = "CLOSER", defaultValue = "false") boolean closer,
+      @RequestParam(value = "SAME", defaultValue = "false") boolean same) {
+
+    System.out.println("\nstarting filter\n");
+    System.out.flush();
+
+    if ((cheaper != false && cheaper != true)
+        || (closer != false && closer != true)
+        || (same != false && same != true)) {
+      List<Item> itemList = new ArrayList<Item>();
+      return itemList;
+    }
+
+    // change switches accordingly
+    WegmanApi.setMustbecheaper(cheaper);
+    WegmanApi.setMustbecloser(closer);
+    WegmanApi.setMustbesameitem(same);
+
+    String id;
+    if (principal != null) {
+      id = principal.getAttribute("sub");
+    } else {
+      id = "105222900313734280075";
+    }
+
+    // get task info from table
+    OngoingTask currentTask = new OngoingTask();
+    try {
+
+      currentTask = DatabaseJdbc.getTask(database, "Task", "Search", "Item",
+          id);
+    } catch (SQLException e1) {
+      e1.printStackTrace();
+    }
+
+    return EndPointHelper.filterAlternativeItem(lat, lon,
+        currentTask.getAlternativeItem(), currentTask.getInitialItem());
   }
 
   /**

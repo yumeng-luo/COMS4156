@@ -21,9 +21,40 @@ function select_search(item_index) {
     show_alt(item_index);
 } 
 
-async function request_alternatives(cheaper,closer,same) {
+async function request_alternatives() {
 
   const response = await fetch ("/alternatives", {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
+  generate_alt(await response.json());
+  var switches = document.getElementById("switches");
+switches.innerHTML = '<!-- Default inline 1-->'+
+'		<div class="custom-control custom-checkbox custom-control-inline">'+
+'			<input type="checkbox" onclick="toggle_cheaper()" class="custom-control-input" id="defaultInline1">'+
+'			<label class="custom-control-label" for="defaultInline1">cheaper</label>'+
+'		</div>'+
+'		'+
+'		<!-- Default inline 2-->'+
+'		<div class="custom-control custom-checkbox custom-control-inline">'+
+'			<input type="checkbox" onclick="toggle_closer()" class="custom-control-input" id="defaultInline2">'+
+'			<label class="custom-control-label" for="defaultInline2">closer</label>'+
+'		</div>'+
+'		'+
+'		<!-- Default inline 3-->'+
+'		<div class="custom-control custom-checkbox custom-control-inline">'+
+'			<input type="checkbox" onclick="toggle_same()" class="custom-control-input" id="defaultInline3">'+
+'			<label class="custom-control-label" for="defaultInline3">same</label>'+
+'		</div>';
+	
+
+}
+
+async function request_filter(cheaper,closer,same) {
+
+  const response = await fetch ("/filter", {
     method: "POST",
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'

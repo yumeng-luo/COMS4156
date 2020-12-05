@@ -11,6 +11,7 @@ function toggle_cheaper(){
   } else {
     cheaper=true;
   }
+  request_filter(cheaper,closer,same);
 }
 
 function toggle_closer(){
@@ -19,6 +20,7 @@ function toggle_closer(){
   } else {
     closer=true;
   }
+  request_filter(cheaper,closer,same);
 }
 
 function toggle_same(){
@@ -27,6 +29,7 @@ function toggle_same(){
   } else {
     same=true;
   }
+  request_filter(cheaper,closer,same);
 }
 
 function storeDist(lat,lon){
@@ -91,6 +94,7 @@ element.innerHTML='Check here to filter our alternative searches';
 '	      </ul>'+
 '	    </div>'+
 '	  </div>';
+
 }
 //switches to the view for alternate items
 function show_alt(item_index) {
@@ -118,6 +122,9 @@ element.innerHTML='';
 
 //use api endpoint to get saved value
 function show_confirm(item_index) {
+	var switches = document.getElementById("switches");
+	switches.innerHTML = '';
+	
   ori_item=ori_list[search_ind];
   document.getElementById('alt_results').innerHTML="";
   document.getElementById('alt_name').innerHTML="";
@@ -126,7 +133,7 @@ function show_confirm(item_index) {
   	drawRoute(ori_item.lat,ori_item.lon);
   } else{
   	fin_item=alt_list[item_index];
-  	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You haved saved $"+Math.min(ori_item.price-fin_item.price,0);
+  	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You haved saved $"+Math.max(ori_item.price-fin_item.price,0);
   	drawRoute(fin_item.lat,fin_item.lon);
   }
   document.getElementById("map").style.display="block";
