@@ -1,4 +1,4 @@
-package savings.tracker;
+package savings.tracker.util;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -11,9 +11,8 @@ import java.util.List;
 import java.util.PriorityQueue;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import savings.tracker.util.DatabaseJdbc;
-import savings.tracker.util.Item;
-import savings.tracker.util.Store;
+import savings.tracker.Item;
+import savings.tracker.Store;
 
 public class WegmanApi {
 

@@ -1,4 +1,4 @@
-package savings.tracker;
+package savings.tracker.util;
 
 class InvalUserInputException extends Exception {
   /**

@@ -18,11 +18,6 @@ import java.util.List;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import savings.tracker.util.DatabaseJdbc;
-import savings.tracker.util.Item;
-import savings.tracker.util.OngoingTask;
-import savings.tracker.util.PurchaseRecord;
-import savings.tracker.util.Store;
-import savings.tracker.util.User;
 
 public class DatabaseTest {
 

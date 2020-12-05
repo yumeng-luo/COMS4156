@@ -1,4 +1,4 @@
-package savings.tracker;
+package savings.tracker.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,8 @@ import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
-import savings.tracker.util.Item;
-import savings.tracker.util.Store;
+import savings.tracker.Item;
+import savings.tracker.Store;
 
 public class TargetApi {
 

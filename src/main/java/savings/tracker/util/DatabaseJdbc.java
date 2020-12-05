@@ -15,6 +15,12 @@ import java.util.Date;
 import java.util.List;
 //import org.sqlite.JDBC;
 
+import savings.tracker.Item;
+import savings.tracker.OngoingTask;
+import savings.tracker.PurchaseRecord;
+import savings.tracker.Store;
+import savings.tracker.User;
+
 public class DatabaseJdbc {
 
   public static void main(String[] args) {

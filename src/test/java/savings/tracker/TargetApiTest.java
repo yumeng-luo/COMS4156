@@ -10,8 +10,8 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import savings.tracker.util.Item;
-import savings.tracker.util.Store;
+
+import savings.tracker.util.TargetApi;
 
 @TestMethodOrder(OrderAnnotation.class)
 public class TargetApiTest {

@@ -1,4 +1,4 @@
-package savings.tracker.util;
+package savings.tracker;
 
 import java.sql.SQLException;
 

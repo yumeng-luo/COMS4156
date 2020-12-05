@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import savings.tracker.util.DatabaseJdbc;
-import savings.tracker.util.Item;
-import savings.tracker.util.Message;
-import savings.tracker.util.OngoingTask;
-import savings.tracker.util.User;
+import savings.tracker.util.WegmanApi;
 
 @RestController
 public class Controller {

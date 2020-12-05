@@ -1,4 +1,4 @@
-package savings.tracker;
+package savings.tracker.util;
 
 import com.sendgrid.Method;
 import com.sendgrid.Request;

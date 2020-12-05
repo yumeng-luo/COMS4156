@@ -28,8 +28,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import savings.tracker.util.DatabaseJdbc;
-import savings.tracker.util.Item;
-import savings.tracker.util.Store;
 
 @SpringBootApplication
 public class Application extends WebSecurityConfigurerAdapter {
