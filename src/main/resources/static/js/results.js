@@ -1,6 +1,34 @@
 let items_list;
 let search_ind;
 let alt_list;
+let cheaper=false;
+let closer=false;
+let same=false;
+
+function toggle_cheaper(){
+  if (cheaper){
+    cheaper=false;
+  } else {
+    cheaper=true;
+  }
+}
+
+function toggle_closer(){
+  if (closer){
+    closer=false;
+  } else {
+    closer=true;
+  }
+}
+
+function toggle_same(){
+  if (same){
+    same=false;
+  } else {
+    same=true;
+  }
+}
+
 //generates a list of buttons based on a parsed json list of items
 function generate_searched(items) {
   document.getElementById("confirm_mesg").innerHTML="";
@@ -29,7 +57,7 @@ function show_alt(item_index) {
   search_ind=item_index;
   document.getElementById('results').innerHTML="";
   document.getElementById("alt_name").innerHTML="You chose "+item.name+" $"+item.price+", <br /> here are some alternatives:";
-  request_alternatives();
+  request_alternatives(cheaper,closer,same);
 }
 
 //use api endpoint to get saved value
@@ -46,7 +74,6 @@ function show_confirm(item_index) {
 
 //generate alternate items
 function generate_alt(items) {
-  console.log(items);
   alt_list=items;
   results=document.getElementById('alt_results');
   let n=items.length;

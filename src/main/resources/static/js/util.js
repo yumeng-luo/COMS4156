@@ -1,7 +1,3 @@
-var cheaper=false;
-var closer=false;
-var same=false;
-
 async function init_search() {   
     searched_item=document.getElementById("search_bar").value;
     const response = await fetch("/search", {
@@ -15,7 +11,6 @@ async function init_search() {
   }
 
 function select_search(item_index) {
-    console.log(item_index);
     const response = fetch ("/select_item", {
       method: "POST",
       headers: {
@@ -26,15 +21,16 @@ function select_search(item_index) {
     show_alt(item_index);
 } 
 
-async function request_alternatives() {
+async function request_alternatives(cheaper,closer,same) {
   //{
   const response = await fetch ("/alternatives", {
     method: "POST",
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    body: 'lat='+pos.lat+'&lon='+pos.lng+'&CHEAPER=false&CLOSER=false&SAME=false'
+    body: 'lat='+pos.lat+'&lon='+pos.lng+'&CHEAPER='+cheaper+'&CLOSER='+closer+'&SAME='+same
   });
+  console.log('&CHEAPER='+cheaper+'&CLOSER='+closer+'&SAME='+same);
   generate_alt(await response.json());
 // }
 }
