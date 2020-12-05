@@ -84,7 +84,7 @@ public class DatabaseJdbc {
   /**
    * Create table for confirmed purchases.
    * 
-   * @param jdbc database
+   * @param jdbc      database
    * @param tableName table name
    * @throws SQLException exception
    */
@@ -1100,7 +1100,7 @@ public class DatabaseJdbc {
   /**
    * Gets purchase record for a user.
    * 
-   * @param jdbc database
+   * @param jdbc      database
    * @param tableName name of table
    * @throws SQLException exception
    */
@@ -1530,10 +1530,10 @@ public class DatabaseJdbc {
    */
   public static double getWeekSavings(List<PurchaseRecord> purchaseList) {
 
-    //    Calendar currentCal = Calendar.getInstance();
-    //    Calendar weekCal = Calendar.getInstance();
-    //    weekCal.add(Calendar.DATE, -7); 
-    //    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd"); 
+    // Calendar currentCal = Calendar.getInstance();
+    // Calendar weekCal = Calendar.getInstance();
+    // weekCal.add(Calendar.DATE, -7);
+    // SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
     double savings = 0;
 
     LocalDate currentDate = LocalDate.now();
@@ -1541,16 +1541,16 @@ public class DatabaseJdbc {
 
     for (int i = 0; i < purchaseList.size(); i++) {
       PurchaseRecord record = purchaseList.get(i);
-      //      Date dateObj;
+      // Date dateObj;
 
       LocalDate recordDate = LocalDate.parse(record.getDate());
 
       System.out.println("Current time: " + currentDate);
       System.out.println("recorded time: " + recordDate);
       System.out.println("week ago time: " + weekDate);
-      //        
-      //        System.out.println("before" + recordCal.before(currentCal.getTime()));
-      //        System.out.println("after" + recordCal.after(weekCal.getTime()));
+      //
+      // System.out.println("before" + recordCal.before(currentCal.getTime()));
+      // System.out.println("after" + recordCal.after(weekCal.getTime()));
 
       if (!recordDate.isAfter(currentDate) && recordDate.isAfter(weekDate)) {
 
