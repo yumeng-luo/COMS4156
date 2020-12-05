@@ -245,4 +245,46 @@ public class Controller {
   public static DatabaseJdbc getDb() {
     return database;
   }
+  
+  /**
+   * Sends email.
+   * @param principal
+   * @return a message object
+   */
+  @GetMapping("/send_email")
+  public Message sendEmail(@AuthenticationPrincipal OAuth2User principal) {
+    String email;
+    String id;
+
+    
+    if (principal == null) {
+      email = "jch2169@columbia.edu"; //ASE.email.api
+      id = "105222900313734280075";
+    } else {
+      email = principal.getAttribute("email");
+      id = principal.getAttribute("sub");
+    }
+    
+    return EndPointHelper.sendEmailHelper(database, id, email);
+  }
+  
+  @GetMapping("/history")
+  public List<PurchaseRecord> getHistory(@AuthenticationPrincipal OAuth2User principal) {
+    String id;
+    List<PurchaseRecord> history = new ArrayList<PurchaseRecord>();
+    
+    if (principal == null) {
+      id = "105222900313734280075";
+    } else {
+      id = principal.getAttribute("sub");
+    }
+    
+    try {
+      history = database.getPurchaseData(database, "Purchase", id);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    
+    return history;
+  }
 }
