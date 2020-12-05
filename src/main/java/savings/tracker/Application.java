@@ -1,19 +1,7 @@
 package savings.tracker;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.sql.SQLException;
-import java.text.Format;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
-import kong.unirest.json.JSONArray;
-import kong.unirest.json.JSONObject;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

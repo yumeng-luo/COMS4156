@@ -8,6 +8,7 @@ public class Item {
   private double lat;
   private double lon;
   private String sku;
+  @SuppressWarnings("unused")
   private String tcin;
   private String image;
 

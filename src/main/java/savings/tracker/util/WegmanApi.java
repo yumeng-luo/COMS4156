@@ -56,7 +56,7 @@ public class WegmanApi {
    * @param lat       user location
    * @param lon       user location
    * @return price as string
-   * @throws InterruptedException
+   * @throws InterruptedException exception
    */
   public static List<List<Item>> getItems(DatabaseJdbc jdbc, String tableName,
       String name, double lat, double lon) throws InterruptedException {

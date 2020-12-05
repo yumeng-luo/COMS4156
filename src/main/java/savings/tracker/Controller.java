@@ -1,9 +1,6 @@
 package savings.tracker;
 
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import savings.tracker.util.DatabaseJdbc;
+import savings.tracker.util.EndPointHelper;
 import savings.tracker.util.WegmanApi;
 
 @RestController
 public class Controller {
-  private static int ALTERNATIVE_NUMBER = 1;
 
   private static DatabaseJdbc database = new DatabaseJdbc();
 
@@ -80,22 +77,7 @@ public class Controller {
       id = "105222900313734280075";
     }
     System.out.print(principal);
-    // delete ongoing task
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-    List<Item> emptyList = new ArrayList<Item>();
-    Item emptyItem = new Item();
-    OngoingTask task = new OngoingTask(id, "", timestamp, emptyList, emptyItem,
-        0, 0, emptyList, emptyItem, 0, 0);
-
-    try {
-      DatabaseJdbc.addTask(database, "Task", task);
-      DatabaseJdbc.removeSearch(database, "Search", id + "1");
-      DatabaseJdbc.removeSearch(database, "Search", id + "2");
-    } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return new Message(200, "No Alternative");
+    return EndPointHelper.noAlternativeHelper(database, id);
   }
 
   /**
@@ -106,8 +88,7 @@ public class Controller {
    * @param item name of item
    * @param lat  of user
    * @param lon  of user
-   * @throws InterruptedException
-   * @throws SQLException         Exception
+   * @throws InterruptedException Exception
    */
   @PostMapping("/search")
   @ResponseBody
@@ -117,12 +98,7 @@ public class Controller {
       @RequestParam(value = "lat", defaultValue = "37.7510") double lat,
       @RequestParam(value = "lon", defaultValue = "-97.8220") double lon)
       throws InterruptedException {
-    /**
-     * TODO: test if multiple /search calls can be called with changing item
-     * name. Currently, the endpoint is reusing the first search item for all
-     * subsequent /search calls. Also, reduce database operations (taking too
-     * long on the frontend).
-     */
+
     if (item.length() > 50) {
       List<Item> itemList = new ArrayList<Item>();
       return itemList;
@@ -136,68 +112,7 @@ public class Controller {
 
     System.out.println("/search called->item: " + item);
 
-    // updates user location data
-    try {
-      User user = DatabaseJdbc.getUser(database, "User", id);
-      user.setLat(lat);
-      user.setLon(lon);
-      DatabaseJdbc.updatesUser(database, "User", user);
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-
-    System.out.print(id);
-    System.out.print(item);
-    // save to on going task
-    OngoingTask currentTask = new OngoingTask();
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-    currentTask.setTaskStartTime(timestamp);
-    currentTask.setUserId(id);
-    currentTask.setSearchString(item);
-    try {
-      DatabaseJdbc.addTask(database, "Task", currentTask);
-    } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-    // search for item
-    // TODO implement this part after rapid api
-
-    // save to ongoing task
-    currentTask.setInitialItem(new Item());
-    currentTask.setInitialLat(0);
-    currentTask.setInitialLon(0);
-    currentTask.setFinalItem(new Item());
-    currentTask.setFinalLat(0);
-    currentTask.setFinalLon(0);
-    List<List<Item>> list = WegmanApi.getItems(database, "Store", item, lat,
-        lon);
-    if (list.size() == 0) {
-      currentTask.setSearchItems(new ArrayList<Item>());
-      currentTask.setAlternativeItem(new ArrayList<Item>());
-
-      System.out.println("\n search returned 0 results\n");
-      System.out.flush();
-
-    } else {
-      currentTask.setSearchItems(list.get(0));
-      currentTask.setAlternativeItem(list.get(1));
-    }
-    try {
-      DatabaseJdbc.removeSearch(database, "Search", id + "1");
-      DatabaseJdbc.removeSearch(database, "Search", id + "2");
-      DatabaseJdbc.addSearch(database, "Search", "Item",
-          currentTask.getSearchItems(), id + "1");
-      DatabaseJdbc.addSearch(database, "Search", "Item",
-          currentTask.getAlternativeItem(), id + "2");
-      DatabaseJdbc.addTask(database, "Task", currentTask);
-    } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-    return currentTask.getSearchItems();
+    return EndPointHelper.searchItemHelper(database, item, id, lat, lon);
   }
 
   /**
@@ -221,41 +136,7 @@ public class Controller {
       id = "105222900313734280075";
     }
     System.out.print(id);
-    OngoingTask task = new OngoingTask();
-    try {
-      task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
-    } catch (SQLException e1) {
-      e1.printStackTrace();
-    }
-
-    // ongoing task
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-    task.setTaskStartTime(timestamp);
-    List<Item> itemList = task.getSearchItems();
-    task.setInitialItem(itemList.get(itemNumber));
-    task.setInitialLat(Double.valueOf(task.getInitialItem().getLat()));
-    task.setInitialLon(Double.valueOf(task.getInitialItem().getLon()));
-
-    System.out.println("\n setting initial item\n");
-    System.out.flush();
-
-    System.out
-        .println("\n initial item name" + task.getInitialItem().getName());
-    System.out.flush();
-
-    System.out.println(
-        "\n initial item barcode" + task.getInitialItem().getBarcode() + "\n");
-    System.out.flush();
-
-    // save to ongoing task
-    try {
-      // DatabaseJdbc.removeSearch(database, "Search", id + "2");
-      DatabaseJdbc.addTask(database, "Task", task);
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-
-    return new Message(200, task.getInitialItem().getName());
+    return EndPointHelper.selectItemHelper(database, itemNumber, id);
   }
 
   /**
@@ -305,162 +186,7 @@ public class Controller {
       id = "105222900313734280075";
     }
 
-//    int zip = TargetApi.getZip(lat, lon);
-//    System.out.println("\n zip " + zip + "\n");
-//    System.out.flush();
-
-    // int zip = TargetApi.getZip(lat, lon);
-    List<Item> targetList;
-    List<Item> result = new ArrayList<Item>();
-
-    // temporary dummy return value
-    List<Item> dummy_result = new ArrayList<Item>();
-    Item item1 = new Item();
-    item1.setName("name1");
-    item1.setBarcode("barcode1");
-    item1.setPrice(99.99);
-    item1.setStore("store1");
-    item1.setLat(100);
-    item1.setLon(100);
-
-    Item item2 = new Item();
-    item2.setName("name2");
-    item2.setBarcode("barcode2");
-    item2.setPrice(299.99);
-    item2.setStore("store2");
-    item2.setLat(200);
-    item2.setLon(200);
-    dummy_result.add(item1);
-    dummy_result.add(item2);
-
-    System.out.print(id);
-    // get task info from table
-    OngoingTask currentTask = new OngoingTask();
-    try {
-
-      currentTask = DatabaseJdbc.getTask(database, "Task", "Search", "Item",
-          id);
-    } catch (SQLException e1) {
-      e1.printStackTrace();
-    }
-    // dummy_result = currentTask.getAlternativeItem();
-
-    // save to on going task
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-    currentTask.setTaskStartTime(timestamp);
-    if (currentTask.getInitialItem().getBarcode() == null) {
-      System.out.println("\n no initial barcode\n");
-      System.out.flush();
-      return dummy_result;
-    }
-    currentTask.setFinalItem(new Item());
-    currentTask.setFinalLat(0);
-    currentTask.setFinalLon(0);
-
-    // adding target searches for those in alternative here
-
-//    targetList = TargetApi.getTargetAlternatives(zip, currentTask.getAlternativeItem());
-//    if (targetList != null) {
-//      for (int i = 0; i < targetList.size(); i++) {
-//        result.add(targetList.get(i));
-//      }
-//    }
-
-    result = filterAlternativeItem(lat, lon, currentTask.getAlternativeItem(),
-        currentTask.getInitialItem());
-    if (result.size() < ALTERNATIVE_NUMBER) {
-      // search for more item
-      // TODO implement this part after rapid api
-      result = WegmanApi.getAlternativeItems(database, "Store",
-          currentTask.getSearchString(), lat, lon,
-          currentTask.getInitialItem().getPrice());
-
-//      targetList = TargetApi.getSecTargetAlternatives(zip, result);
-//      if (targetList != null) {
-//        for (int i = 0; i < targetList.size(); i++) {
-//          result.add(targetList.get(i));
-//        }
-//
-//      }
-      result = filterAlternativeItem(lat, lon, result,
-          currentTask.getInitialItem());
-    }
-
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    // save to ongoing task
-    currentTask.setAlternativeItem(result);
-    try {
-      DatabaseJdbc.removeSearch(database, "Search", id + "2");
-      DatabaseJdbc.addSearch(database, "Search", "Item", result, id + "2");
-      DatabaseJdbc.addTask(database, "Task", currentTask);
-    } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-//    System.out.println("\nresult" + result.size() + "\n");
-//    System.out.flush();
-    // return result;
-
-    return currentTask.getAlternativeItem();
-    // return dummy_result;
-  }
-
-  /**
-   * Filter Alternatives based on toggle switch.
-   * 
-   * @param lat          of user
-   * @param lon          of user
-   * @param alternatives list of alternatives
-   * @param initialItem  initial chosen item
-   * @throws SQLException Exception
-   */
-  public List<Item> filterAlternativeItem(double lat, double lon,
-      List<Item> alternatives, Item initialItem) {
-
-    List<Item> result = new ArrayList<Item>();
-
-    // check if there are alternatives
-    if (alternatives.size() != 0) {
-      // deep copy
-      // non empty alternatives, check if there is alt requirement
-      for (int i = 0; i < alternatives.size(); i++) {
-        if (WegmanApi.isMustbecheaper() == false
-            || alternatives.get(i).getPrice() <= initialItem.getPrice()) {
-          // no cheaper requirement or yes cheaper requirement but cheaper
-
-          // check distance reuirement
-          double lat1 = alternatives.get(i).getLat(); // alt
-          double lon1 = alternatives.get(i).getLon();
-          double lat2 = initialItem.getLat(); // initial
-          double lon2 = initialItem.getLon();
-          // lat lon user
-          double distance1 = WegmanApi.getDistance(lat, lon, lat1, lon1);
-          double distance2 = WegmanApi.getDistance(lat, lon, lat2, lon2);
-          if (WegmanApi.isMustbecloser() == false || distance1 <= distance2) {
-            // no distance requirement or yes but closer
-
-            String barcode1 = initialItem.getBarcode();
-            String barcode2 = alternatives.get(i).getBarcode();
-            boolean locationNotMatch = ((lat1 != lat2) || (lon1 != lon2));
-            // check same item requirement
-            if (WegmanApi.isMustbesameitem() == false
-                || (barcode2.equals(barcode1) && locationNotMatch)) {
-              // no same item requirement or yes but same item but different
-              // location
-              result.add(new Item(alternatives.get(i)));
-            }
-          }
-        }
-      }
-    }
-
-    return result;
+    return EndPointHelper.searchAlternativeItemHelper(database, id, lat, lon);
   }
 
   /**
@@ -489,32 +215,7 @@ public class Controller {
       id = "105222900313734280075";
     }
     System.out.print(id);
-    OngoingTask task = new OngoingTask();
-    Item finalItem = new Item();
-    try {
-      task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
-
-      finalItem = DatabaseJdbc.getItem(database, "Item", barcode,
-          Double.valueOf(lat), Double.valueOf(lon));
-    } catch (SQLException e1) {
-      e1.printStackTrace();
-    }
-
-    // ongoing task
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-    task.setTaskStartTime(timestamp);
-    task.setFinalItem(finalItem);
-    task.setFinalLat(Double.valueOf(lat));
-    task.setFinalLon(Double.valueOf(lon));
-
-    // save to ongoing task
-    try {
-      DatabaseJdbc.addTask(database, "Task", task);
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-
-    return new Message(200, task.getFinalItem().getName());
+    return EndPointHelper.selectPurchaseHelper(database, barcode, lat, lon, id);
   }
 
   /**
@@ -533,60 +234,7 @@ public class Controller {
       id = "105222900313734280075";
     }
     System.out.print(id);
-    User user = new User();
-    OngoingTask task = new OngoingTask();
-    try {
-      user = DatabaseJdbc.getUser(database, "User", id);
-      task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
-    } catch (SQLException e1) {
-      e1.printStackTrace();
-    }
-
-    // ongoing task
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-    task.setTaskStartTime(timestamp);
-    Item finalItem = task.getFinalItem();
-    Item initialItem = task.getInitialItem();
-    if (initialItem.getBarcode() == null) {
-      return new Message(201, user.getName() + " haven't chose any items yet!");
-    }
-
-    if (finalItem.getBarcode() == null) {
-      return new Message(202,
-          user.getName() + " haven't added any items to cart yet!");
-    }
-
-    // after using clear task to avoid multiple purchase
-    task.setInitialItem(new Item());
-    task.setFinalItem(new Item());
-
-    // calculate savings
-    double saving = 0;
-    saving = initialItem.getPrice() - finalItem.getPrice();
-    saving = Math.max(saving, 0);
-    // save to user info
-    try {
-      DatabaseJdbc.addTask(database, "Task", task);
-      user.setSavings(user.getSavings() + saving);
-      DatabaseJdbc.updatesUser(database, "User", user);
-
-      LocalDate currentDate = LocalDate.now();
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-      String strCurrentDate = currentDate.format(formatter);
-      DatabaseJdbc.addPurchaseData(database, "Purchase", finalItem,
-          user.getUserId(), saving, strCurrentDate);
-
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-
-    return new Message(200,
-        user.getName() + " purchased " + finalItem.getName() + " with $"
-            + String.valueOf(finalItem.getPrice()) + " instead of "
-            + initialItem.getName() + "with $" + initialItem.getPrice()
-            + ". \n Good Job! You saved $" + String.valueOf(saving)
-            + " on this purchase! \n You have accumulated $" + user.getSavings()
-            + " so far!");
+    return EndPointHelper.confirmPurchaseHelper(database, id);
   }
 
   /**
