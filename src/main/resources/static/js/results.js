@@ -135,14 +135,14 @@ function show_confirm(item_index) {
   document.getElementById('alt_name').innerHTML="";
   if (item_index == -1){
   	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+ori_item.name+" $"+ori_item.price+" <br /> You haved spent $"+ori_item.price;
+    document.getElementById("confirm_button").style.display="block";
   	drawRoute(ori_item.lat,ori_item.lon);
   } else{
   	fin_item=alt_list[item_index];
   	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You haved saved $"+Math.max(ori_item.price-fin_item.price,0);
+    document.getElementById("confirm_button").style.display="block";
   	drawRoute(fin_item.lat,fin_item.lon);
   }
-  
-  confirm_purchase();
 }
 
 //generate alternate items
