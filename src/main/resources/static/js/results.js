@@ -1,6 +1,8 @@
-let ori_list;
-let search_ind;
-let alt_list;
+let ori_list; //the list of searched items
+let search_ind; //index of item chosen in the search list
+let alt_list; //the list of alternate items
+let item; //item chosen in the search list
+var confirm_page = false; //if we arrived at the confirmed page
 let cheaper=false;
 let closer=false;
 let same=false;
@@ -53,12 +55,33 @@ function storeDist(lat,lon){
     return Math.round(dist * 10) / 10;
 }
 }
+//cur to mark current location
+//searched to mark searched item
+function clearMap(cur,searched){
+  clearRoute();
+  clearMarkers();
+  if (cur){
+    createMarker(pos.lat, pos.lng, "current location",true);
+  } 
+  if (searched){
+    createMarker(item.lat, item.lon, "0",true);
+  }
+  
+}
+
+function clearConfirm(){
+  document.getElementById("confirm_button").style.display="none";
+  document.getElementById("back_button").style.display="none";
+  document.getElementById("confirm_mesg").innerHTML="";
+}
 
 //generates a list of buttons based on a parsed json list of items
 function generate_searched(items) {
-  clearMarkers();
-  createMarker(pos.lat, pos.lng, "current location",true);
-  document.getElementById("map").style.display="hidden";
+  confirm_page = false;
+  clearMap(true,false);
+  clearConfirm()
+  document.getElementById("switches").style.display="none";
+  document.getElementById("map").style.display="block";
   document.getElementById("confirm_mesg").innerHTML="";
   document.getElementById("alt_name").innerHTML="";
   results=document.getElementById('results');
@@ -93,24 +116,32 @@ element.innerHTML='Check here to filter our alternative searches';
 '	  	    </button>';
     createMarker(items[i].lat, items[i].lon, (i+1).toString(),false);
   }
-  fitBound()
   results.innerHTML = x +
 '	      </ul>'+
 '	    </div>'+
 '	  </div>';
 
 }
+
+function back_alt(){
+  show_alt(search_ind);
+}
+
 //switches to the view for alternate items
 function show_alt(item_index) {
+  confirm_page = false;
+  clearConfirm();
   item=ori_list[item_index];
+  clearMap(true, true);
   search_ind=item_index;
+  document.getElementById("switches").style.display="block";
   var element = document.getElementById("myvar");
-element.innerHTML='';
+  element.innerHTML='';
   document.getElementById('results').innerHTML="";
   document.getElementById("alt_name").innerHTML="You chose: "+
   '	        <button onclick = "select_alternative('+item.barcode+','+item.lat+', '+item.lon+',-1)" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
 '	          <div class="column" >'+
-'	    		<h5>'+item.name+'</h5>'+
+'	    		<h5>0: '+item.name+'</h5>'+
 '	    		<p>Price: $'+item.price+'</p>'+
 '	    		<small>Store Name: '+item.store+'</small>'+
 '	  		  </div>'+
@@ -126,30 +157,33 @@ element.innerHTML='';
 
 //use api endpoint to get saved value
 function show_confirm(item_index) {
-	var switches = document.getElementById("switches");
-  document.getElementById("map").style.display="block";
-	switches.innerHTML = '';
+  document.getElementById("wait_mesg").style.display="none";
+  confirm_page = true;
+  clearMap(false,false);
+	document.getElementById("switches").style.display="none";
 	
   ori_item=ori_list[search_ind];
   document.getElementById('alt_results').innerHTML="";
   document.getElementById('alt_name').innerHTML="";
-  clearMarkers();
   if (item_index == -1){
   	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+ori_item.name+" $"+ori_item.price+" <br /> You haved spent $"+ori_item.price;
     document.getElementById("confirm_button").style.display="block";
+    document.getElementById("back_button").style.display="block";
   	drawRoute(ori_item.lat,ori_item.lon);
   } else{
   	fin_item=alt_list[item_index];
   	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You haved saved $"+Math.max(ori_item.price-fin_item.price,0);
     document.getElementById("confirm_button").style.display="block";
+    document.getElementById("back_button").style.display="block";
   	drawRoute(fin_item.lat,fin_item.lon);
   }
 }
 
 //generate alternate items
 function generate_alt(items) {
-  clearMarkers();
-  createMarker(pos.lat, pos.lng, "current location",true);
+  clearMap(true, true);
+  item=ori_list[search_ind];
+  createMarker(item.lat, item.lon, "0",true);
   alt_list=items;
   results=document.getElementById('alt_results');
   let n=items.length;
@@ -179,7 +213,6 @@ function generate_alt(items) {
 '	  	    </button>';
     createMarker(items[i].lat, items[i].lon, (i+1).toString(),false);
   }
-  fitBound()
   results.innerHTML = x +
 '	      </ul>'+
 '	    </div>'+

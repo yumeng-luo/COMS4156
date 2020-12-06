@@ -1,4 +1,5 @@
-async function init_search() {   
+async function init_search() {
+    document.getElementById("wait_mesg").style.display="block";
     searched_item=document.getElementById("search_bar").value;
     const response = await fetch("/search", {
       method: "POST",
@@ -8,6 +9,7 @@ async function init_search() {
       body: 'item='+searched_item+'&lat='+pos.lat+'&lon='+pos.lng
     });
     generate_searched(await response.json());
+    document.getElementById("wait_mesg").style.display="none";
   }
 
 function select_search(item_index) {
@@ -22,37 +24,21 @@ function select_search(item_index) {
 } 
 
 async function request_alternatives() {
-
+  document.getElementById("wait_mesg").style.display="block";
   const response = await fetch ("/alternatives", {
     method: "POST",
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
   });
-  generate_alt(await response.json());
-  var switches = document.getElementById("switches");
-switches.innerHTML = '<!-- Default inline 1-->'+
-'		<div class="custom-control custom-checkbox custom-control-inline">'+
-'			<input type="checkbox" onclick="toggle_cheaper()" class="custom-control-input" id="defaultInline1">'+
-'			<label class="custom-control-label" for="defaultInline1">cheaper</label>'+
-'		</div>'+
-'		'+
-'		<!-- Default inline 2-->'+
-'		<div class="custom-control custom-checkbox custom-control-inline">'+
-'			<input type="checkbox" onclick="toggle_closer()" class="custom-control-input" id="defaultInline2">'+
-'			<label class="custom-control-label" for="defaultInline2">closer</label>'+
-'		</div>'+
-'		'+
-'		<!-- Default inline 3-->'+
-'		<div class="custom-control custom-checkbox custom-control-inline">'+
-'			<input type="checkbox" onclick="toggle_same()" class="custom-control-input" id="defaultInline3">'+
-'			<label class="custom-control-label" for="defaultInline3">same</label>'+
-'		</div>';
-	
-
+  if (!confirm_page){
+    generate_alt(await response.json());
+  }
+  document.getElementById("wait_mesg").style.display="none";
 }
 
 async function request_filter(cheaper,closer,same) {
+  document.getElementById("wait_mesg").style.display="block";
 
   const response = await fetch ("/filter", {
     method: "POST",
@@ -61,8 +47,10 @@ async function request_filter(cheaper,closer,same) {
     },
     body: 'lat='+pos.lat+'&lon='+pos.lng+'&CHEAPER='+cheaper+'&CLOSER='+closer+'&SAME='+same
   });
-  generate_alt(await response.json());
-
+  if (!confirm_page){
+    generate_alt(await response.json());
+  }
+  document.getElementById("wait_mesg").style.display="none";
 }
 
 function select_alternative(upc,lat,lon,item_index) {

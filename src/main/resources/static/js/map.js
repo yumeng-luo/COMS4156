@@ -26,9 +26,9 @@ function initMap() {
         };
         map = new google.maps.Map(document.getElementById('map'), {
             center: pos,
-            zoom: 15
+            zoom: 13
         });
-        directionsRenderer.setMap(map);
+//        directionsRenderer.setMap(map);
     }, () => {
         // Browser supports geolocation, but user has denied permission
         handleLocationError(true, infoWindow);
@@ -45,9 +45,9 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
         pos = {lat: 40.8106604, lng: -73.9573358};
         map = new google.maps.Map(document.getElementById('map'), {
         center: pos,
-        zoom: 15
+        zoom: 13
     });
-    directionsRenderer.setMap(map);
+//    directionsRenderer.setMap(map);
 }
 
 function clearMarkers() {
@@ -91,6 +91,7 @@ function fitBound(){
 //draws the route from current location to store
 //input: destination lat lng
 function drawRoute(lat,lng) {
+    directionsRenderer.setMap(map);
     const start=new google.maps.LatLng(pos.lat,pos.lng);
     const end=new google.maps.LatLng(lat,lng);
     var request = {
@@ -104,6 +105,11 @@ function drawRoute(lat,lng) {
         }
       });
   }
+  
+function clearRoute(){
+    directionsRenderer.setDirections(null);
+    directionsRenderer.setMap(null);
+}
 
 // DO NOT REMOVE
 module.exports = { initMap: initMap, handleLocationError: handleLocationError, 

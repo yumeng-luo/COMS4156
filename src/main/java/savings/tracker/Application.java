@@ -107,7 +107,7 @@ public class Application extends WebSecurityConfigurerAdapter {
           request.getSession().setAttribute("error.message",
               exception.getMessage());
           // handler.onAuthenticationFailure(request, response, exception);
-        }).defaultSuccessUrl("http://localhost:8443/", true));
+        }).defaultSuccessUrl("https://localhost:8443/", true));
     http.cors().and().csrf().disable();
   }
 
