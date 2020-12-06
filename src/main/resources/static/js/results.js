@@ -58,7 +58,7 @@ function storeDist(lat,lon){
 function generate_searched(items) {
   clearMarkers();
   createMarker(pos.lat, pos.lng, "current location",true);
-  document.getElementById("map").style.display="block";
+  document.getElementById("map").style.display="hidden";
   document.getElementById("confirm_mesg").innerHTML="";
   document.getElementById("alt_name").innerHTML="";
   results=document.getElementById('results');
@@ -127,6 +127,7 @@ element.innerHTML='';
 //use api endpoint to get saved value
 function show_confirm(item_index) {
 	var switches = document.getElementById("switches");
+  document.getElementById("map").style.display="block";
 	switches.innerHTML = '';
 	
   ori_item=ori_list[search_ind];
