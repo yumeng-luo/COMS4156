@@ -133,6 +133,7 @@ function show_confirm(item_index) {
   ori_item=ori_list[search_ind];
   document.getElementById('alt_results').innerHTML="";
   document.getElementById('alt_name').innerHTML="";
+  clearMarkers();
   if (item_index == -1){
   	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+ori_item.name+" $"+ori_item.price+" <br /> You haved spent $"+ori_item.price;
     document.getElementById("confirm_button").style.display="block";
