@@ -1,5 +1,6 @@
 var pos;
-let map;
+var map;
+var markersArray = [];
 let bounds;
 let infoWindow;
 let currentInfoWindow;
@@ -27,7 +28,6 @@ function initMap() {
             center: pos,
             zoom: 15
         });
-
         directionsRenderer.setMap(map);
     }, () => {
         // Browser supports geolocation, but user has denied permission
@@ -47,6 +47,45 @@ function handleLocationError(browserHasGeolocation, infoWindow) {
         center: pos,
         zoom: 15
     });
+    directionsRenderer.setMap(map);
+}
+
+function clearMarkers() {
+    for (var i = 0; i < markersArray.length; i++ ) {
+        markersArray[i].setMap(null);
+      }
+      markersArray.length = 0;
+}
+
+// Set markers at lat lng
+function createMarker(lat, lng, name, info) {
+    const loca=new google.maps.LatLng(lat,lng)
+    let marker = new google.maps.Marker({
+        position: loca,
+        map: map,
+        title: name
+    });
+    markersArray.push(marker);
+    const infowindow = new google.maps.InfoWindow({
+        content: name,
+      });
+      if (info){
+        infowindow.open(map, marker);
+      }
+    // Add click listener to each marker
+    google.maps.event.addListener(marker, 'click', () => {
+        infowindow.open(map, marker);
+    });
+
+    // Adjust the map bounds to include the location of this marker
+   bounds.extend(loca);
+   return marker;
+}
+
+function fitBound(){
+      	/* Once all the markers have been placed, adjust the bounds of the map to
+     * show all the markers within the visible area. */
+    map.fitBounds(bounds);
 }
 
 //draws the route from current location to store

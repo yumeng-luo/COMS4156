@@ -56,8 +56,10 @@ function storeDist(lat,lon){
 
 //generates a list of buttons based on a parsed json list of items
 function generate_searched(items) {
+  clearMarkers();
+  createMarker(pos.lat, pos.lng, "current location",true);
+  document.getElementById("map").style.display="block";
   document.getElementById("confirm_mesg").innerHTML="";
-  document.getElementById("map").style.display="none";
   document.getElementById("alt_name").innerHTML="";
   results=document.getElementById('results');
   ori_list=items;
@@ -78,7 +80,7 @@ element.innerHTML='Check here to filter our alternative searches';
     x = x+ 
 '	        <button onclick = "select_search('+i+')" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
 '	          <div class="column" >'+
-'	    		<h5>'+items[i].name+'</h5>'+
+'	    		<h5>'+(i+1)+": "+items[i].name+'</h5>'+
 '	    		<p>Price: $'+items[i].price+'</p>'+
 '	    		<small>Store Name: '+items[i].store+'</small>'+
 '	  		  </div>'+
@@ -89,7 +91,9 @@ element.innerHTML='Check here to filter our alternative searches';
 '	     		</div>'+
 '	   		  </div>'+
 '	  	    </button>';
+    createMarker(items[i].lat, items[i].lon, (i+1).toString(),false);
   }
+  fitBound()
   results.innerHTML = x +
 '	      </ul>'+
 '	    </div>'+
@@ -136,13 +140,14 @@ function show_confirm(item_index) {
   	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You haved saved $"+Math.max(ori_item.price-fin_item.price,0);
   	drawRoute(fin_item.lat,fin_item.lon);
   }
-  document.getElementById("map").style.display="block";
   
   confirm_purchase();
 }
 
 //generate alternate items
 function generate_alt(items) {
+  clearMarkers();
+  createMarker(pos.lat, pos.lng, "current location",true);
   alt_list=items;
   results=document.getElementById('alt_results');
   let n=items.length;
@@ -159,7 +164,7 @@ function generate_alt(items) {
     x = x+ 
 '	        <button onclick = "select_alternative('+items[i].barcode+','+items[i].lat+', '+items[i].lon+','+i+')" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
 '	          <div class="column" >'+
-'	    		<h5>'+items[i].name+'</h5>'+
+'	    		<h5>'+(i+1)+": "+items[i].name+'</h5>'+
 '	    		<p>Price: $'+items[i].price+'</p>'+
 '	    		<small>Store Name: '+items[i].store+'</small>'+
 '	  		  </div>'+
@@ -170,7 +175,9 @@ function generate_alt(items) {
 '	     		</div>'+
 '	   		  </div>'+
 '	  	    </button>';
+    createMarker(items[i].lat, items[i].lon, (i+1).toString(),false);
   }
+  fitBound()
   results.innerHTML = x +
 '	      </ul>'+
 '	    </div>'+
