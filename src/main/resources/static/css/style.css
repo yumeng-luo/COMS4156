@@ -6,3 +6,39 @@
 	text-align:center;
 	margin: auto;
 }
+
+.button1 {
+	border: none;
+	background-color: Transparent;
+	outline: none;
+	border: none;
+	font-family: Palatino, "Palatino LT STD", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+	color: #c4cfcf;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 14px;
+	cursor: pointer;
+	position: absolute;
+	right: 100px;
+	top: 210px;
+	/*border-top: solid 2px grey;*/
+	margin-bottom: 20px;
+}
+.button2 {
+	border: none;
+	background-color: Transparent;
+	outline: none;
+	border: none;
+	font-family: Palatino, "Palatino LT STD", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+	color: #c4cfcf;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 14px;
+	cursor: pointer;
+	position: absolute;
+	right: 100px;
+	top: 230px;
+	border-bottom: solid 2px #c4cfcf;
+}

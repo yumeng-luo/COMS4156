@@ -81,15 +81,22 @@ function generate_searched(items) {
   clearMap(true,false);
   clearConfirm()
   document.getElementById("switches").style.display="none";
-  document.getElementById("map").style.display="block";
+  
   document.getElementById("confirm_mesg").innerHTML="";
   document.getElementById("alt_name").innerHTML="";
+  document.getElementById('history_table').innerHTML="";
   results=document.getElementById('results');
   ori_list=items;
   let n=items.length;
   let bt;
   let i;
+  
+  if (n == 0) {
+    alert("No item found. Please try another item.");
+  	return;
+  }
 
+  document.getElementById("map").style.display="block";
   //results.innerHTML='';
   var x = '<div class="row">'+
 '	    <div class="col-12">'+
@@ -138,6 +145,7 @@ function show_alt(item_index) {
   var element = document.getElementById("myvar");
   element.innerHTML='';
   document.getElementById('results').innerHTML="";
+  document.getElementById('history_table').innerHTML="";
   document.getElementById("alt_name").innerHTML="You chose: "+
   '	        <button onclick = "select_alternative('+item.barcode+','+item.lat+', '+item.lon+',-1)" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
 '	          <div class="column" >'+
@@ -165,14 +173,15 @@ function show_confirm(item_index) {
   ori_item=ori_list[search_ind];
   document.getElementById('alt_results').innerHTML="";
   document.getElementById('alt_name').innerHTML="";
+  document.getElementById('history_table').innerHTML="";
   if (item_index == -1){
-  	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+ori_item.name+" $"+ori_item.price+" <br /> You haved spent $"+ori_item.price;
+  	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+ori_item.name+" $"+ori_item.price+" <br /> You have spent $"+ori_item.price;
     document.getElementById("confirm_button").style.display="block";
     document.getElementById("back_button").style.display="block";
   	drawRoute(ori_item.lat,ori_item.lon);
   } else{
   	fin_item=alt_list[item_index];
-  	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You haved saved $"+Math.max(ori_item.price-fin_item.price,0);
+  	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You would save $"+Math.max(ori_item.price-fin_item.price,0);
     document.getElementById("confirm_button").style.display="block";
     document.getElementById("back_button").style.display="block";
   	drawRoute(fin_item.lat,fin_item.lon);
@@ -212,6 +221,48 @@ function generate_alt(items) {
 '	   		  </div>'+
 '	  	    </button>';
     createMarker(items[i].lat, items[i].lon, (i+1).toString(),false);
+  }
+  results.innerHTML = x +
+'	      </ul>'+
+'	    </div>'+
+'	  </div>';
+
+}
+
+//generate history
+function generate_history(records) {
+  console.log(records);
+  
+  confirm_page = false;
+  clearConfirm()
+  document.getElementById("switches").style.display="none";
+  document.getElementById("map").style.display="none";
+  document.getElementById("confirm_mesg").innerHTML="";
+  document.getElementById("alt_name").innerHTML="";
+  
+  /*alt_list=records;*/
+  results=document.getElementById('history_table');
+  let n=records.length;
+  /*let bt;*/
+  let i;
+
+//  results.innerHTML='';
+  var x = '<div class="row">'+
+'	    <div class="col-12">'+
+'	      '+
+'	      <ul class="list-group ">';
+
+  for (i =0; i<n; ++i) {
+    x = x+ 
+'      <div class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
+'	    <div class="column" >'+
+			"<br />" +
+'	    	<p>Date: '+records[i].date+'</p>'+
+'			<p>Item: '+records[i].item+'</p>'+
+'	    	<p>Price: $'+records[i].price+'</p>'+
+'	    	<p>Price: $'+records[i].price+'</p>'+
+'		</div>' + 
+'     </div>';
   }
   results.innerHTML = x +
 '	      </ul>'+

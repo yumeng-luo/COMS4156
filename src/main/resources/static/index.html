@@ -129,6 +129,8 @@
 		<button type="button" id="confirm_button" onclick="confirm_purchase()" class="btn btn-primary" style="display:none;">Confirm</button>
 	</div>
 
+	<button class="button1" onclick="send_email()">Send snapshot to email</button>
+	<button class="button2" onclick="history()">Get history</button>
 
 	<div class="container" id="map" style="display:none">
 		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3tMF1nrRzpd0gJb769F9TecMJUGpcsHs&libraries=places&callback=initMap"></script>
@@ -165,7 +167,10 @@
 	<div class="container">
 		<div id='results' class="list-group"></div>
 	</div>
-	
+		
+	<div class="container">
+		<div id='history_table' class="list-group"></div>
+	</div>
 
 	<div class="container">
 		<div id='alt_results' class="list-group"></div>

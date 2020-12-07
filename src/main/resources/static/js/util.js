@@ -76,6 +76,30 @@ function confirm_purchase() {
     xhttp.send();
 } 
 
+function send_email() {
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+	    if (xhr.readyState == XMLHttpRequest.DONE) {
+	    	var data = JSON.parse(xhr.responseText);
+	    	alert(data.message);
+	    }
+	}
+	xhr.open('GET', '/send_email', true);
+	xhr.send(null);
+} 
+
+async function history() {
+
+  const response = await fetch ("/history", {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
+  generate_history(await response.json());
+}
+
+
 // DO NOT REMOVE
 module.exports = { init_search: init_search, select_search: select_search, 
    request_alternatives: request_alternatives, select_alternative: select_alternative, 

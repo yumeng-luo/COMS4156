@@ -107,9 +107,16 @@ public class WegmanApi {
       return new ArrayList<List<Item>>();
     }
     JsonArray results = jsonObject.get("results").getAsJsonArray();
+    
+    if (results.size() == 0) {
+      return new ArrayList<List<Item>>();
+    }
+    
     List<Item> exactList = new ArrayList<Item>();
     List<Item> altList = new ArrayList<Item>();
-    for (int i = 0; i < SEARCHSIZE; i++) {
+    int count = 0;
+    for (int i = 0; i < results.size(); i++) {
+      count++;
       // get item name store and sku
       JsonElement itemJson = results.get(i);
       JsonElement itemName = itemJson.getAsJsonObject().get("name");
@@ -179,6 +186,10 @@ public class WegmanApi {
           altList.add(new Item(item));
         }
 
+      }
+      
+      if (count == SEARCHSIZE) {
+        break;
       }
 
     }
