@@ -99,6 +99,16 @@ async function history() {
   generate_history(await response.json());
 }
 
+async function getBalance() {
+  const response = await fetch ("/balance", {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
+  updateBalance(await response.json());
+}
+
 
 // DO NOT REMOVE
 module.exports = { init_search: init_search, select_search: select_search, 

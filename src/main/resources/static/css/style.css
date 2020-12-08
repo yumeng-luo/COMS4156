@@ -13,17 +13,13 @@
 	outline: none;
 	border: none;
 	font-family: Palatino, "Palatino LT STD", "Palatino Linotype", "Book Antiqua", Georgia, serif;
-	color: #c4cfcf;
+	color: #212529;
 	text-align: center;
 	text-decoration: none;
-	display: inline-block;
+	display: block;
 	font-size: 14px;
 	cursor: pointer;
-	position: absolute;
-	right: 100px;
-	top: 210px;
-	/*border-top: solid 2px grey;*/
-	margin-bottom: 20px;
+	float:right
 }
 .button2 {
 	border: none;
@@ -31,14 +27,21 @@
 	outline: none;
 	border: none;
 	font-family: Palatino, "Palatino LT STD", "Palatino Linotype", "Book Antiqua", Georgia, serif;
-	color: #c4cfcf;
+	color: #212529;
 	text-align: center;
 	text-decoration: none;
-	display: inline-block;
+	display: block;
 	font-size: 14px;
 	cursor: pointer;
-	position: absolute;
-	right: 100px;
-	top: 230px;
-	border-bottom: solid 2px #c4cfcf;
+	float:right
+}
+
+#balance {
+	font-family: Palatino, "Palatino LT STD", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+	color: #212529;
+	text-align: center;
+	text-decoration: none;
+	display: block;
+	font-size: 14px;
+	float:right
 }

@@ -101,13 +101,22 @@
 	  <button class="btn btn-primary" id="login-button" style="float:right; margin-top: 85px; margin-right: 100px" onclick="location.href = '/oauth2/authorization/google';">Google Login</button>
 	  </div>
 	</div>
-	<div class="container authenticated" style="display:none">
+	<div class="container authenticated" style="float:left; width:30%; margin-left: 5%; display:none">
 	    Logged in as: <span id="user"></span>
 	  <div>
 	    <button onClick="logout()" class="btn btn-primary">Logout</button>
 	  </div>
 	</div>
 	<div class="container text-danger error"></div>
+
+	<div class="container" style="float:right;  margin-right: 5%; width:30%; ">
+		<div id="balance" >balance goes here</div>
+		<br>
+		<button class="button1" onclick="send_email()">Send snapshot to email</button>
+		<br>
+		<button class="button2" onclick="history()">Get history</button>
+		<br>
+	</div>
 
 	<div class="container">
 		<div class="input-group md-form form-sm form-1 pl-0">
@@ -119,8 +128,8 @@
 		</div>
 	</div>
 
-	<div class="container">
-		<div id="myvar"> Need help? Look at tutorial here </div>
+	<div class="container" style="display:block">
+		<div id="tutorial"> Need help? Look at tutorial here </div>
 	</div>
 	
 	<div class="container" id="alt_name"></div>
@@ -129,13 +138,13 @@
 		<button type="button" id="confirm_button" onclick="confirm_purchase()" class="btn btn-primary" style="display:none;">Confirm</button>
 	</div>
 
-	<button class="button1" onclick="send_email()">Send snapshot to email</button>
-	<button class="button2" onclick="history()">Get history</button>
-
 	<div class="container" id="map" style="display:none">
 		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3tMF1nrRzpd0gJb769F9TecMJUGpcsHs&libraries=places&callback=initMap"></script>
 	</div>
 
+	<div class="container" style="display:none">
+		<div id="filters"> Need help? Look at tutorial here </div>
+	</div>
 	<div class="container" id="switches" style="display:none">
 		<!-- Default inline 1-->
 		<div class="custom-control custom-checkbox custom-control-inline">
