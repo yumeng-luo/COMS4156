@@ -82,7 +82,7 @@ function createMarker(lat, lng, index, info,info_content,color) {
     let marker = new google.maps.Marker({
         position: loca,
         map: map,
-        label: index,
+        //label: index,
         icon: icon_,
     });
     markersArray.push(marker);

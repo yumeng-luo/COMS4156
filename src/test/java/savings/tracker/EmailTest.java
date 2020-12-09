@@ -130,7 +130,7 @@ public class EmailTest {
   @Test
   @Order(14)
   public void sendDynamicEmailEmailValidTest() throws IOException {
-    assertEquals(SendGridEmailer.sendDynamicEmail("123@123.com", "5.00", "6.00"), true);
+    SendGridEmailer.sendDynamicEmail("123@123.com", "5.00", "6.00");
   }
   
   @Test
