@@ -269,7 +269,7 @@ function generate_history(records) {
 '	    	<p>Date: '+records[i].date+'</p>'+
 '			<p>Item: '+records[i].item+'</p>'+
 '	    	<p>Price: $'+records[i].price+'</p>'+
-'	    	<p>Price: $'+records[i].price+'</p>'+
+'	    	<p>Savings from this purchase: $'+records[i].saving+'</p>'+
 '		</div>' + 
 '     </div>';
   }

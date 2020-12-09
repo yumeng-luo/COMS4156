@@ -44,13 +44,19 @@
 	        $(".unauthenticated").hide()
 	        $(".authenticated").show()
 	        $("#balance").html('Total Saving: $ '+data.savings);
+	        balance=document.getElementById('balance');
+	        balance.innerHTML = 'Total Saving: $ '+data.savings
 	        $(".unauthenticated").hide()
 	        $(".authenticated").show()
 	        email=document.getElementById('email');
-	        email.innerHTML = '<button class="btn btn-primary" onclick="send_email()" style="background-color:grey;">Send Email to '+data.email+'</button>'
+	        email.innerHTML = '<button class="btn btn-info btn-group-xs" onclick="send_email()">Send Email to '+data.email+'</button>'
 	        $(".unauthenticated").hide()
 	        $(".authenticated").show()
-	        document.getElementById('history').style.display = "block";
+	        history_=document.getElementById('history_button');
+	        history_.innerHTML = '<button class="btn btn-group-xs btn btn-info" onclick="history()"  id="history_button">Purchase History</button>'
+	        history_.style.display = "inline";
+	        $(".unauthenticated").hide()
+	        $(".authenticated").show()
 	    });
 	    var logout = function() {
 		    $.post("/logout", function() {
@@ -70,8 +76,8 @@
 		        document.getElementById('switches').style.display = "none";
 		        document.getElementById('back_button').style.display = "none";
 		        document.getElementById('confirm_button').style.display = "none";
-		        document.getElementById('login-button').style.display = "block";
-		        document.getElementById('history').style.display = "none";
+		        document.getElementById('login-button').style.display = "inline";
+		        document.getElementById('history_button').style.display = "none";
 		    })
 		    return true;
 		}
@@ -135,10 +141,10 @@
 	<div class="container" style="float:right;  margin-right: 5%; width:30%; ">
 		<div id="balance" >Total Savings: Login to see</div>
 		<br>
-		<div id="email"> Login to receive news letters </div>
-		
-		<br>
-		<button class="button2" onclick="history()"  id="history">Your Purchase History</button>
+		 <div class="btn-group btn-group-xs">
+		<div id="email"> Login to receive news letters and view history</div>
+		<div id="history_button"></div>
+		</div>
 		<br>
 	</div>
 
