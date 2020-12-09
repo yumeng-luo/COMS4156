@@ -58,16 +58,31 @@ function clearMarkers() {
 }
 
 // Set markers at lat lng
-function createMarker(lat, lng, name, info) {
+function createMarker(lat, lng, index, info,info_content,color) {
+	icon_ = "../image/red-dot.png";
+
+    if (color=="green"){
+       icon_ = "../image/green-dot.png";
+    }
+    else if (color=="blue"){
+       icon_ = "../image/blue-dot.png";
+    }
+    else if (color=="yellow"){
+       icon_ = "../image/yellow-dot.png";
+    }
+    else if (color=="orange"){
+       icon_ = "../image/orange-dot.png";
+    }
     const loca=new google.maps.LatLng(lat,lng)
     let marker = new google.maps.Marker({
         position: loca,
         map: map,
-        title: name
+        //label: index,
+        icon: icon_,
     });
     markersArray.push(marker);
     const infowindow = new google.maps.InfoWindow({
-        content: name,
+        content: info_content,
       });
       if (info){
         infowindow.open(map, marker);

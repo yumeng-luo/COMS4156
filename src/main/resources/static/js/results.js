@@ -62,10 +62,10 @@ function clearMap(cur,searched){
   clearRoute();
   clearMarkers();
   if (cur){
-    createMarker(pos.lat, pos.lng, "current location",true);
+    createMarker(pos.lat, pos.lng, "current location",true,"Your current location","blue");
   } 
   if (searched){
-    createMarker(item.lat, item.lon, "0",true);
+    createMarker(item.lat, item.lon, "0",true,item.name+" $"+item.price,"green");
   }
 }
 
@@ -134,7 +134,7 @@ function generate_searched(items) {
 '	     		</div>'+
 '	   		  </div>'+
 '	  	    </button>';
-    createMarker(items[i].lat, items[i].lon, (i+1).toString(),false);
+    createMarker(items[i].lat, items[i].lon, (i+1).toString(),false,items[i].name+" $"+items[i].price,"red");
   }
   results.innerHTML = x +
 '	      </ul>'+
@@ -179,7 +179,7 @@ function show_alt(item_index) {
 function generate_alt(items) {
   item=ori_list[search_ind];
   clearMap(true, true);
-  createMarker(item.lat, item.lon, "0",true);
+  createMarker(item.lat, item.lon, "0",true,item.name+" $"+item.price,"green");
   alt_list=items;
   results=document.getElementById('alt_results');
   let n=items.length;
@@ -207,7 +207,7 @@ function generate_alt(items) {
 '	     		</div>'+
 '	   		  </div>'+
 '	  	    </button>';
-    createMarker(items[i].lat, items[i].lon, (i+1).toString(),false);
+    createMarker(items[i].lat, items[i].lon, (i+1).toString(),false,items[i].name+" $"+items[i].price,"red");
   }
   results.innerHTML = x +
 '	      </ul>'+
