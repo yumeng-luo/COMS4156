@@ -18,7 +18,7 @@
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>Savers</title>
 	<!-- icon -->
-	<link rel="icon" href="img/logo.png" type="image/x-icon">
+	<link rel="icon" href="image/logo.png" type="image/x-icon">
 	<!-- Font Awesome -->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
 	<!-- Google Fonts -->
@@ -126,7 +126,8 @@
 
 <body>
 	<div class="header">
-	  <img id="logo" src="img/logo_transparent.png" style="margin-left:5%; float:left"alt="Logo">
+	  <img id="logo" src="image/logo.png" style="margin-left:5%; float:left"alt="Logo">
+	  <img id="logo" src="image/logo_title.png" style="margin-left:5%; float:left"alt="Logo title">
 	  <button class="btn btn-primary unauthenticated" id="login-button" style="float:right; margin-top: 85px; margin-right: 100px" onclick="location.href = '/oauth2/authorization/google';">Google Login</button>
 	  </div>
 	</div>
@@ -213,6 +214,48 @@
 
 	<div class="container">
 		<div id='alt_results' class="list-group"></div>
+	</div>
+	
+	<div class="container" id="tutorial">
+		<div id='tut_search' class="list-group">
+		<h6>Type in the name of item and press the search button on the right:</h6>
+		<img src="image/search_help.png" class="img-fluid" alt="search tut" >
+		</div>
+		<br>
+		<div id='tut_search' class="list-group">
+		<h6>Search results are identified with makers relative to your current location on map. You can zoom in and out to view more.</h6>
+		<img src="image/search_demo.png" class="img-fluid" alt="search demo" >
+		</div>
+		<br>
+		<div id='item_help' class="list-group">
+		<h6>In list, you can find information about each item's name, price, store, distance away and picture:</h6>
+		<img src="image/item_help.png" class="img-fluid" alt="item demo" >
+		</div>
+		<br>
+		<div id='alt_demo' class="list-group">
+		<h6>After choosing an item, why not look at some other alternative we suggest? You can also find your choice and our suggestions on map:</h6>
+		<img src="image/alt_demo.png" class="img-fluid" alt="alt demo" >
+		</div>
+		<br>
+		<div id='filter_demo' class="list-group">
+		<h6>We provide 3 different filters for you: 
+		<ul>
+		<li>Cheaper: only look at items cheaper than your choice</li>
+		<li>Closer: only look at items closer than your choice</li>
+		<li>Same: I just want this specific item, show me this item at other stores and their prices</li>
+		</ul></h6>
+		<img src="image/filter_demo.png" class="img-fluid" alt="filter demo" >
+		</div>
+		<br>
+		<div id='final_item' class="list-group">
+		<h6>Find out how much you CAN SAVE from this purchase and follow the directions to the store. Click confirm to record this purchase. You can also go back to previous page if you changed your mind:</h6>
+		<img src="image/final_item.png" class="img-fluid" alt="final item demo" >
+		</div>
+		<br>
+		<div id='history_demo' class="list-group">
+		<h6>Click the purchase history button on top right corner of the page and review your purchase history:</h6>
+		<img src="image/history_demo.png" class="img-fluid" alt="purchase history demo" >
+		</div>
 	</div>
 
 </body>
