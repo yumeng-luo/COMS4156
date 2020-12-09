@@ -36,7 +36,7 @@ public class EmailTest {
   public void sendEmailTest() throws IOException {
     
     Mail mail = SendGridEmailer.buildDynamicTemplate("ASE.email.api@gmail.com", "5.00", "6.00");
-    assertEquals(SendGridEmailer.send(mail, "SG.bxNhOT"), true);
+    assertEquals(SendGridEmailer.send(mail, "SG.bxNhOT"), false);
   }
   
   @Test
@@ -44,7 +44,7 @@ public class EmailTest {
   public void sendEmailInputNoNullTest() throws IOException {
     
     Mail mail = SendGridEmailer.buildDynamicTemplate("ASE.email.api@gmail.com", "5.00", "6.00");
-    assertEquals(SendGridEmailer.send(mail, "SG.bxNhOTUbQM"), true);
+    assertEquals(SendGridEmailer.send(mail, "SG.bxNhOTUbQM"), false);
   }
   
   @Test
@@ -73,7 +73,7 @@ public class EmailTest {
   @Order(7)
   public void sendEmailAPIKeyValidTest() throws IOException {
     Mail mail = SendGridEmailer.buildDynamicTemplate("ASE.email.api@gmail.com", "5.00", "6.00");
-    assertEquals(SendGridEmailer.send(mail, "SG.38487ddsaf"), true);
+    assertEquals(SendGridEmailer.send(mail, "SG.38487ddsaf"), false);
   }
   
   @Test
