@@ -39,6 +39,9 @@
 	<!-- MDB core JavaScript -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
     <script type="text/javascript">
+	    $('#myModal').on('shown.bs.modal', function () {
+		  $('#myInput').trigger('focus')
+		})
 	    $.get("/user", function(data) {
 	        $("#user").html(data.name);
 	        $(".unauthenticated").hide()
@@ -160,7 +163,72 @@
 	</div>
 
 	<div class="container" style="display:block">
-		<div id="tutorial"> Need help? Look at tutorial here </div>
+		<div id="tutorial"> Need help? Look at tutorial 
+		<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
+  here
+</button>
+
+<!-- Modal -->
+<div class="modal fade bd-example-modal-lg" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Tutorial</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container" id="tutorial">
+		<div id='tut_search' class="list-group">
+		<h6>Type in the name of item and press the search button on the right:</h6>
+		<img src="image/search_help.png" class="img-fluid" alt="search tut" >
+		</div>
+		<br>
+		<div id='tut_search' class="list-group">
+		<h6>Search results are identified with makers relative to your current location on map. You can zoom in and out to view more.</h6>
+		<img src="image/search_demo.png" class="img-fluid" alt="search demo" >
+		</div>
+		<br>
+		<div id='item_help' class="list-group">
+		<h6>In list, you can find information about each item's name, price, store, distance away and picture:</h6>
+		<img src="image/item_help.png" class="img-fluid" alt="item demo" >
+		</div>
+		<br>
+		<div id='alt_demo' class="list-group">
+		<h6>After choosing an item, why not look at some other alternative we suggest? You can also find your choice and our suggestions on map:</h6>
+		<img src="image/alt_demo.png" class="img-fluid" alt="alt demo" >
+		</div>
+		<br>
+		<div id='filter_demo' class="list-group">
+		<h6>We provide 3 different filters for you: 
+		<ul>
+		<li>Cheaper: only look at items cheaper than your choice</li>
+		<li>Closer: only look at items closer than your choice</li>
+		<li>Same: I just want this specific item, show me this item at other stores and their prices</li>
+		</ul></h6>
+		<img src="image/filter_demo.png" class="img-fluid" alt="filter demo" >
+		</div>
+		<br>
+		<div id='final_item' class="list-group">
+		<h6>Find out how much you CAN SAVE from this purchase and follow the directions to the store. Click confirm to record this purchase. You can also go back to previous page if you changed your mind:</h6>
+		<img src="image/final_item.png" class="img-fluid" alt="final item demo" >
+		</div>
+		<br>
+		<div id='history_demo' class="list-group">
+		<h6>Click the purchase history button on top right corner of the page and review your purchase history:</h6>
+		<img src="image/history_demo.png" class="img-fluid" alt="purchase history demo" >
+		</div>
+	</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 	</div>
 	
 	<div class="container" id="alt_name"></div>
@@ -175,6 +243,7 @@
 
 	<div class="container" style="display:none">
 		<div id="filters"> Need help? Look at tutorial here </div>
+		
 	</div>
 	<div class="container" id="switches" style="display:none">
 		<!-- Default inline 1-->
@@ -216,47 +285,7 @@
 		<div id='alt_results' class="list-group"></div>
 	</div>
 	
-	<div class="container" id="tutorial">
-		<div id='tut_search' class="list-group">
-		<h6>Type in the name of item and press the search button on the right:</h6>
-		<img src="image/search_help.png" class="img-fluid" alt="search tut" >
-		</div>
-		<br>
-		<div id='tut_search' class="list-group">
-		<h6>Search results are identified with makers relative to your current location on map. You can zoom in and out to view more.</h6>
-		<img src="image/search_demo.png" class="img-fluid" alt="search demo" >
-		</div>
-		<br>
-		<div id='item_help' class="list-group">
-		<h6>In list, you can find information about each item's name, price, store, distance away and picture:</h6>
-		<img src="image/item_help.png" class="img-fluid" alt="item demo" >
-		</div>
-		<br>
-		<div id='alt_demo' class="list-group">
-		<h6>After choosing an item, why not look at some other alternative we suggest? You can also find your choice and our suggestions on map:</h6>
-		<img src="image/alt_demo.png" class="img-fluid" alt="alt demo" >
-		</div>
-		<br>
-		<div id='filter_demo' class="list-group">
-		<h6>We provide 3 different filters for you: 
-		<ul>
-		<li>Cheaper: only look at items cheaper than your choice</li>
-		<li>Closer: only look at items closer than your choice</li>
-		<li>Same: I just want this specific item, show me this item at other stores and their prices</li>
-		</ul></h6>
-		<img src="image/filter_demo.png" class="img-fluid" alt="filter demo" >
-		</div>
-		<br>
-		<div id='final_item' class="list-group">
-		<h6>Find out how much you CAN SAVE from this purchase and follow the directions to the store. Click confirm to record this purchase. You can also go back to previous page if you changed your mind:</h6>
-		<img src="image/final_item.png" class="img-fluid" alt="final item demo" >
-		</div>
-		<br>
-		<div id='history_demo' class="list-group">
-		<h6>Click the purchase history button on top right corner of the page and review your purchase history:</h6>
-		<img src="image/history_demo.png" class="img-fluid" alt="purchase history demo" >
-		</div>
-	</div>
+	
 
 </body>
 </html>
