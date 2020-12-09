@@ -43,12 +43,35 @@
 	        $("#user").html(data.name);
 	        $(".unauthenticated").hide()
 	        $(".authenticated").show()
+	        $("#balance").html('Total Saving: $ '+data.savings);
+	        $(".unauthenticated").hide()
+	        $(".authenticated").show()
+	        email=document.getElementById('email');
+	        email.innerHTML = '<button class="btn btn-primary" onclick="send_email()" style="background-color:grey;">Send Email to '+data.email+'</button>'
+	        $(".unauthenticated").hide()
+	        $(".authenticated").show()
+	        document.getElementById('history').style.display = "block";
 	    });
 	    var logout = function() {
 		    $.post("/logout", function() {
 		        $("#user").html('');
 		        $(".unauthenticated").show();
 		        $(".authenticated").hide();
+		        $("#balance").html('');
+		        $("#email").html('');
+		        $("#search_bar").html('');
+		        $("#alt_name").html('');
+		        $("#map").html('');
+		        $("#results").html('');
+		        $("#history_table").html('');
+		        $("#confirm_mesg").html('');
+		        $("#history_table").html('');
+		        $("#alt_results").html('');
+		        document.getElementById('switches').style.display = "none";
+		        document.getElementById('back_button').style.display = "none";
+		        document.getElementById('confirm_button').style.display = "none";
+		        document.getElementById('login-button').style.display = "block";
+		        document.getElementById('history').style.display = "none";
 		    })
 		    return true;
 		}
@@ -98,7 +121,7 @@
 <body>
 	<div class="header">
 	  <img id="logo" src="img/logo_transparent.png" style="margin-left:5%; float:left"alt="Logo">
-	  <button class="btn btn-primary" id="login-button" style="float:right; margin-top: 85px; margin-right: 100px" onclick="location.href = '/oauth2/authorization/google';">Google Login</button>
+	  <button class="btn btn-primary unauthenticated" id="login-button" style="float:right; margin-top: 85px; margin-right: 100px" onclick="location.href = '/oauth2/authorization/google';">Google Login</button>
 	  </div>
 	</div>
 	<div class="container authenticated" style="float:left; width:30%; margin-left: 5%; display:none">
@@ -110,11 +133,12 @@
 	<div class="container text-danger error"></div>
 
 	<div class="container" style="float:right;  margin-right: 5%; width:30%; ">
-		<div id="balance" >balance goes here</div>
+		<div id="balance" >Total Savings: Login to see</div>
 		<br>
-		<button class="button1" onclick="send_email()">Send snapshot to email</button>
+		<div id="email"> Login to receive news letters </div>
+		
 		<br>
-		<button class="button2" onclick="history()">Get history</button>
+		<button class="button2" onclick="history()"  id="history">Your Purchase History</button>
 		<br>
 	</div>
 

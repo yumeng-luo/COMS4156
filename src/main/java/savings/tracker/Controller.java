@@ -35,20 +35,21 @@ public class Controller {
    * @throws SQLException Exception
    */
   @GetMapping("/user")
-  public Map<String, Object> user(
+  public User user(
       @AuthenticationPrincipal OAuth2User principal) {
+    User currentUser = new User();
     try {
       System.out.print(principal);
       String email = principal.getAttribute("email");
       String name = principal.getAttribute("name");
       String id = principal.getAttribute("sub");
 
-      User currentUser = new User(id, email, name, 0, 0, 0);
+      currentUser = new User(id, email, name, 0, 0, 0);
 
       if (DatabaseJdbc.alreadyExists(database, "User", currentUser.getUserId(),
           "user_id")) {
-        System.out.print(name + " Already exists");
-        DatabaseJdbc.updatesLoginData(database, "User", id);
+        System.out.print(name + " Welcome back");
+        currentUser = DatabaseJdbc.getUser(database, "User", id);
       } else {
         System.out.print("Adding " + name);
         DatabaseJdbc.addLoginData(database, "User", currentUser);
@@ -61,7 +62,7 @@ public class Controller {
 
     System.out.print(principal);
 
-    return Collections.singletonMap("name", principal.getAttribute("name"));
+    return currentUser;
   }
 
   /**
