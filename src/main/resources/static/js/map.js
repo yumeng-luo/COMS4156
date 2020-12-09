@@ -37,6 +37,11 @@ function initMap() {
         // Browser doesn't support geolocation
         handleLocationError(false, infoWindow);
     }
+    var oms = new OverlappingMarkerSpiderfier(map, {
+	  markersWontMove: true,
+	  markersWontHide: true,
+	  basicFormatEvents: true
+	});
 }
 
 // Handle a geolocation error
@@ -77,7 +82,7 @@ function createMarker(lat, lng, index, info,info_content,color) {
     let marker = new google.maps.Marker({
         position: loca,
         map: map,
-        //label: index,
+        label: index,
         icon: icon_,
     });
     markersArray.push(marker);

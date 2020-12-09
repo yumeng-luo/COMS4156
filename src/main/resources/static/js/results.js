@@ -62,7 +62,7 @@ function clearMap(cur,searched){
   clearRoute();
   clearMarkers();
   if (cur){
-    createMarker(pos.lat, pos.lng, "current location",true,"Your current location","blue");
+    createMarker(pos.lat, pos.lng, "",true,"Your current location","blue");
   } 
   if (searched){
     createMarker(item.lat, item.lon, "0",true,item.name+" $"+item.price,"green");
@@ -104,7 +104,7 @@ function generate_searched(items) {
   document.getElementById("tutorial").style.display="block";
   results=document.getElementById('results');
   ori_list=items;
-  let n=items.length;
+  let n=Math.min(items.length,100);
   let bt;
   let i;
   
@@ -118,8 +118,8 @@ function generate_searched(items) {
 '	      <h6 class="text-muted">Please Select An Item Below:</h6> '+
 '	      '+
 '	      <ul class="list-group ">';
-
-  for (i =0; i<n; ++i) {
+  var overlap_start = 0;
+  for (i =0; i<n-1; ++i) {
     x = x+ 
 '	        <button onclick = "select_search('+i+')" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
 '	          <div class="column" >'+
@@ -134,7 +134,17 @@ function generate_searched(items) {
 '	     		</div>'+
 '	   		  </div>'+
 '	  	    </button>';
-    createMarker(items[i].lat, items[i].lon, (i+1).toString(),false,items[i].name+" $"+items[i].price,"red");
+
+
+    if (items[i].lat != items[i+1].lat || items[i].lon!=items[i+1].lon){
+    	if (i!=overlap_start){
+    		createMarker(items[i].lat, items[i].lon, (overlap_start+1)+"-"+(i+1),false,"Multiple item: No."+(overlap_start+1)+"-No."+(i+1)+" @"+items[i].store,"red");
+    	}else{
+    		createMarker(items[i].lat, items[i].lon, (i+1).toString(),false,items[i].name+" $"+items[i].price,"red");
+    	}
+    	overlap_start = i+1;
+    }
+    
   }
   results.innerHTML = x +
 '	      </ul>'+
@@ -179,13 +189,13 @@ function show_alt(item_index) {
 function generate_alt(items) {
   item=ori_list[search_ind];
   clearMap(true, true);
-  createMarker(item.lat, item.lon, "0",true,item.name+" $"+item.price,"green");
+
   alt_list=items;
   results=document.getElementById('alt_results');
-  let n=items.length;
+  let n=Math.min(items.length,100);
   let bt;
   let i;
-
+  var overlap_start = 0;
 //  results.innerHTML='';
   var x = '<div class="row">'+
 '	    <div class="col-12">'+
@@ -207,13 +217,21 @@ function generate_alt(items) {
 '	     		</div>'+
 '	   		  </div>'+
 '	  	    </button>';
-    createMarker(items[i].lat, items[i].lon, (i+1).toString(),false,items[i].name+" $"+items[i].price,"red");
+    if (items[i].lat != items[i+1].lat || items[i].lon!=items[i+1].lon){
+    	if (i!=overlap_start){
+    		createMarker(items[i].lat, items[i].lon, (overlap_start+1)+"-"+(i+1),false,"Multiple item: No."+(overlap_start+1)+"-No."+(i+1)+" @"+items[i].store,"red");
+    	}else{
+    		createMarker(items[i].lat, items[i].lon, (i+1).toString(),false,items[i].name+" $"+items[i].price,"red");
+    	}
+    	overlap_start = i+1;
+    }
   }
   results.innerHTML = x +
 '	      </ul>'+
 '	    </div>'+
 '	  </div>';
 
+createMarker(item.lat, item.lon, "0",true,item.name+" $"+item.price,"green");
 }
 
 //use api endpoint to get saved value
