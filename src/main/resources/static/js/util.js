@@ -6,6 +6,7 @@ async function init_search(searched_item) {
 	document.getElementById("tutorial").style.display="none";
 	document.getElementById("ongoing").style.display="none";
     document.getElementById("wait_mesg").style.display="block";
+    document.getElementById("loader").style.display="block";
     if (searched_item==''){
     	searched_item=document.getElementById("search_bar").value;
     }
@@ -18,6 +19,7 @@ async function init_search(searched_item) {
     });
     generate_searched(await response.json());
     document.getElementById("wait_mesg").style.display="none";
+    document.getElementById("loader").style.display="none";
   }
 
 function select_search(item_index) {
