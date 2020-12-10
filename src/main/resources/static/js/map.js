@@ -37,11 +37,6 @@ function initMap() {
         // Browser doesn't support geolocation
         handleLocationError(false, infoWindow);
     }
-    var oms = new OverlappingMarkerSpiderfier(map, {
-	  markersWontMove: true,
-	  markersWontHide: true,
-	  basicFormatEvents: true
-	});
 }
 
 // Handle a geolocation error
@@ -133,7 +128,13 @@ function clearRoute(){
 
   
 function overwritePos(userlat,userlon){
-    pos = {lat: userlat, lng: userlon};
+	if (typeof(pos) == 'undefined'){
+    	pos = {lat: userlat, lng: userlon};
+    	map = new google.maps.Map(document.getElementById('map'), {
+            center: pos,
+            zoom: 13
+        });
+    }
 }
 
 // DO NOT REMOVE

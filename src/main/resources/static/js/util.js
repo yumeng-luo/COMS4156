@@ -98,6 +98,8 @@ document.getElementById("tutorial").style.display="none";
     xhttp.open("POST", "/confirm", true);
     xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhttp.send();
+    document.getElementById("confirm_button").style.display="none";
+    document.getElementById("back_button").style.display="none";
 } 
 
 function send_email() {
