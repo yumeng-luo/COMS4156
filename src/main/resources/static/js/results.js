@@ -1,4 +1,5 @@
 var ori_list; //the list of searched items
+var ori_item;
 var search_ind; //index of item chosen in the search list
 let alt_list; //the list of alternate items
 let item; //item chosen in the search list
@@ -57,15 +58,17 @@ function storeDist(lat,lon){
 }
 //cur to mark current location
 //searched to mark searched item
-function clearMap(cur,searched){
+function clearMap(cur,searched,skip){
   document.getElementById("map").style.display="block";
-  clearRoute();
+  if (!skip){
+  	clearRoute();
+  }
   clearMarkers();
   if (cur){
     createMarker(pos.lat, pos.lng, "",true,"Your current location","blue");
   } 
   if (searched){
-    createMarker(item.lat, item.lon, "0",true,item.name+" $"+item.price,"green");
+    createMarker(ori_item.lat, ori_item.lon, "0",true,ori_item.name+" $"+ori_item.price,"green");
   }
 }
 
@@ -100,7 +103,7 @@ function generate_searched(items) {
   clearConfirm();
   clearAlt();
   clearHistTable();
-  clearMap(true,false);
+  clearMap(true,false,false);
   document.getElementById("tutorial").style.display="block";
   results=document.getElementById('results');
   ori_list=items;
@@ -153,32 +156,69 @@ function generate_searched(items) {
 
 }
 
+//generates redirect to correct state
+function redirect_state(task) {
+    var lat = task.userLat;
+    var lon = task.userLon;
+    overwritePos(lat,lon);
+	if (task.finalLat != 0.0 && task.finalLon != 0.0){
+	   //go to confirm
+	   document.getElementById("search_bar").value = task.searchString;
+	   ori_item = task.initialItem;
+	   item = ori_item;
+	   ori_list = task.initialItems;
+	   alt_list = task.alternativeItem;
+	   show_confirm(-2, task.initialItem, task.finalItem,true)
+	   drawRoute(task.finalLat,task.finalLon)
+	   
+	} else if (task.initialLat!=0.0 && task.initialLon!=0.0){
+	   // go to request alt
+	   document.getElementById("search_bar").value = task.searchString;
+	   ori_item = task.initialItem;
+	   item = ori_item;
+	   ori_list = task.initialItems;
+	   show_alt(-1, task.initialItem)
+	   
+	} else if (task.searchString != ""){
+	   // init search
+	   document.getElementById("search_bar").value = task.searchString;
+	   init_search(task.searchString)
+	}
+}
 function back_alt(){
-  show_alt(search_ind);
+  show_alt(-1,ori_item);
 }
 
 //switches to the view for alternate items
-function show_alt(item_index) {
-  item=ori_list[item_index];
+function show_alt(item_index,item_) {
+    if (item_index != -1){
+	  	search_ind=item_index;
+	  	ori_item = ori_list[item_index];
+	  }else {
+	    ori_item = item_;	
+	    
+	  }
   confirm_page = false;
   clearConfirm();
   clearSearch();
   clearHistTable();
-  clearMap(true, true);
+  clearMap(true, true,false);
   document.getElementById("filters").style.display="block";
-  search_ind=item_index;
+
+  item = ori_item;
+  
   document.getElementById("switches").style.display="block";
   document.getElementById("alt_name").innerHTML="You chose: "+
-  '	        <button onclick = "select_alternative('+item.barcode+','+item.lat+', '+item.lon+',-1)" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
+  '	        <button onclick = "select_alternative('+ori_item.barcode+','+ori_item.lat+', '+ori_item.lon+',-1)" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
 '	          <div class="column" >'+
-'	    		<h5>0: '+item.name+'</h5>'+
-'	    		<p>Price: $'+item.price+'</p>'+
-'	    		<small>Store Name: '+item.store+'</small>'+
+'	    		<h5>0: '+ori_item.name+'</h5>'+
+'	    		<p>Price: $'+ori_item.price+'</p>'+
+'	    		<small>Store Name: '+ori_item.store+'</small>'+
 '	  		  </div>'+
 '	  		  <div class="column" >'+
-'	    		<small>'+storeDist(item.lat,item.lon)+' km</small>'+
+'	    		<small>'+storeDist(ori_item.lat,ori_item.lon)+' km</small>'+
 '	    		<div class="image-parent">'+
-'	        		<img src="'+item.image+'" class="img-fluid" alt="item_image" width="100" height="100">'+
+'	        		<img src="'+ori_item.image+'" class="img-fluid" alt="ori_item" width="100" height="100">'+
 '	     		</div>'+
 '	   		  </div>'+
 '	  	    </button>'+" <br /> here are some alternatives:";
@@ -187,8 +227,7 @@ function show_alt(item_index) {
 
 //generate alternate items
 function generate_alt(items) {
-  item=ori_list[search_ind];
-  clearMap(true, true);
+  clearMap(true, true,false);
 
   alt_list=items;
   results=document.getElementById('alt_results');
@@ -231,26 +270,29 @@ function generate_alt(items) {
 '	    </div>'+
 '	  </div>';
 
-createMarker(item.lat, item.lon, "0",true,item.name+" $"+item.price,"green");
+createMarker(ori_item.lat, ori_item.lon, "0",true,ori_item.name+" $"+ori_item.price,"green");
 }
 
 //use api endpoint to get saved value
-function show_confirm(item_index) {
+function show_confirm(item_index,ori_item_,fin_item_,skip) {
   confirm_page = true;
   document.getElementById("wait_mesg").style.display="none";
   clearAlt();
   clearHistTable();
   clearSearch();
-  clearMap(false,false);
-	
-  ori_item=ori_list[search_ind];
+  clearMap(false,false,skip);
   if (item_index == -1){
   	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+ori_item.name+" $"+ori_item.price+" <br /> You have spent $"+ori_item.price;
     document.getElementById("confirm_button").style.display="block";
     document.getElementById("back_button").style.display="block";
   	drawRoute(ori_item.lat,ori_item.lon);
   } else{
-  	fin_item=alt_list[item_index];
+	if (item_index==-2){
+	  	ori_item=ori_item_;
+    	fin_item=fin_item_;
+    } else{
+    	fin_item=alt_list[item_index];
+    }
   	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You would save $"+Math.max(ori_item.price-fin_item.price,0);
     document.getElementById("confirm_button").style.display="block";
     document.getElementById("back_button").style.display="block";

@@ -44,6 +44,26 @@ public class EndPointHelper {
     }
     return new Message(200, "No Alternative");
   }
+  
+
+  /**
+   * No Alternative Found.
+   * 
+   * @throws SQLException Exception
+   */
+  public static OngoingTask resumeHelper(DatabaseJdbc database, String id) {
+
+    OngoingTask task = new OngoingTask();
+    try {
+      task = DatabaseJdbc.getTask(database, "Task", "Search", "Item", id);
+      User user = DatabaseJdbc.getUser(database, "User", id);
+      task.setUserLat(user.getLat());
+      task.setUserLon(user.getLon());
+    } catch (SQLException e1) {
+      e1.printStackTrace();
+    }
+    return task;
+  }
 
   /**
    * Search Item by string. creates both search items and alternative items
@@ -374,12 +394,6 @@ public class EndPointHelper {
   public static Message confirmPurchaseHelper(DatabaseJdbc database,
       String id) {
     //sleep for 5s to prevent race condition
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
 
     User user = new User();
     OngoingTask task = new OngoingTask();
@@ -407,13 +421,21 @@ public class EndPointHelper {
     // after using clear task to avoid multiple purchase
     task.setInitialItem(new Item());
     task.setFinalItem(new Item());
+    task.setSearchString("");
+    task.setInitialLat(0.0);
+    task.setInitialLon(0.0);
+    task.setFinalLat(0.0);
+    task.setFinalLon(0.0);
 
+    
     // calculate savings
     double saving = 0;
     saving = initialItem.getPrice() - finalItem.getPrice();
     saving = Math.max(saving, 0);
     // save to user info
     try {
+      DatabaseJdbc.removeSearch(database, "Search", id + "1");
+      DatabaseJdbc.removeSearch(database, "Search", id + "2");
       DatabaseJdbc.addTask(database, "Task", task);
       user.setSavings(user.getSavings() + saving);
       DatabaseJdbc.updatesUser(database, "User", user);

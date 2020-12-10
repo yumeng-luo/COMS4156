@@ -17,6 +17,8 @@ public class OngoingTask {
   private Item finalItem;
   private double finalLat;
   private double finalLon;
+  private double userLat;
+  private double userLon;
 
   /**
    * Construct from input.
@@ -40,6 +42,31 @@ public class OngoingTask {
     this.finalLon = finalLon;
   }
 
+  
+  /**
+   * Construct from input.
+   * 
+   */
+  public OngoingTask(String userId, String searchString,
+      Timestamp taskStartTime, List<Item> searchItems, Item initialItem,
+      double initialLat, double initialLon, List<Item> alternativeItem,
+      Item finalItem, double finalLat, double finalLon, double userLat,double userLon) {
+    super();
+    this.userId = userId;
+    this.searchString = searchString;
+    this.taskStartTime = taskStartTime;
+    this.searchItems = searchItems;
+    this.initialItem = initialItem;
+    this.initialLat = initialLat;
+    this.initialLon = initialLon;
+    this.alternativeItem = alternativeItem;
+    this.finalItem = finalItem;
+    this.finalLat = finalLat;
+    this.finalLon = finalLon;
+    this.userLat = userLat;
+    this.userLon = userLon;
+  }
+ 
   /**
    * Construct from blank.
    * 
@@ -57,6 +84,8 @@ public class OngoingTask {
     this.finalItem = new Item();
     this.finalLat = 0;
     this.finalLon = 0;
+    this.userLat = 0;
+    this.userLon = 0;
   }
 
   public String getUserId() {
@@ -162,4 +191,25 @@ public class OngoingTask {
     this.finalLon = finalLon;
   }
 
+
+  public double getUserLat() {
+    return userLat;
+  }
+
+
+  public void setUserLat(double userLat) {
+    this.userLat = userLat;
+  }
+
+
+  public double getUserLon() {
+    return userLon;
+  }
+
+
+  public void setUserLon(double userLon) {
+    this.userLon = userLon;
+  }
+
+  
 }

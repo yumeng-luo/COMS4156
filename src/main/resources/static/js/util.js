@@ -1,6 +1,8 @@
-async function init_search() {
+async function init_search(searched_item) {
     document.getElementById("wait_mesg").style.display="block";
-    searched_item=document.getElementById("search_bar").value;
+    if (searched_item==''){
+    	searched_item=document.getElementById("search_bar").value;
+    }
     const response = await fetch("/search", {
       method: "POST",
       headers: {
@@ -20,7 +22,7 @@ function select_search(item_index) {
       },
       body: 'item_number='+item_index
     });
-    show_alt(item_index);
+    show_alt(item_index,"");
 } 
 
 async function request_alternatives() {
@@ -53,6 +55,18 @@ async function request_filter(cheaper,closer,same) {
   document.getElementById("wait_mesg").style.display="none";
 }
 
+async function retreive_state() {
+    document.getElementById("wait_mesg").style.display="block";
+    const response = await fetch("/resume", {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+    redirect_state(await response.json());
+    document.getElementById("wait_mesg").style.display="none";
+  }
+  
 function select_alternative(upc,lat,lon,item_index) {
      const response = fetch ("/select_purchase", {
       method: "POST",
@@ -61,7 +75,7 @@ function select_alternative(upc,lat,lon,item_index) {
       },
       body: 'upc='+upc+'&lat='+lat+'&lon='+lon
     });
-    show_confirm(item_index);
+    show_confirm(item_index,"","",false);
 }
 
 function confirm_purchase() {
@@ -111,6 +125,6 @@ async function getBalance() {
 
 
 // DO NOT REMOVE
-module.exports = { init_search: init_search, select_search: select_search, 
+module.exports = { init_search: init_search, select_search: select_search, retreive_state: retreive_state,
    request_alternatives: request_alternatives, select_alternative: select_alternative, 
    confirm_purchase: confirm_purchase}

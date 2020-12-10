@@ -60,6 +60,8 @@
 	        history_.style.display = "inline";
 	        $(".unauthenticated").hide()
 	        $(".authenticated").show()
+	        
+	        retreive_state();
 	    });
 	    var logout = function() {
 		    $.post("/logout", function() {
@@ -155,7 +157,7 @@
 	<div class="container">
 		<div class="input-group md-form form-sm form-1 pl-0">
 			<input class="form-control my-0 py-1" type="text" placeholder="Search"  id="search_bar">
-			<div type="button" onclick="init_search()" class="input-group-prepend">
+			<div type="button" onclick="init_search('')" class="input-group-prepend">
 				<span class="input-group-text blue lighten-3" id="basic-text1"><i class="fas fa-search text-white"
 					aria-hidden="true"></i></span>
 			</div>
@@ -238,7 +240,7 @@
 	</div>
 
 	<div class="container" id="map" style="display:none">
-		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3tMF1nrRzpd0gJb769F9TecMJUGpcsHs&libraries=places&callback=initMap"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3tMF1nrRzpd0gJb769F9TecMJUGpcsHs&libraries=places&callback=initMap"></script>
 	</div>
 
 	<div class="container" style="display:none">

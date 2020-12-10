@@ -82,6 +82,23 @@ public class Controller {
     return EndPointHelper.noAlternativeHelper(database, id);
   }
 
+
+  /**
+   * Resume previous task.
+   * 
+   * @throws SQLException Exception
+   */
+  @GetMapping("/resume")
+  public OngoingTask resume(@AuthenticationPrincipal OAuth2User principal) {
+    String id;
+    if (principal != null) {
+      id = principal.getAttribute("sub");
+    } else {
+      id = "105222900313734280075";
+    }
+    System.out.print(principal);
+    return EndPointHelper.resumeHelper(database, id);
+  }
   /**
    * Search Item by string. creates both search items and alternative items
    * search items are items with exact match alternative items are items with

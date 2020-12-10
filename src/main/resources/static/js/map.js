@@ -131,8 +131,13 @@ function clearRoute(){
     directionsRenderer.setMap(null);
 }
 
+  
+function overwritePos(userlat,userlon){
+    pos = {lat: userlat, lng: userlon};
+}
+
 // DO NOT REMOVE
 module.exports = { initMap: initMap, handleLocationError: handleLocationError, 
    getNearbyPlaces: getNearbyPlaces, nearbyCallback: nearbyCallback, createMarker: createMarker, 
    showDetails: showDetails, pos: pos, map: map, bounds: bounds, infoWindow: infoWindow,
-   currentInfoWindow: currentInfoWindow, service: service, infoPane: infoPane }
+   currentInfoWindow: currentInfoWindow, service: service, infoPane: infoPane ,overwritePos: overwritePos}
