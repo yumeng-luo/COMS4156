@@ -1,4 +1,10 @@
 async function init_search(searched_item) {
+	var inputs = document.querySelectorAll('.custom-control-input'); 
+        for (var i = 0; i < inputs.length; i++) { 
+            inputs[i].checked = false; 
+        }
+	document.getElementById("tutorial").style.display="none";
+	document.getElementById("ongoing").style.display="none";
     document.getElementById("wait_mesg").style.display="block";
     if (searched_item==''){
     	searched_item=document.getElementById("search_bar").value;
@@ -15,6 +21,7 @@ async function init_search(searched_item) {
   }
 
 function select_search(item_index) {
+document.getElementById("tutorial").style.display="none";
     const response = fetch ("/select_item", {
       method: "POST",
       headers: {
@@ -26,6 +33,7 @@ function select_search(item_index) {
 } 
 
 async function request_alternatives() {
+document.getElementById("tutorial").style.display="none";
   document.getElementById("wait_mesg").style.display="block";
   const response = await fetch ("/alternatives", {
     method: "POST",
@@ -40,6 +48,7 @@ async function request_alternatives() {
 }
 
 async function request_filter(cheaper,closer,same) {
+document.getElementById("tutorial").style.display="none";
   document.getElementById("wait_mesg").style.display="block";
 
   const response = await fetch ("/filter", {
@@ -79,6 +88,7 @@ function select_alternative(upc,lat,lon,item_index) {
 }
 
 function confirm_purchase() {
+document.getElementById("tutorial").style.display="none";
     var xhttp = new XMLHttpRequest(); 
     xhttp.onreadystatechange = function() { 
       if (this.readyState == 4 && this.status == 200) { 
@@ -111,6 +121,27 @@ async function history() {
     }
   });
   generate_history(await response.json());
+}
+
+async function reset() {
+
+  const response = await fetch ("/no_alternative", {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
+  $("#alt_name").html('');
+  $("#results").html('');
+  $("#history_table").html('');
+  $("#confirm_mesg").html('');
+  $("#alt_results").html('');
+  document.getElementById('switches').style.display = "none";
+  document.getElementById('back_button').style.display = "none";
+  document.getElementById('confirm_button').style.display = "none";
+  document.getElementById("tutorial").style.display="block";
+  document.getElementById("ongoing").style.display="none";
+  document.getElementById("map").style.display="none";
 }
 
 async function getBalance() {

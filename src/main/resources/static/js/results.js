@@ -8,6 +8,7 @@ let cheaper=false;
 let closer=false;
 let same=false;
 
+
 function toggle_cheaper(){
   if (cheaper){
     cheaper=false;
@@ -105,7 +106,7 @@ function generate_searched(items) {
   clearMap(true,false,false);
   results=document.getElementById('results');
   ori_list=items;
-  let n=Math.min(items.length,100);
+  let n=Math.min(items.length,200);
   let bt;
   let i;
   
@@ -158,32 +159,44 @@ function generate_searched(items) {
 function redirect_state(task) {
     var lat = task.userLat;
     var lon = task.userLon;
-    
+    var date = new Date(task.taskStartTime);
 	if (task.finalLat != 0.0 && task.finalLon != 0.0){
 	   //go to confirm
+	   document.getElementById("ongoing").innerHTML='We detected your ongoing task on '+ date.toDateString() +
+	   ' at '+ date.toTimeString() + ' Resuming below '+ ' <button type="button" onclick = "reset()" class="btn btn-warning">'+
+            'Start a new search? </button>';
+	   
 	   overwritePos(lat,lon);
 	   document.getElementById("search_bar").value = task.searchString;
 	   ori_item = task.initialItem;
 	   item = ori_item;
 	   ori_list = task.initialItems;
 	   alt_list = task.alternativeItem;
-	   show_confirm(-2, task.initialItem, task.finalItem,true)
-	   drawRoute(task.finalLat,task.finalLon)
+	   show_confirm(-2, task.initialItem, task.finalItem,true);
+	   drawRoute(task.finalLat,task.finalLon);
 	   
 	} else if (task.initialLat!=0.0 && task.initialLon!=0.0){
 	   // go to request alt
+	   
+	   document.getElementById("ongoing").innerHTML='We detected your ongoing task on '+ date.toDateString() +
+	   ' at '+ date.toTimeString() + ' Resuming below '+ ' <button type="button" onclick = "reset()"  class="btn btn-warning">'+
+            'Start a new search? </button>';
 	   overwritePos(lat,lon);
 	   document.getElementById("search_bar").value = task.searchString;
 	   ori_item = task.initialItem;
 	   item = ori_item;
 	   ori_list = task.initialItems;
-	   show_alt(-1, task.initialItem)
+	   show_alt(-1, task.initialItem);
 	   
 	} else if (task.searchString != ""){
 	   // init search
+	   
+	   document.getElementById("ongoing").innerHTML='We detected your ongoing task on '+ date.toDateString() +
+	   ' at '+ date.toTimeString() + ' Resuming below '+ ' <button type="button" onclick = "reset()"  class="btn btn-warning">'+
+            'Start a new search? </button>';
 	   overwritePos(lat,lon);
 	   document.getElementById("search_bar").value = task.searchString;
-	   init_search(task.searchString)
+	   init_search(task.searchString);
 	}
 }
 function back_alt(){
@@ -232,7 +245,7 @@ function generate_alt(items) {
 
   alt_list=items;
   results=document.getElementById('alt_results');
-  let n=Math.min(items.length,100);
+  let n=Math.min(items.length,200);
   let bt;
   let i;
   var overlap_start = 0;
@@ -242,7 +255,7 @@ function generate_alt(items) {
 '	      '+
 '	      <ul class="list-group ">';
 
-  for (i =0; i<n; ++i) {
+  for (i =0; i<n-1; ++i) {
     x = x+ 
 '	        <button onclick = "select_alternative('+items[i].barcode+','+items[i].lat+', '+items[i].lon+','+i+')" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
 '	          <div class="column" >'+
@@ -283,7 +296,7 @@ function show_confirm(item_index,ori_item_,fin_item_,skip) {
   clearSearch();
   clearMap(false,false,skip);
   if (item_index == -1){
-  	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+ori_item.name+" $"+ori_item.price+" <br /> You have spent $"+ori_item.price;
+  	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+ori_item.name+" $"+ori_item.price+" <br /> You have spent $"+parseFloat(ori_item.price).toFixed(2);
     document.getElementById("confirm_button").style.display="block";
     document.getElementById("back_button").style.display="block";
   	drawRoute(ori_item.lat,ori_item.lon);
@@ -294,7 +307,7 @@ function show_confirm(item_index,ori_item_,fin_item_,skip) {
     } else{
     	fin_item=alt_list[item_index];
     }
-  	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You would save $"+Math.max(ori_item.price-fin_item.price,0);
+  	document.getElementById("confirm_mesg").innerHTML="You are purchasing "+fin_item.name+" $"+fin_item.price+" <br /> You would save $"+parseFloat(Math.max(ori_item.price-fin_item.price,0)).toFixed(2);
     document.getElementById("confirm_button").style.display="block";
     document.getElementById("back_button").style.display="block";
   	drawRoute(fin_item.lat,fin_item.lon);
@@ -329,8 +342,8 @@ function generate_history(records) {
 			"<br />" +
 '	    	<p>Date: '+records[i].date+'</p>'+
 '			<p>Item: '+records[i].item+'</p>'+
-'	    	<p>Price: $'+records[i].price+'</p>'+
-'	    	<p>Savings from this purchase: $'+records[i].saving+'</p>'+
+'	    	<p>Price: $'+parseFloat(records[i].price).toFixed(2)+'</p>'+
+'	    	<p>Savings from this purchase: $'+parseFloat(records[i].saving).toFixed(2)+'</p>'+
 '		</div>' + 
 '     </div>';
   }

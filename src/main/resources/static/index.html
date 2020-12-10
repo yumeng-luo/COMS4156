@@ -1,293 +1,277 @@
 <!doctype html>
 <html lang="en">
-<style type=text/css>
-	.header {
-	  width: 100%;
-	  height: 200px;
-	  background: rgba(216,224,255,1);
-	}
-	#logo {
-		max-width:100%;
-		max-height:100%;
-	}
-</style>
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-	<meta name="description" content="Savers Savings Tracker"/>
-	<meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Savers</title>
-	<!-- icon -->
-	<link rel="icon" href="image/logo.png" type="image/x-icon">
-	<!-- Font Awesome -->
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-	<!-- Google Fonts -->
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
-	<!-- Bootstrap core CSS -->
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-	<!-- Material Design Bootstrap -->
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
-	<!-- Your custom styles (optional) -->
-	<link rel="stylesheet" href="css/style.css">
-
-	<!-- JQuery -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<!-- Bootstrap tooltips -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
-	<!-- Bootstrap core JavaScript -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
-	<!-- MDB core JavaScript -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
-    <script type="text/javascript">
-	    $('#myModal').on('shown.bs.modal', function () {
-		  $('#myInput').trigger('focus')
-		})
-	    $.get("/user", function(data) {
-	        $("#user").html(data.name);
-	        $(".unauthenticated").hide()
-	        $(".authenticated").show()
-	        $("#balance").html('Total Saving: $ '+data.savings);
-	        balance=document.getElementById('balance');
-	        balance.innerHTML = 'Total Saving: $ '+data.savings
-	        $(".unauthenticated").hide()
-	        $(".authenticated").show()
-	        email=document.getElementById('email');
-	        email.innerHTML = '<button class="btn btn-info btn-group-xs" onclick="send_email()">Send Email to '+data.email+'</button>'
-	        $(".unauthenticated").hide()
-	        $(".authenticated").show()
-	        history_=document.getElementById('history_button');
-	        history_.innerHTML = '<button class="btn btn-group-xs btn btn-info" onclick="history()"  id="history_button">Purchase History</button>'
-	        history_.style.display = "inline";
-	        $(".unauthenticated").hide()
-	        $(".authenticated").show()
-	        
-	        retreive_state();
-	    });
-	    var logout = function() {
-		    $.post("/logout", function() {
-		        $("#user").html('');
-		        $(".unauthenticated").show();
-		        $(".authenticated").hide();
-		        $("#balance").html('');
-		        $("#email").html('');
-		        $("#alt_name").html('');
-		        $("#map").html('');
-		        $("#results").html('');
-		        $("#history_table").html('');
-		        $("#confirm_mesg").html('');
-		        $("#history_table").html('');
-		        $("#alt_results").html('');
-		        document.getElementById('switches').style.display = "none";
-		        document.getElementById('back_button').style.display = "none";
-		        document.getElementById('confirm_button').style.display = "none";
-		        document.getElementById('login-button').style.display = "inline";
-		        document.getElementById('history_button').style.display = "none";
-		    })
-		    return true;
-		}
-		$.get("/error", function(data) {
-		    if (data) {
-		        $(".error").html(data);
-		    } else {
-		        $(".error").html('');
-		    }
-		});
-	</script>
-	<script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
-	<script type="text/javascript">
-		$.ajaxSetup({
-		  beforeSend : function(xhr, settings) {
-		    if (settings.type == 'POST' || settings.type == 'PUT'
-		        || settings.type == 'DELETE') {
-		      if (!(/^http:.*/.test(settings.url) || /^https:.*/
-		        .test(settings.url))) {
-		        // Only send the token to relative URLs i.e. locally.
-		        xhr.setRequestHeader("X-XSRF-TOKEN",
-		          Cookies.get('XSRF-TOKEN'));
-		      }
-		    }
-		  }
-		});
-	</script>
-	<script src="js/map.js"></script>
-	<script type="text/javascript" src="js/results.js"></script>
-	<script type="text/javascript" src="js/util.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier/1.0.3/oms.min.js"></script>
-	
-	<style  type=text/css>
-    #map {
-      height: 400px;
-	  width: 650px;
-	  background-color:white;
-	  margin-top: 2%;
-	  margin-bottom: 2%;
-	}
-	h1 {
-		margin-top: 7%;
-	}
-  </style>
-</head>
-
-
-<body>
-	<div class="header">
-	  <img id="logo" src="http://imgur.com/AldA2U4.png" style="margin-left:5%; float:left"alt="Logo">
-	  <img id="logo" src="http://imgur.com/cQb1uAu.png" style="margin-left:5%; float:left"alt="Logo title">
-	  <button class="btn btn-primary unauthenticated" id="login-button" style="float:right; margin-top: 85px; margin-right: 100px" onclick="location.href = '/oauth2/authorization/google';">Google Login</button>
-	  </div>
-	</div>
-	<div class="container authenticated" style="float:left; width:30%; margin-left: 5%; display:none">
-	    Logged in as: <span id="user"></span>
-	  <div>
-	    <button onClick="logout()" class="btn btn-primary">Logout</button>
-	  </div>
-	</div>
-	<div class="container text-danger error"></div>
-
-	<div class="container" style="float:right;  margin-right: 7%; width:30%; ">
-		<div id="balance" >Total Savings: Login to see</div>
-		<br>
-		 <div class="btn-group btn-group-xs"  style="float:right">
-		<div id="email"> Login to receive news letters and view history</div>
-		<div id="history_button"  style="float:right"></div>
-		</div>
-		<br>
-	</div>
-
-	<div class="container" style="margin-top: 9%;">
-		<div class="input-group md-form form-sm form-1 pl-0">
-			<input class="form-control my-0 py-1" type="text" placeholder="Search"  id="search_bar">
-			<div type="button" onclick="init_search('')" class="input-group-prepend">
-				<span class="input-group-text blue lighten-3" id="basic-text1"><i class="fas fa-search text-white"
-					aria-hidden="true"></i></span>
-			</div>
-		</div>
-	</div>
-
-	<div class="container" style="display:block">
-		<div id="tutorial"> Need help? Look at tutorial 
-		<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
-  here
-</button>
-
-<!-- Modal -->
-<div class="modal fade bd-example-modal-lg" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Tutorial</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+   <style type=text/css>
+      .header {
+      width: 100%;
+      height: 200px;
+      background: rgba(216,224,255,1);
+      }
+      #logo {
+      max-width:100%;
+      max-height:100%;
+      }
+   </style>
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+      <meta name="description" content="Savers Savings Tracker"/>
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      <title>Savers</title>
+      <!-- icon -->
+      <link rel="icon" href="image/logo.png" type="image/x-icon">
+      <!-- Font Awesome -->
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+      <!-- Google Fonts -->
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+      <!-- Bootstrap core CSS -->
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+      <!-- Material Design Bootstrap -->
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+      <!-- Your custom styles (optional) -->
+      <link rel="stylesheet" href="css/style.css">
+      <!-- JQuery -->
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <!-- Bootstrap tooltips -->
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+      <!-- Bootstrap core JavaScript -->
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+      <!-- MDB core JavaScript -->
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+      <script type="text/javascript">
+         $('#myModal').on('shown.bs.modal', function () {
+         $('#myInput').trigger('focus')
+         })
+         $.get("/user", function(data) {
+             $("#user").html(data.name);
+             $(".unauthenticated").hide()
+             $(".authenticated").show()
+             $("#balance").html('Total Saving: $ '+data.savings);
+             balance=document.getElementById('balance');
+             balance.innerHTML = 'Total Saving: $ '+data.savings
+             $(".unauthenticated").hide()
+             $(".authenticated").show()
+             email=document.getElementById('email');
+             email.innerHTML = '<button class="btn btn-info btn-group-xs" onclick="send_email()">Send Email to '+data.email+'</button>'
+             $(".unauthenticated").hide()
+             $(".authenticated").show()
+             history_=document.getElementById('history_button');
+             history_.innerHTML = '<button class="btn btn-group-xs btn btn-info" onclick="history()"  id="history_button">Purchase History</button>'
+             history_.style.display = "inline";
+             $(".unauthenticated").hide()
+             $(".authenticated").show()
+             
+             retreive_state();
+         });
+         var logout = function() {
+          $.post("/logout", function() {
+              $("#user").html('');
+              $(".unauthenticated").show();
+              $(".authenticated").hide();
+              $("#balance").html('');
+              $("#email").html('');
+              $("#alt_name").html('');
+              $("#results").html('');
+              $("#history_table").html('');
+              $("#confirm_mesg").html('');
+              $("#history_table").html('');
+              $("#alt_results").html('');
+              document.getElementById('switches').style.display = "none";
+              document.getElementById('back_button').style.display = "none";
+              document.getElementById('confirm_button').style.display = "none";
+              document.getElementById('login-button').style.display = "inline";
+              document.getElementById('history_button').style.display = "none";
+              document.getElementById("tutorial").style.display="block";
+              document.getElementById("ongoing").style.display="none";
+              document.getElementById("map").style.display="none";
+          })
+          return true;
+         }
+         $.get("/error", function(data) {
+          if (data) {
+              $(".error").html(data);
+          } else {
+              $(".error").html('');
+          }
+         });
+      </script>
+      <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
+      <script type="text/javascript">
+         $.ajaxSetup({
+           beforeSend : function(xhr, settings) {
+             if (settings.type == 'POST' || settings.type == 'PUT'
+                 || settings.type == 'DELETE') {
+               if (!(/^http:.*/.test(settings.url) || /^https:.*/
+                 .test(settings.url))) {
+                 // Only send the token to relative URLs i.e. locally.
+                 xhr.setRequestHeader("X-XSRF-TOKEN",
+                   Cookies.get('XSRF-TOKEN'));
+               }
+             }
+           }
+         });
+      </script>
+      <script src="js/map.js"></script>
+      <script type="text/javascript" src="js/results.js"></script>
+      <script type="text/javascript" src="js/util.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier/1.0.3/oms.min.js"></script>
+      <style  type=text/css>
+         #map {
+         height: 400px;
+         width: 650px;
+         background-color:white;
+         margin-top: 2%;
+         margin-bottom: 2%;
+         }
+         h1 {
+         margin-top: 7%;
+         }
+      </style>
+   </head>
+   <body>
+      <div class="header">
+         <img id="logo" src="http://imgur.com/AldA2U4.png" style="margin-left:5%; float:left"alt="Logo">
+         <img id="logo" src="http://imgur.com/cQb1uAu.png" style="margin-left:5%; float:left"alt="Logo title">
+         <button class="btn btn-primary unauthenticated" id="login-button" style="float:right; margin-top: 85px; margin-right: 100px" onclick="location.href = '/oauth2/authorization/google';">Google Login</button>
       </div>
-      <div class="modal-body">
-        <div class="container" id="tutorial">
-		<div id='tut_search' class="list-group">
-		<h6>Type in the name of item and press the search button on the right:</h6>
-		<img src="https://imgur.com/jVqqRzN.png" class="img-fluid" alt="search tut" >
-		</div>
-		<br>
-		<div id='tut_search' class="list-group">
-		<h6>Search results are identified with makers relative to your current location on map. You can zoom in and out to view more.</h6>
-		<img src="https://imgur.com/s2ROgWF.png" class="img-fluid" alt="search demo" >
-		</div>
-		<br>
-		<div id='item_help' class="list-group">
-		<h6>In list, you can find information about each item's name, price, store, distance away and picture:</h6>
-		<img src="https://imgur.com/Phpm26X.png" class="img-fluid" alt="item demo" >
-		</div>
-		<br>
-		<div id='alt_demo' class="list-group">
-		<h6>After choosing an item, why not look at some other alternative we suggest? You can also find your choice and our suggestions on map:</h6>
-		<img src="https://imgur.com/y1CI5FT.png" class="img-fluid" alt="alt demo" >
-		</div>
-		<br>
-		<div id='filter_demo' class="list-group">
-		<h6>We provide 3 different filters for you: 
-		<ul>
-		<li>Cheaper: only look at items cheaper than your choice</li>
-		<li>Closer: only look at items closer than your choice</li>
-		<li>Same: I just want this specific item, show me this item at other stores and their prices</li>
-		</ul></h6>
-		<img src="https://imgur.com/Q70sn9u.png" class="img-fluid" alt="filter demo" >
-		</div>
-		<br>
-		<div id='final_item' class="list-group">
-		<h6>Find out how much you CAN SAVE from this purchase and follow the directions to the store. Click confirm to record this purchase. You can also go back to previous page if you changed your mind:</h6>
-		<img src="https://imgur.com/cVvRMMq.png" class="img-fluid" alt="final item demo" >
-		</div>
-		<br>
-		<div id='history_demo' class="list-group">
-		<h6>Click the purchase history button on top right corner of the page and review your purchase history:</h6>
-		<img src="https://imgur.com/m6b6Ra5.png" class="img-fluid" alt="purchase history demo" >
-		</div>
-	</div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <div class="container authenticated" style="float:left; width:30%; margin-left: 5%; display:none">
+         Logged in as: <span id="user"></span>
+         <div>
+            <button onClick="logout()" class="btn btn-primary">Logout</button>
+         </div>
       </div>
-    </div>
-  </div>
-</div>
-</div>
-	</div>
-	
-	<div class="container" id="alt_name"></div>
-	<div class="container" id="confirm_mesg"></div>
-	<div>
-		<button type="button" id="confirm_button" onclick="confirm_purchase()" class="btn btn-primary" style="display:none;">Confirm</button>
-	</div>
-
-	<div class="container" id="map" style="display:none">
-		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3tMF1nrRzpd0gJb769F9TecMJUGpcsHs&libraries=places&callback=initMap"></script>
-	</div>
-
-	<div class="container" style="display:none">
-		<div id="filters"> Need help? Look at tutorial here </div>
-		
-	</div>
-	<div class="container" id="switches" style="display:none">
-		<!-- Default inline 1-->
-		<div class="custom-control custom-checkbox custom-control-inline">
-			<input type="checkbox" onclick="toggle_cheaper()" class="custom-control-input" id="defaultInline1">
-			<label class="custom-control-label" for="defaultInline1">cheaper</label>
-		</div>
-
-		<!-- Default inline 2-->
-		<div class="custom-control custom-checkbox custom-control-inline">
-			<input type="checkbox" onclick="toggle_closer()" class="custom-control-input" id="defaultInline2">
-			<label class="custom-control-label" for="defaultInline2">closer</label>
-		</div>
-
-		<!-- Default inline 3-->
-		<div class="custom-control custom-checkbox custom-control-inline">
-			<input type="checkbox" onclick="toggle_same()" class="custom-control-input" id="defaultInline3">
-			<label class="custom-control-label" for="defaultInline3">same</label>
-		</div>
-	</div>
-
-	<div class="container" id="wait_mesg"  style="display:none">
-		Results loading...
-	</div>
-
-	<div>
-		<button type="button" id="back_button" onclick="back_alt()" class="btn btn-primary" style="display:none;">Back</button>
-	</div>
-
-	<div class="container">
-		<div id='results' class="list-group"></div>
-	</div>
-		
-	<div class="container">
-		<div id='history_table' class="list-group"></div>
-	</div>
-
-	<div class="container">
-		<div id='alt_results' class="list-group"></div>
-	</div>
-	
-	
-
-</body>
+      <div class="container text-danger error"></div>
+      <div class="container" style="float:right;  margin-right: 7%; width:30%; ">
+         <div id="balance" >Total Savings: Login to see</div>
+         <br>
+         <div class="btn-group btn-group-xs"  style="float:right">
+            <div id="email"> Login to receive news letters and view history</div>
+            <div id="history_button"  style="float:right"></div>
+         </div>
+         <br>
+      </div>
+      <div class="container" style="margin-top: 9%;">
+         <div class="input-group md-form form-sm form-1 pl-0">
+            <input class="form-control my-0 py-1" type="text" placeholder="Search"  id="search_bar">
+            <div type="button" onclick="init_search('')" class="input-group-prepend">
+               <span class="input-group-text blue lighten-3" id="basic-text1"><i class="fas fa-search text-white"
+                  aria-hidden="true"></i></span>
+            </div>
+         </div>
+      </div>
+      <div class="container" style="display:block">
+         <div id="tutorial">
+            Need help? Look at tutorial 
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
+            here
+            </button>
+            <!-- Modal -->
+            <div class="modal fade bd-example-modal-lg" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+               <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Tutorial</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                     </div>
+                     <div class="modal-body">
+                        <div class="container" id="tutorial">
+                           <div id='tut_search' class="list-group">
+                              <h6>Type in the name of item and press the search button on the right:</h6>
+                              <img src="https://imgur.com/jVqqRzN.png" class="img-fluid" alt="search tut" >
+                           </div>
+                           <br>
+                           <div id='tut_search' class="list-group">
+                              <h6>Search results are identified with makers relative to your current location on map. You can zoom in and out to view more.</h6>
+                              <img src="https://imgur.com/s2ROgWF.png" class="img-fluid" alt="search demo" >
+                           </div>
+                           <br>
+                           <div id='item_help' class="list-group">
+                              <h6>In list, you can find information about each item's name, price, store, distance away and picture:</h6>
+                              <img src="https://imgur.com/Phpm26X.png" class="img-fluid" alt="item demo" >
+                           </div>
+                           <br>
+                           <div id='alt_demo' class="list-group">
+                              <h6>After choosing an item, why not look at some other alternative we suggest? You can also find your choice and our suggestions on map:</h6>
+                              <img src="https://imgur.com/y1CI5FT.png" class="img-fluid" alt="alt demo" >
+                           </div>
+                           <br>
+                           <div id='filter_demo' class="list-group">
+                              <h6>
+                                 We provide 3 different filters for you: 
+                                 <ul>
+                                    <li>Cheaper: only look at items cheaper than your choice</li>
+                                    <li>Closer: only look at items closer than your choice</li>
+                                    <li>Same: I just want this specific item, show me this item at other stores and their prices</li>
+                                 </ul>
+                              </h6>
+                              <img src="https://imgur.com/Q70sn9u.png" class="img-fluid" alt="filter demo" >
+                           </div>
+                           <br>
+                           <div id='final_item' class="list-group">
+                              <h6>Find out how much you CAN SAVE from this purchase and follow the directions to the store. Click confirm to record this purchase. You can also go back to previous page if you changed your mind:</h6>
+                              <img src="https://imgur.com/cVvRMMq.png" class="img-fluid" alt="final item demo" >
+                           </div>
+                           <br>
+                           <div id='history_demo' class="list-group">
+                              <h6>Click the purchase history button on top right corner of the page and review your purchase history:</h6>
+                              <img src="https://imgur.com/m6b6Ra5.png" class="img-fluid" alt="purchase history demo" >
+                           </div>
+                        </div>
+                     </div>
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="container" id="ongoing"></div>
+      <div class="container" id="alt_name"></div>
+      <div class="container" id="confirm_mesg"></div>
+      <div>
+         <button type="button" id="confirm_button" onclick="confirm_purchase()" class="btn btn-success" style="display:none;">Confirm</button>
+      </div>
+      <div class="container" id="map" style="display:none">
+         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3tMF1nrRzpd0gJb769F9TecMJUGpcsHs&libraries=places&callback=initMap"></script>
+      </div>
+      <div class="container" style="display:none">
+         <div id="filters"> Need help? Look at tutorial here </div>
+      </div>
+      <div class="container" id="switches" style="display:none">
+         <!-- Default inline 1-->
+         <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" onclick="toggle_cheaper()" class="custom-control-input" id="defaultInline1">
+            <label class="custom-control-label" for="defaultInline1">cheaper</label>
+         </div>
+         <!-- Default inline 2-->
+         <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" onclick="toggle_closer()" class="custom-control-input" id="defaultInline2">
+            <label class="custom-control-label" for="defaultInline2">closer</label>
+         </div>
+         <!-- Default inline 3-->
+         <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" onclick="toggle_same()" class="custom-control-input" id="defaultInline3">
+            <label class="custom-control-label" for="defaultInline3">same</label>
+         </div>
+      </div>
+      <div class="container" id="wait_mesg"  style="display:none">
+         Results loading...
+      </div>
+      <div>
+         <button type="button" id="back_button" onclick="back_alt()" class="btn btn-danger" style="display:none;">Back</button>
+      </div>
+      <div class="container">
+         <div id='results' class="list-group"></div>
+      </div>
+      <div class="container">
+         <div id='history_table' class="list-group"></div>
+      </div>
+      <div class="container">
+         <div id='alt_results' class="list-group"></div>
+      </div>
+   </body>
 </html>
