@@ -46,9 +46,9 @@
 	        $("#user").html(data.name);
 	        $(".unauthenticated").hide()
 	        $(".authenticated").show()
-	        $("#balance").html('Total Savings: $ '+data.savings);
+	        $("#balance").html('Total Saving: $ '+data.savings);
 	        balance=document.getElementById('balance');
-	        balance.innerHTML = 'Total Savings: $ '+data.savings
+	        balance.innerHTML = 'Total Saving: $ '+data.savings
 	        $(".unauthenticated").hide()
 	        $(".authenticated").show()
 	        email=document.getElementById('email');
@@ -144,19 +144,19 @@
 	</div>
 	<div class="container text-danger error"></div>
 
-	<div class="container" style="float:right;  margin-right: 7%; width:30%;">
-		<div id="balance"style="float:right" >Total Savings: Login to see</div>
+	<div class="container" style="float:right;  margin-right: 7%; width:30%; ">
+		<div id="balance" >Total Savings: Login to see</div>
 		<br>
-		<div class="btn-group btn-group-xs" style="float:right">
-		<div id="email" > Login to receive news letters and view history</div>
-		<div id="history_button" style="float:right"></div>
+		 <div class="btn-group btn-group-xs"  style="float:right">
+		<div id="email"> Login to receive news letters and view history</div>
+		<div id="history_button"  style="float:right"></div>
 		</div>
 		<br>
 	</div>
 
 	<div class="container" style="margin-top: 9%;">
 		<div class="input-group md-form form-sm form-1 pl-0">
-			<input class="form-control my-0 py-1" type="text" placeholder="Search"  id="search_bar" >
+			<input class="form-control my-0 py-1" type="text" placeholder="Search"  id="search_bar">
 			<div type="button" onclick="init_search('')" class="input-group-prepend">
 				<span class="input-group-text blue lighten-3" id="basic-text1"><i class="fas fa-search text-white"
 					aria-hidden="true"></i></span>
@@ -185,22 +185,22 @@
         <div class="container" id="tutorial">
 		<div id='tut_search' class="list-group">
 		<h6>Type in the name of item and press the search button on the right:</h6>
-		<img src="image/search_help.png" class="img-fluid" alt="search tut" >
+		<img src="https://imgur.com/jVqqRzN.png" class="img-fluid" alt="search tut" >
 		</div>
 		<br>
 		<div id='tut_search' class="list-group">
 		<h6>Search results are identified with makers relative to your current location on map. You can zoom in and out to view more.</h6>
-		<img src="image/search_demo.png" class="img-fluid" alt="search demo" >
+		<img src="https://imgur.com/s2ROgWF.png" class="img-fluid" alt="search demo" >
 		</div>
 		<br>
 		<div id='item_help' class="list-group">
 		<h6>In list, you can find information about each item's name, price, store, distance away and picture:</h6>
-		<img src="image/item_help.png" class="img-fluid" alt="item demo" >
+		<img src="https://imgur.com/Phpm26X.png" class="img-fluid" alt="item demo" >
 		</div>
 		<br>
 		<div id='alt_demo' class="list-group">
 		<h6>After choosing an item, why not look at some other alternative we suggest? You can also find your choice and our suggestions on map:</h6>
-		<img src="image/alt_demo.png" class="img-fluid" alt="alt demo" >
+		<img src="https://imgur.com/y1CI5FT.png" class="img-fluid" alt="alt demo" >
 		</div>
 		<br>
 		<div id='filter_demo' class="list-group">
@@ -210,17 +210,17 @@
 		<li>Closer: only look at items closer than your choice</li>
 		<li>Same: I just want this specific item, show me this item at other stores and their prices</li>
 		</ul></h6>
-		<img src="image/filter_demo.png" class="img-fluid" alt="filter demo" >
+		<img src="https://imgur.com/Q70sn9u.png" class="img-fluid" alt="filter demo" >
 		</div>
 		<br>
 		<div id='final_item' class="list-group">
 		<h6>Find out how much you CAN SAVE from this purchase and follow the directions to the store. Click confirm to record this purchase. You can also go back to previous page if you changed your mind:</h6>
-		<img src="image/final_item.png" class="img-fluid" alt="final item demo" >
+		<img src="https://imgur.com/cVvRMMq.png" class="img-fluid" alt="final item demo" >
 		</div>
 		<br>
 		<div id='history_demo' class="list-group">
 		<h6>Click the purchase history button on top right corner of the page and review your purchase history:</h6>
-		<img src="image/history_demo.png" class="img-fluid" alt="purchase history demo" >
+		<img src="https://imgur.com/m6b6Ra5.png" class="img-fluid" alt="purchase history demo" >
 		</div>
 	</div>
       </div>
@@ -240,7 +240,7 @@
 	</div>
 
 	<div class="container" id="map" style="display:none">
-		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3tMF1nrRzpd0gJb769F9TecMJUGpcsHs&libraries=places&callback=initMap"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3tMF1nrRzpd0gJb769F9TecMJUGpcsHs&libraries=places&callback=initMap"></script>
 	</div>
 
 	<div class="container" style="display:none">

@@ -82,7 +82,6 @@ function clearConfirm(){
 function clearSearch(){
   document.getElementById('results').innerHTML="";
   document.getElementById("map").style.display="none";
-  document.getElementById("tutorial").style.display="none";
 }
 
 function clearAlt(){
@@ -104,7 +103,6 @@ function generate_searched(items) {
   clearAlt();
   clearHistTable();
   clearMap(true,false,false);
-  document.getElementById("tutorial").style.display="block";
   results=document.getElementById('results');
   ori_list=items;
   let n=Math.min(items.length,100);
@@ -160,9 +158,10 @@ function generate_searched(items) {
 function redirect_state(task) {
     var lat = task.userLat;
     var lon = task.userLon;
-    overwritePos(lat,lon);
+    
 	if (task.finalLat != 0.0 && task.finalLon != 0.0){
 	   //go to confirm
+	   overwritePos(lat,lon);
 	   document.getElementById("search_bar").value = task.searchString;
 	   ori_item = task.initialItem;
 	   item = ori_item;
@@ -173,6 +172,7 @@ function redirect_state(task) {
 	   
 	} else if (task.initialLat!=0.0 && task.initialLon!=0.0){
 	   // go to request alt
+	   overwritePos(lat,lon);
 	   document.getElementById("search_bar").value = task.searchString;
 	   ori_item = task.initialItem;
 	   item = ori_item;
@@ -181,6 +181,7 @@ function redirect_state(task) {
 	   
 	} else if (task.searchString != ""){
 	   // init search
+	   overwritePos(lat,lon);
 	   document.getElementById("search_bar").value = task.searchString;
 	   init_search(task.searchString)
 	}
