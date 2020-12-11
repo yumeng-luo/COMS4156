@@ -215,7 +215,17 @@ public class EndPointHelper {
       String id, double lat, double lon) {
 
     int zip = TargetApi.getZip(lat, lon);
-    List<Item> targetList;
+    System.out.println("LAT: " + lat + " LON: " + lon);
+    System.out.println("ZIP : " + zip);
+    
+//    try {
+//      Thread.sleep(5000);
+//    } catch (InterruptedException e2) {
+//      // TODO Auto-generated catch block
+//      e2.printStackTrace();
+//    }
+    
+    List<Item> target;
     List<Item> result = new ArrayList<Item>();
 
     // get task info from table
@@ -240,7 +250,9 @@ public class EndPointHelper {
     currentTask.setFinalLat(0);
     currentTask.setFinalLon(0);
 
-    result =currentTask.getAlternativeItem();
+    result = currentTask.getAlternativeItem();
+    target = TargetApi.getTargetAlternatives(zip, result);
+    result.addAll(target);
     if (result.size() < ALTERNATIVE_NUMBER) {
       // search for more item
       // TODO implement this part after rapid api
@@ -249,29 +261,22 @@ public class EndPointHelper {
           currentTask.getInitialItem().getPrice());
       List<Item> walmart = new ArrayList<Item>();
       List<Item>  trader = new ArrayList<Item>();
-      List<Item> target = new ArrayList<Item>();
       try {
         walmart = Walmart.getItems(database, "Store", result,
             lat, lon, "Walmart");
         trader = Walmart.getItems(database, "Store", result, lat,
             lon, "Trader Joes");
-       // target = TargetApi.getTargetAlternatives(zip, result);
+        //target = TargetApi.getSecTargetAlternatives(zip, result);
         
         result.addAll(walmart);
         result.addAll(trader);
-        //result.addAll(target);
+        
       } catch (InterruptedException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
       
-      // targetList = TargetApi.getSecTargetAlternatives(zip, result);
-      // if (targetList != null) {
-      // for (int i = 0; i < targetList.size(); i++) {
-      // result.add(targetList.get(i));
-      // }
-      //
-      // }
+
     }
 
     try {
