@@ -274,15 +274,18 @@ public class TargetApi {
       System.out.flush();
     }
 
-    for (int i = 0; i < orgList.size(); i++) {
-      Set<String> set = new HashSet<>();
+    Set<String> itemSet = new HashSet<>();
+    for (int i = 0; i < orgList.size() - 1; i++) {
+      
+      Item temp = orgList.get(i);
+      if (itemSet.contains(temp.getBarcode())) {
+        continue;
+      }
+      
+      itemSet.add(temp.getBarcode());
       for (int j = 0; j < storeList.size(); j++) {
-        //Item item = getItem(storeList.get(j).getNumber(),
-        //    orgList.get(i).getTcin());
-        Item temp = orgList.get(i);
-        if (!set.contains(temp.getName())) {
-          System.out.println("In adding a store");
-          System.out.flush();
+          //System.out.println("In adding a store");
+          //System.out.flush();
           
           Item item = new Item();
           
@@ -295,8 +298,6 @@ public class TargetApi {
           item.setLon(storeList.get(j).getLon());
   
           itemList.add(item);
-          set.add(item.getName());
-        }
       }
     }
 
