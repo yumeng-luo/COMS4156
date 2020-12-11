@@ -277,8 +277,9 @@ public class EndPointHelper {
           currentTask.getInitialItem().getPrice());
       List<Item> walmart = new ArrayList<Item>();
       List<Item> trader = new ArrayList<Item>();
-      List<Item> target = TargetApi.getSecTargetAlternatives(zip,
-          currentTask.getSearchString());
+      //List<Item> target = TargetApi.getSecTargetAlternatives(zip,
+         // currentTask.getSearchString());
+      List<Item> target = TargetApi.getTargetAlternatives(zip, wegman);
       try {
         walmart = Walmart.getItems2(database, "Store", target, lat, lon,
             "Walmart");
