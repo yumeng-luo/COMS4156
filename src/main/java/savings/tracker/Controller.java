@@ -112,16 +112,27 @@ public class Controller {
   @PostMapping("/search")
   @ResponseBody
   public List<Item> searchItem(
-      @RequestParam(value = "item", defaultValue = "whole milk") String item,
+      @RequestParam(value = "item") String item,
       @AuthenticationPrincipal OAuth2User principal,
-      @RequestParam(value = "lat", defaultValue = "37.7510") double lat,
-      @RequestParam(value = "lon", defaultValue = "-97.8220") double lon)
+      @RequestParam(value = "lat") double lat,
+      @RequestParam(value = "lon") double lon)
       throws InterruptedException {
 
-    if (item.length() > 50) {
+    if (item == null || item.length() > 50) {
       List<Item> itemList = new ArrayList<Item>();
       return itemList;
     }
+    
+    boolean found = false;
+    for (char ch : item.toCharArray()) {
+      if (Character.isDigit(ch) || Character.isLetter(ch)) {
+        found = true;
+        break;
+      }
+    }
+    if (found == false) {
+      return new ArrayList<Item>();
+    } 
     String id;
     if (principal != null) {
       id = principal.getAttribute("sub");
