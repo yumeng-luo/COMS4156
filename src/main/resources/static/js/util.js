@@ -3,6 +3,7 @@ async function init_search(searched_item) {
         for (var i = 0; i < inputs.length; i++) { 
             inputs[i].checked = false; 
         }
+    	reset_boolean();
 	document.getElementById("tutorial").style.display="none";
 	document.getElementById("ongoing").style.display="none";
     document.getElementById("wait_mesg").style.display="block";
@@ -46,6 +47,7 @@ async function request_alternatives(cheaper,closer,same) {
     body: 'lat='+pos.lat+'&lon='+pos.lng
   });
   if (!confirm_page){
+  	
     generate_alt(await response.json());
   }
   document.getElementById("wait_mesg").style.display="none";
@@ -70,7 +72,7 @@ document.getElementById("tutorial").style.display="none";
 }
 
 async function retreive_state() {
-    document.getElementById("wait_mesg").style.display="block";
+    //document.getElementById("wait_mesg").style.display="block";
     const response = await fetch("/resume", {
       method: "GET",
       headers: {
@@ -78,7 +80,7 @@ async function retreive_state() {
       }
     });
     redirect_state(await response.json());
-    document.getElementById("wait_mesg").style.display="none";
+    //document.getElementById("wait_mesg").style.display="none";
   }
   
 function select_alternative(upc,lat,lon,item_index) {

@@ -21,8 +21,8 @@ public class TargetApi {
 
   private static final int INITALSTORESIZE = 10;
   private static final int SECONDSTORESIZE = 20;
-  private static final String KEY = "";
-  private static final String KEY2 = "";
+  private static final String KEY = "c79ba0de13msh64dbcb2ec4b217cp1fc880jsnce11de8dbe1c";
+  private static final String KEY2 = "90edf87601msheef53f51133c0f9p149c70jsn62c12b7d797b";
 
   /**
    * example main.

@@ -8,7 +8,11 @@ let cheaper=false;
 let closer=false;
 let same=false;
 
-
+function reset_boolean() {
+	cheaper=false;
+	closer=false;
+	same=false;
+}
 function toggle_cheaper(){
   if (cheaper){
     cheaper=false;
@@ -112,6 +116,7 @@ function generate_searched(items) {
   
   if (n == 0) {
     alert("No item found. Please try another item.");
+    //document.getElementById('results').style.display = "none";
   	return;
   }
   //results.innerHTML='';
