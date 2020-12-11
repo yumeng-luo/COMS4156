@@ -35,7 +35,7 @@ document.getElementById("tutorial").style.display="none";
 } 
 
 async function request_alternatives() {
-document.getElementById("tutorial").style.display="none";
+  document.getElementById("tutorial").style.display="none";
   document.getElementById("wait_mesg").style.display="block";
   document.getElementById("loader").style.display="block";
   const response = await fetch ("/alternatives", {
