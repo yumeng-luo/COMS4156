@@ -351,4 +351,27 @@ public class Controller {
     
     return history;
   }
+  
+  @GetMapping("/weekly_saving")
+  public double getWeeklySaving(@AuthenticationPrincipal OAuth2User principal) {
+    String id;
+    double weeklySaving = 0;
+    List<PurchaseRecord> history = new ArrayList<PurchaseRecord>();
+    
+    if (principal == null) {
+      id = "105222900313734280075";
+    } else {
+      id = principal.getAttribute("sub");
+    }
+    
+    try {
+      history = database.getPurchaseData(database, "Purchase", id);
+      weeklySaving = DatabaseJdbc.getWeekSavings(history);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    
+    return weeklySaving;
+  }
+
 }
