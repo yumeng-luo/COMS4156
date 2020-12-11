@@ -5,6 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -30,9 +35,9 @@ public class TargetApi {
     String validTcin = "54191097";
     double price = 129.99;
 
-    Item item = TargetApi.getItem(locationId, validTcin);
+    // Item item = TargetApi.getItem(locationId, validTcin);
 
-    assert (item.getPrice() == price);
+    // assert (item.getPrice() == price);
   }
 
   /**
@@ -90,7 +95,7 @@ public class TargetApi {
     String response = Unirest
         .get("https://target1.p.rapidapi.com/stores/list?zipcode=" + zipcode)
         .header("x-rapidapi-key",
-            System.getenv("TARGET_API_KEY"))
+            "DIFFERENT KEY")
         .header("x-rapidapi-host", "target1.p.rapidapi.com").asString()
         .getBody();
 
@@ -160,7 +165,7 @@ public class TargetApi {
     String response = Unirest
         .get("https://target1.p.rapidapi.com/stores/list?zipcode=" + zipcode)
         .header("x-rapidapi-key",
-            System.getenv("TARGET_API_KEY"))
+            "DIFFERENT KEY")
         .header("x-rapidapi-host", "target1.p.rapidapi.com").asString()
         .getBody();
 
@@ -213,45 +218,103 @@ public class TargetApi {
   /**
    * gets price of an object.
    * 
-   * @param tcin product id
+   * @param name product name
    * @return price as string
    */
-  public static Item getItem(int storeId, String tcin) throws UnirestException {
+  public static List<List<Item>> getItem(int zip, String name)
+      throws UnirestException {
 
-    Item item = new Item();
-
-    HttpResponse<JsonNode> response = Unirest
-        .get("https://target1.p.rapidapi.com/products/get-details?tcin=" + tcin
-            + "&store_id=" + storeId)
-        .header("x-rapidapi-key",
-            System.getenv("TARGET_API_KEY"))
-        .header("x-rapidapi-host", "target1.p.rapidapi.com").asJson();
-
-    JsonNode body = response.getBody();
-    JSONObject bodyJson = body.getObject();
-
-    // API determines its invalid tcin number
-    if (bodyJson.has("errors")) {
-      JSONArray errorArray = bodyJson.getJSONArray("errors");
-      String errorMsg = errorArray.getJSONObject(0).get("message").toString();
-      System.out.println("\n" + errorMsg + "\n");
-
+    List<Store> storeList = getStoreIdList(zip);
+    if (storeList == null) {
+      System.out.println("\n null store list --- Target\n");
       return null;
-
-      // throw new InvalUserInputException(errorMsg);
     }
 
-    double price = bodyJson.getJSONObject("data").getJSONObject("product")
-        .getJSONObject("price").getDouble("current_retail");
+    List<Item> exactList = new ArrayList<Item>();
+    List<Item> altList = new ArrayList<Item>();
 
-    item.setPrice(price);
-    item.setTcin(tcin);
-    item.setStore("Target");
-    item.setImage(
-        "https://1000logos.net/wp-content/uploads/2017/06/Target-Logo.png");
+    for (int i = 0; i < Math.min(storeList.size(), 3); i++) {
+      System.out.println(storeList.get(i).getName());
+      HttpResponse<String> response = Unirest
+          // https://target-com-store-product-reviews-locations-data.p.rapidapi.com/product/search?store_id=3991&keyword=lamp&sponsored=1&limit=50&offset=0"
+          .get(
+              "https://target-com-store-product-reviews-locations-data.p.rapidapi.com/product/search?store_id="
+                  + String.valueOf(storeList.get(i).getNumber()) + "&keyword="
+                  + name + "&sponsored=1&limit=50&offset=0")
+          .header("x-rapidapi-key",
+              "KEEEEEEEY")
+          .header("x-rapidapi-host",
+              "target-com-store-product-reviews-locations-data.p.rapidapi.com")
+          .asString();
 
-    System.out.println(price);
-    return item;
+      String body = response.getBody();
+      System.out.println(body);
+      JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
+
+      // API determines its invalid name
+      JsonObject errorObject;
+      if ((errorObject = jsonObject.getAsJsonObject("error")) != null) {
+        System.out.println("\n Target inside error\n");
+        System.out.println("\n code is: " + errorObject.get("code") + "\n");
+        System.out.flush();
+        break;
+      }
+
+      if (jsonObject.get("products") == null) {
+        continue;
+      }
+
+      JsonArray results = jsonObject.get("products").getAsJsonArray();
+
+      if (results.size() == 0) {
+        continue;
+      }
+
+      for (int j = 0; j < Math.min(results.size(), 10); j++) {
+        // get item name store and sku
+        JsonElement itemJson = results.get(j);
+        JsonElement itemName = itemJson.getAsJsonObject().get("title");
+        JsonElement itemTcin = itemJson.getAsJsonObject().get("tcin");
+        Item item1 = new Item();
+        item1.setName(itemName.toString().replace("\"", ""));
+        item1.setTcin(itemTcin.toString().replace("\"", ""));
+        item1.setBarcode(itemTcin.toString().replace("\"", ""));
+
+        // get item image
+        JsonArray images = itemJson.getAsJsonObject().get("images")
+            .getAsJsonArray();
+        JsonElement image = images.get(0);
+        JsonElement primary = image.getAsJsonObject().get("primary");
+        item1.setImage("https://target.scene7.com/is/image/Target/"
+            + primary.toString().replace("\"", ""));
+
+        // get item location
+
+        JsonElement priceArray = itemJson.getAsJsonObject().get("price");
+        String price = priceArray.getAsJsonObject()
+            .get("formatted_current_price").toString();
+        item1.setStore("Target");
+        String temp = price.replace("\"", "");
+        temp = temp.substring(1);
+        Double priceD = Double.valueOf(temp);
+        item1.setPrice(Double.valueOf(priceD));
+        item1.setLat(storeList.get(i).getLat());
+        item1.setLon(storeList.get(i).getLon());
+
+        // check if its exact or close item
+        if (item1.getName().toLowerCase().contains(name.toLowerCase())) {
+          exactList.add(new Item(item1));
+        } else {
+          altList.add(new Item(item1));
+        }
+      }
+
+    }
+
+    List<List<Item>> list = new ArrayList<List<Item>>();
+    list.add(exactList);
+    list.add(altList);
+    return list;
   }
 
   /**
@@ -267,8 +330,7 @@ public class TargetApi {
       List<Item> orgList) throws UnirestException {
 
     List<Item> itemList = new ArrayList<Item>();
- 
-    
+
     for (int i = 0; i < orgList.size(); i++) {
       System.out.println(orgList.get(i).getName());
       System.out.flush();
@@ -276,28 +338,28 @@ public class TargetApi {
 
     Set<String> itemSet = new HashSet<>();
     for (int i = 0; i < orgList.size() - 1; i++) {
-      
+
       Item temp = orgList.get(i);
       if (itemSet.contains(temp.getBarcode())) {
         continue;
       }
-      
+
       itemSet.add(temp.getBarcode());
       for (int j = 0; j < storeList.size(); j++) {
-          //System.out.println("In adding a store");
-          //System.out.flush();
-          
-          Item item = new Item();
-          
-          item.setName(temp.getName());
-          item.setStore("Target");
-          item.setPrice(temp.getPrice());
-          item.setTcin(temp.getTcin());
-          item.setImage(temp.getImage());
-          item.setLat(storeList.get(j).getLat());
-          item.setLon(storeList.get(j).getLon());
-  
-          itemList.add(item);
+        // System.out.println("In adding a store");
+        // System.out.flush();
+
+        Item item = new Item();
+
+        item.setName(temp.getName());
+        item.setStore("Target");
+        item.setPrice(temp.getPrice());
+        item.setTcin(temp.getTcin());
+        item.setImage(temp.getImage());
+        item.setLat(storeList.get(j).getLat());
+        item.setLon(storeList.get(j).getLon());
+
+        itemList.add(item);
       }
     }
 
@@ -324,7 +386,7 @@ public class TargetApi {
       System.out.println("\n null store list\n");
       return null;
     }
-    
+
     for (int i = 0; i < storeList.size(); i++) {
       System.out.println(storeList.get(i).getName());
     }
@@ -334,11 +396,11 @@ public class TargetApi {
       System.out.println("\n Null item list\n");
       return null;
     }
-    
+
     if (itemList.size() == 0) {
       System.out.println("\n Empty item list\n");
     }
-    
+
     for (int i = 0; i < itemList.size(); i++) {
       System.out.println(itemList.get(i).getName());
     }
@@ -356,38 +418,89 @@ public class TargetApi {
    * @throws UnirestException        exception
    * @throws InvalUserInputException exception
    */
-  public static List<Item> getSecTargetAlternatives(int zip, List<Item> orgList)
+  public static List<Item> getSecTargetAlternatives(int zip, String name)
       throws UnirestException {
-
     List<Store> storeList = getSecStoreIdList(zip);
     if (storeList == null) {
-      System.out.println("\n null store list2\n");
-      return null;
-    }
-    if (storeList.size() == 0) {
-      System.out.println("\n Empty store list2\n");
-    }
-    
-    for (int i = 0; i < storeList.size(); i++) {
-      System.out.println(storeList.get(i).getName());
-    }
-
-    
-
-    List<Item> itemList = getItemList(storeList, orgList);
-    if (itemList.size() == 0) {
-      System.out.println("\n Empty item list2\n");
-    }
-    
-    for (int i = 0; i < itemList.size(); i++) {
-      System.out.println(storeList.get(i).getName());
-    }
-
-    if (itemList == null) {
+      System.out.println("\n null store list --- Target\n");
       return null;
     }
 
-    return itemList;
+    List<Item> list = new ArrayList<Item>();
 
+    for (int i = 0; i < Math.min(storeList.size(), 3); i++) {
+      System.out.println(storeList.get(i).getName());
+      HttpResponse<String> response = Unirest
+          // https://target-com-store-product-reviews-locations-data.p.rapidapi.com/product/search?store_id=3991&keyword=lamp&sponsored=1&limit=50&offset=0"
+          .get(
+              "https://target-com-store-product-reviews-locations-data.p.rapidapi.com/product/search?store_id="
+                  + String.valueOf(storeList.get(i).getNumber()) + "&keyword="
+                  + name + "&sponsored=1&limit=50&offset=0")
+          .header("x-rapidapi-key",
+              "KEEEEEEEY")
+          .header("x-rapidapi-host",
+              "target-com-store-product-reviews-locations-data.p.rapidapi.com")
+          .asString();
+
+      String body = response.getBody();
+      System.out.println(body);
+      JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
+
+      // API determines its invalid name
+      JsonObject errorObject;
+      if ((errorObject = jsonObject.getAsJsonObject("error")) != null) {
+        System.out.println("\n Target inside error\n");
+        System.out.println("\n code is: " + errorObject.get("code") + "\n");
+        System.out.flush();
+        break;
+      }
+
+      if (jsonObject.get("products") == null) {
+        continue;
+      }
+
+      JsonArray results = jsonObject.get("products").getAsJsonArray();
+
+      if (results.size() == 0) {
+        continue;
+      }
+
+      for (int j = 0; j < Math.min(results.size(), 10); j++) {
+        // get item name store and sku
+        JsonElement itemJson = results.get(j);
+        JsonElement itemName = itemJson.getAsJsonObject().get("title");
+        JsonElement itemTcin = itemJson.getAsJsonObject().get("tcin");
+        Item item1 = new Item();
+        item1.setName(itemName.toString().replace("\"", ""));
+        item1.setTcin(itemTcin.toString().replace("\"", ""));
+        item1.setBarcode(itemTcin.toString().replace("\"", ""));
+
+        // get item image
+        JsonArray images = itemJson.getAsJsonObject().get("images")
+            .getAsJsonArray();
+        JsonElement image = images.get(0);
+        JsonElement primary = image.getAsJsonObject().get("primary");
+        item1.setImage("https://target.scene7.com/is/image/Target/"
+            + primary.toString().replace("\"", ""));
+
+        // get item location
+
+        JsonElement priceArray = itemJson.getAsJsonObject().get("price");
+        String price = priceArray.getAsJsonObject()
+            .get("formatted_current_price").toString();
+        item1.setStore("Target");
+        String temp = price.replace("\"", "");
+        temp = temp.substring(1);
+        Double priceD = Double.valueOf(temp);
+        item1.setPrice(Double.valueOf(priceD));
+        item1.setLat(storeList.get(i).getLat());
+        item1.setLon(storeList.get(i).getLon());
+
+        list.add(new Item(item1));
+      }
+
+    }
+
+    return list;
   }
 }

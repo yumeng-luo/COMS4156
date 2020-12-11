@@ -18,7 +18,7 @@ import savings.tracker.User;
 
 public class EndPointHelper {
 
-  private static int ALTERNATIVE_NUMBER = 1;
+  private static int ALTERNATIVE_NUMBER = 10;
 
   /**
    * No Alternative Found.
@@ -44,7 +44,6 @@ public class EndPointHelper {
     }
     return new Message(200, "No Alternative");
   }
-  
 
   /**
    * No Alternative Found.
@@ -115,6 +114,42 @@ public class EndPointHelper {
     currentTask.setFinalLon(0);
     List<List<Item>> list = WegmanApi.getItems(database, "Store", item, lat,
         lon);
+
+    if (list.size() == 2) {
+      // trader joe same as wegman
+      List<Item> trader = Walmart.getItems(database, "Store", list.get(0), lat,
+          lon, "Trader Joes");
+      list.get(0).addAll(trader);
+      List<Item> trader2 = Walmart.getItems(database, "Store", list.get(1), lat,
+          lon, "Trader Joes");
+      list.get(1).addAll(trader2);
+    }
+    // get target items
+    int zip = TargetApi.getZip(lat, lon);
+    List<List<Item>> target = TargetApi.getItem(zip, item);
+
+    // add to list
+    if (list.size() != 2) {
+      list = target;
+    } else {
+      if (target.size() == 2) {
+        list.get(0).addAll(target.get(0));
+        list.get(1).addAll(target.get(1));
+      } else if (target.size() == 1) {
+        list.get(0).addAll(target.get(0));
+      }
+    }
+
+    if (target.size() == 2) {
+      // walmart same as target
+      List<Item> walmart = Walmart.getItems2(database, "Store", target.get(0),
+          lat, lon, "Walmart");
+      list.get(0).addAll(walmart);
+      List<Item> walmart2 = Walmart.getItems2(database, "Store", target.get(1),
+          lat, lon, "Walmart");
+      list.get(1).addAll(walmart2);
+    }
+
     if (list.size() == 0) {
       currentTask.setSearchItems(new ArrayList<Item>());
       currentTask.setAlternativeItem(new ArrayList<Item>());
@@ -123,24 +158,14 @@ public class EndPointHelper {
       System.out.flush();
 
     } else {
-      List<Item> walmart = Walmart.getItems(database, "Store", list.get(0), lat,
-          lon, "Walmart");
-      List<Item> trader = Walmart.getItems(database, "Store", list.get(0), lat,
-          lon, "Trader Joes");
-      list.get(0).addAll(walmart);
-      list.get(0).addAll(trader);
+      // sort all
       List<Item> sorted = Walmart.sortItemByDistance(lat, lon, list.get(0));
       currentTask.setSearchItems(sorted);
-      
-      List<Item> walmart2 = Walmart.getItems(database, "Store", list.get(0),
-          lat, lon, "Walmart");
-      List<Item> trader2 = Walmart.getItems(database, "Store", list.get(0), lat,
-          lon, "Trader Joes");
-      list.get(1).addAll(walmart2);
-      list.get(1).addAll(trader2);
       List<Item> sorted2 = Walmart.sortItemByDistance(lat, lon, list.get(1));
       currentTask.setAlternativeItem(sorted2);
+
     }
+
     try {
       DatabaseJdbc.removeSearch(database, "Search", id + "1");
       DatabaseJdbc.removeSearch(database, "Search", id + "2");
@@ -217,15 +242,7 @@ public class EndPointHelper {
     int zip = TargetApi.getZip(lat, lon);
     System.out.println("LAT: " + lat + " LON: " + lon);
     System.out.println("ZIP : " + zip);
-    
-//    try {
-//      Thread.sleep(5000);
-//    } catch (InterruptedException e2) {
-//      // TODO Auto-generated catch block
-//      e2.printStackTrace();
-//    }
-    
-    List<Item> target;
+
     List<Item> result = new ArrayList<Item>();
 
     // get task info from table
@@ -251,31 +268,35 @@ public class EndPointHelper {
     currentTask.setFinalLon(0);
 
     result = currentTask.getAlternativeItem();
-    target = TargetApi.getTargetAlternatives(zip, result);
-    result.addAll(target);
+
     if (result.size() < ALTERNATIVE_NUMBER) {
       // search for more item
       // TODO implement this part after rapid api
-      result = WegmanApi.getAlternativeItems(database, "Store",
+      List<Item> wegman = WegmanApi.getAlternativeItems(database, "Store",
           currentTask.getSearchString(), lat, lon,
           currentTask.getInitialItem().getPrice());
       List<Item> walmart = new ArrayList<Item>();
-      List<Item>  trader = new ArrayList<Item>();
+      List<Item> trader = new ArrayList<Item>();
+      List<Item> target = TargetApi.getSecTargetAlternatives(zip,
+          currentTask.getSearchString());
       try {
-        walmart = Walmart.getItems(database, "Store", result,
-            lat, lon, "Walmart");
-        trader = Walmart.getItems(database, "Store", result, lat,
-            lon, "Trader Joes");
-        //target = TargetApi.getSecTargetAlternatives(zip, result);
-        
+        walmart = Walmart.getItems2(database, "Store", target, lat, lon,
+            "Walmart");
+        trader = Walmart.getItems(database, "Store", wegman, lat, lon,
+            "Trader Joes");
+        // target = TargetApi.getSecTargetAlternatives(zip, result);
+
         result.addAll(walmart);
         result.addAll(trader);
-        
+
       } catch (InterruptedException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      
+      result = wegman;
+      result.addAll(walmart);
+      result.addAll(trader);
+      result.addAll(target);
 
     }
 
@@ -398,7 +419,7 @@ public class EndPointHelper {
    */
   public static Message confirmPurchaseHelper(DatabaseJdbc database,
       String id) {
-    //sleep for 5s to prevent race condition
+    // sleep for 5s to prevent race condition
 
     User user = new User();
     OngoingTask task = new OngoingTask();
@@ -432,7 +453,6 @@ public class EndPointHelper {
     task.setFinalLat(0.0);
     task.setFinalLon(0.0);
 
-    
     // calculate savings
     double saving = 0;
     saving = initialItem.getPrice() - finalItem.getPrice();
@@ -463,48 +483,49 @@ public class EndPointHelper {
             + " on this purchase! \n You have accumulated $" + user.getSavings()
             + " so far!");
   }
-  
- public static Message sendEmailHelper(DatabaseJdbc database, String id, String email) { 
-    
+
+  public static Message sendEmailHelper(DatabaseJdbc database, String id,
+      String email) {
+
     String totalSavings = "0";
     String weeklySavings = "0";
     boolean res = false;
-    
+
     try {
       User user = DatabaseJdbc.getUser(database, "user", id);
       System.out.println("user id = " + user.getUserId());
       double totalSavingsDouble = user.getSavings();
-      List<PurchaseRecord> list = DatabaseJdbc.getPurchaseData(database, "Purchase", id);
+      List<PurchaseRecord> list = DatabaseJdbc.getPurchaseData(database,
+          "Purchase", id);
       double weeklySavingsDouble = DatabaseJdbc.getWeekSavings(list);
-      
+
       System.out.println("list size: " + list.size());
-      
+
       for (int i = 0; i < list.size(); i++) {
         System.out.println(list.get(i).getSaving());
       }
-      
+
       NumberFormat formatter = NumberFormat.getCurrencyInstance();
-      
+
       totalSavings = formatter.format(totalSavingsDouble);
       weeklySavings = formatter.format(weeklySavingsDouble);
-      
+
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    
 
     try {
-      res = SendGridEmailer.sendDynamicEmail(email, weeklySavings, totalSavings);
-      
+      res = SendGridEmailer.sendDynamicEmail(email, weeklySavings,
+          totalSavings);
+
     } catch (IOException e) {
       e.printStackTrace();
     }
-    
-    
+
     if (res) {
       return new Message(200, "Email successfully sent to " + email);
     }
-    
-    return new Message (202, "Email couldn't be sent");
+
+    return new Message(202, "Email couldn't be sent");
   }
 }

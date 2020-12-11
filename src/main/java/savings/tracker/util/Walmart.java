@@ -37,6 +37,9 @@ public class Walmart {
       return new ArrayList<Item>();
     }
     List<Item> list = new ArrayList<Item>();
+    if (itemList.size() == 0) {
+      return list;
+    }
     List<Store> nearestStores = getNearestStores(jdbc, tableName, lat, lon,
         storeName);
     for (int i = 0; i < itemList.size() - 1; i++) {
@@ -44,6 +47,70 @@ public class Walmart {
       if (item.getBarcode() == itemList.get(i + 1).getBarcode()) {
         // same item, skip
         continue;
+      }
+      // get nearest 10 stores
+
+      for (int j = 0; j < nearestStores.size(); j++) {
+        item.setStore(storeName);
+        item.setLat(nearestStores.get(j).getLat());
+        item.setLon(nearestStores.get(j).getLon());
+        list.add(new Item(item));
+      }
+
+    }
+    Item item = new Item(itemList.get(itemList.size() - 1));
+    for (int j = 0; j < nearestStores.size(); j++) {
+      item.setStore(storeName);
+      item.setLat(nearestStores.get(j).getLat());
+      item.setLon(nearestStores.get(j).getLon());
+      list.add(new Item(item));
+    }
+
+    return list;
+  }
+
+  /**
+   * gets products by name.
+   * 
+   * @param jdbc      Database
+   * @param tableName name of store table
+   * @param itemList  list of items
+   * @param lat       user location
+   * @param lon       user location
+   * @param storeName name of store table
+   * @return price as string
+   * @throws InterruptedException exception
+   */
+  public static List<Item> getItems2(DatabaseJdbc jdbc, String tableName,
+      List<Item> itemList, double lat, double lon, String storeName)
+      throws InterruptedException {
+
+    if (lat > 90 || lat < -90 || lon > 180 || lon < -180) {
+      return new ArrayList<Item>();
+    }
+    List<Item> list = new ArrayList<Item>();
+    if (itemList.size() == 0) {
+      return list;
+    }
+    
+    List<Store> nearestStores = getNearestStores(jdbc, tableName, lat, lon,
+        storeName);
+    Item item = new Item(itemList.get(0));
+    
+    for (int j = 0; j < nearestStores.size(); j++) {
+      item.setStore(storeName);
+      item.setLat(nearestStores.get(j).getLat());
+      item.setLon(nearestStores.get(j).getLon());
+      list.add(new Item(item));
+    }
+    
+    
+    for (int i = 1; i < itemList.size(); i++) {
+      item = new Item(itemList.get(i));
+      if (item.getLat() != itemList.get(i - 1).getLat()
+          || item.getLon() != itemList.get(i - 1).getLon()) {
+        // different location, done
+        return list;
       }
       // get nearest 10 stores
 
@@ -97,7 +164,7 @@ public class Walmart {
     }
 
     // check distance
-    PriorityQueue<Store> pq = new PriorityQueue<Store>(10,
+    PriorityQueue<Store> pq = new PriorityQueue<Store>(5,
         new Comparator<Store>() {
           public int compare(Store s1, Store s2) {
             return Double.compare(
@@ -105,13 +172,13 @@ public class Walmart {
                 WegmanApi.getDistance(lat, lon, s2.getLat(), s2.getLon()));
           }
         });
-    if (allList.size() <= 10) {
+    if (allList.size() <= 5) {
       return allList;
     }
     for (int i = 0; i < allList.size(); i++) {
       pq.add(allList.get(i));
     }
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 5; i++) {
       shortList.add(pq.poll());
     }
 
@@ -127,8 +194,8 @@ public class Walmart {
    * @param list list of items
    * @return list of items
    */
-  public static List<Item> sortItemByDistance(double lat,
-      double lon, List<Item> list) {
+  public static List<Item> sortItemByDistance(double lat, double lon,
+      List<Item> list) {
 
     if (lat > 90 || lat < -90 || lon > 180 || lon < -180) {
       return new ArrayList<Item>();
@@ -136,14 +203,13 @@ public class Walmart {
     List<Item> sortList = new ArrayList<Item>();
 
     // check distance
-    PriorityQueue<Item> pq = new PriorityQueue<Item>(10,
-        new Comparator<Item>() {
-          public int compare(Item s1, Item s2) {
-            return Double.compare(
-                WegmanApi.getDistance(lat, lon, s1.getLat(), s1.getLon()),
-                WegmanApi.getDistance(lat, lon, s2.getLat(), s2.getLon()));
-          }
-        });
+    PriorityQueue<Item> pq = new PriorityQueue<Item>(5, new Comparator<Item>() {
+      public int compare(Item s1, Item s2) {
+        return Double.compare(
+            WegmanApi.getDistance(lat, lon, s1.getLat(), s1.getLon()),
+            WegmanApi.getDistance(lat, lon, s2.getLat(), s2.getLon()));
+      }
+    });
 
     for (int i = 0; i < list.size(); i++) {
       pq.add(list.get(i));
