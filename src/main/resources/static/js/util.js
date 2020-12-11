@@ -113,8 +113,6 @@ function send_email() {
 	    if (xhr.readyState == XMLHttpRequest.DONE) {
 	    	var data = JSON.parse(xhr.responseText);
 	    	alert(data.message);
-	    } else {
-        alert("Failed to send email. Please try again later.");
       }
 	}
 	xhr.open('GET', '/send_email', true);
