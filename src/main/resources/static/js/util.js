@@ -34,7 +34,7 @@ document.getElementById("tutorial").style.display="none";
     show_alt(item_index,"");
 } 
 
-async function request_alternatives() {
+async function request_alternatives(cheaper,closer,same) {
   document.getElementById("tutorial").style.display="none";
   document.getElementById("wait_mesg").style.display="block";
   document.getElementById("loader").style.display="block";

@@ -148,6 +148,27 @@ function generate_searched(items) {
     }
     
   }
+  
+      x = x+ 
+'	        <button onclick = "select_search('+(n-1)+')" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
+'	          <div class="column" >'+
+'	    		<h5>'+n+": "+items[n-1].name+'</h5>'+
+'	    		<p>Price: $'+items[n-1].price+'</p>'+
+'	    		<small>Store Name: '+items[n-1].store+'</small>'+
+'	  		  </div>'+
+'	  		  <div class="column" >'+
+'	    		<small>'+storeDist(items[n-1].lat,items[n-1].lon)+' km</small>'+
+'	    		<div class="image-parent">'+
+'	        		<img src="'+items[n-1].image+'" class="img-fluid" alt="item_image" width="100" height="100">'+
+'	     		</div>'+
+'	   		  </div>'+
+'	  	    </button>';
+    if ((n-1)!=overlap_start){
+    		createMarker(items[n-1].lat, items[n-1].lon, (overlap_start+1)+"-"+n,false,"Multiple item: No."+(overlap_start+1)+"-No."+n+" @"+items[n-1].store,"red");
+    	}else{
+    		createMarker(items[n-1].lat, items[n-1].lon, n.toString(),false,items[n-1].name+" $"+items[n-1].price,"red");
+    	}
+  
   results.innerHTML = x +
 '	      </ul>'+
 '	    </div>'+
@@ -279,6 +300,26 @@ function generate_alt(items) {
     	overlap_start = i+1;
     }
   }
+  
+    x = x+ 
+'	        <button onclick = "select_alternative('+items[n-1].barcode+','+items[n-1].lat+', '+items[n-1].lon+','+(n-1)+')" class="list-group-item list-group-item-action d-flex  w-100 justify-content-between justify-content-between align-items-center ">'+
+'	          <div class="column" >'+
+'	    		<h5>'+n+": "+items[n-1].name+'</h5>'+
+'	    		<p>Price: $'+items[n-1].price+'</p>'+
+'	    		<small>Store Name: '+items[n-1].store+'</small>'+
+'	  		  </div>'+
+'	  		  <div class="column" >'+
+'	    		<small>'+storeDist(items[n-1].lat,items[n-1].lon)+' km</small>'+
+'	    		<div class="image-parent">'+
+'	        		<img src="'+items[n-1].image+'" class="img-fluid" alt="item_image" width="100" height="100">'+
+'	     		</div>'+
+'	   		  </div>'+
+'	  	    </button>';
+  if ((n-1)!=overlap_start){
+    		createMarker(items[n-1].lat, items[n-1].lon, (overlap_start+1)+"-"+n,false,"Multiple item: No."+(overlap_start+1)+"-No."+n+" @"+items[n-1].store,"red");
+    	}else{
+    		createMarker(items[n-1].lat, items[n-1].lon, n.toString(),false,items[n-1].name+" $"+items[n-1].price,"red");
+    	}
   results.innerHTML = x +
 '	      </ul>'+
 '	    </div>'+

@@ -244,7 +244,7 @@ public class TargetApi {
           .asString();
 
       String body = response.getBody();
-      System.out.println(body);
+      System.out.println(String.valueOf(i) + "th store :" +body );
       JsonObject jsonObject = new JsonParser().parse(body).getAsJsonObject();
 
       // API determines its invalid name
@@ -431,7 +431,7 @@ public class TargetApi {
 
     List<Item> list = new ArrayList<Item>();
 
-    for (int i = 0; i < Math.min(storeList.size(), 3); i++) {
+    for (int i = 0; i < Math.min(storeList.size(), 1); i++) {
       System.out.println(storeList.get(i).getName());
       HttpResponse<String> response = Unirest
           // https://target-com-store-product-reviews-locations-data.p.rapidapi.com/product/search?store_id=3991&keyword=lamp&sponsored=1&limit=50&offset=0"
@@ -469,7 +469,7 @@ public class TargetApi {
       }
 
       int count = 0;
-      for (int j = 0; j < results.size(); j++) {
+      for (int j = 0; j < Math.min(results.size(),15); j++) {
         // get item name store and sku
         JsonElement itemJson = results.get(j);
         JsonElement itemName = itemJson.getAsJsonObject().get("title");

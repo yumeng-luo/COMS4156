@@ -260,8 +260,17 @@ public class Controller {
       e1.printStackTrace();
     }
 
-    return EndPointHelper.filterAlternativeItem(lat, lon,
+    List<Item> result =  EndPointHelper.filterAlternativeItem(lat, lon,
         currentTask.getAlternativeItem(), currentTask.getInitialItem());
+    if (result.size()==0) {
+      // no alt found, try putting original back
+      return EndPointHelper.filterAlternativeItem(lat, lon,
+          currentTask.getSearchItems(), currentTask.getInitialItem());
+
+    }else {
+      // found alt, return
+      return result;
+    }
   }
 
   /**
