@@ -37,16 +37,19 @@ document.getElementById("tutorial").style.display="none";
 async function request_alternatives() {
 document.getElementById("tutorial").style.display="none";
   document.getElementById("wait_mesg").style.display="block";
+  document.getElementById("loader").style.display="block";
   const response = await fetch ("/alternatives", {
     method: "POST",
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    },
+    body: 'lat='+pos.lat+'&lon='+pos.lng
   });
   if (!confirm_page){
     generate_alt(await response.json());
   }
   document.getElementById("wait_mesg").style.display="none";
+  document.getElementById("loader").style.display="none";
 }
 
 async function request_filter(cheaper,closer,same) {
@@ -90,11 +93,11 @@ function select_alternative(upc,lat,lon,item_index) {
 }
 
 function confirm_purchase() {
-document.getElementById("tutorial").style.display="none";
+    document.getElementById("tutorial").style.display="none";
     var xhttp = new XMLHttpRequest(); 
     xhttp.onreadystatechange = function() { 
       if (this.readyState == 4 && this.status == 200) { 
-        alert("Success! Great job.")
+        alert("Success! Your purchase plan has been saved.")
       }
     };
     xhttp.open("POST", "/confirm", true);
@@ -110,7 +113,9 @@ function send_email() {
 	    if (xhr.readyState == XMLHttpRequest.DONE) {
 	    	var data = JSON.parse(xhr.responseText);
 	    	alert(data.message);
-	    }
+	    } else {
+        alert("Failed to send email. Please try again later.");
+      }
 	}
 	xhr.open('GET', '/send_email', true);
 	xhr.send(null);

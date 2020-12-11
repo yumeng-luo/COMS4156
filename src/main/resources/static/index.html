@@ -28,13 +28,20 @@
 		  border-left: 4px solid #fff;
 		  border-radius: 50%;
 		  height: 50px;
-		  margin-bottom: 10px;
+		  /*margin-bottom: 10px;*/
 		  width: 50px;
+		  margin-top: 40%;
+		  margin-left: auto;
+    	  margin-right: auto;
 		}
 
 		.loader-text {
-		  color: #fff;
+		  color: black;
 		  font-family: arial, sans-serif;
+		  font-size: 36px;
+		  margin-top: 40%;
+		  margin-left: auto;
+		  margin-right: auto;
 		}
 
 		.loader-text:after {
@@ -65,31 +72,6 @@
 		    content: 'Loading...';
 		  }
 		}
-/*		#loading {
-		  width: 100%;
-		  height: 100%;
-		  top: 0;
-		  left: 0;
-		  position: fixed;
-		  display: none;
-		  opacity: 0.7;
-		  background-color: #fff;
-		  z-index: 999;
-		  text-align: center;
-		  animation: spin 2s linear infinite;
-		}
-
-		@keyframes spin {
-		  0% { transform: rotate(0deg); }
-		  100% { transform: rotate(360deg); }
-		}
-
-		#loading-image {
-		  position: absolute;
-		  top: 100px;
-		  left: 240px;
-		  z-index: 100;
-		}*/
    </style>
    <head>
       <meta charset="UTF-8">
@@ -125,9 +107,9 @@
              $("#user").html(data.name);
              $(".unauthenticated").hide()
              $(".authenticated").show()
-             $("#balance").html('Total Saving: $ '+data.savings);
+             $("#balance").html('Total Saving: $ '+ parseFloat(data.savings).toFixed(2));
              balance=document.getElementById('balance');
-             balance.innerHTML = 'Total Saving: $ '+data.savings
+             balance.innerHTML = 'Total Saving: $ '+ parseFloat(data.savings).toFixed(2)
              $(".unauthenticated").hide()
              $(".authenticated").show()
              email=document.getElementById('email');
@@ -147,13 +129,12 @@
               $("#user").html('');
               $(".unauthenticated").show();
               $(".authenticated").hide();
-              $("#balance").html('');
-              $("#email").html('');
+              document.getElementById('balance').style.display = "none";
+              document.getElementById('email').style.display = "none";
               $("#alt_name").html('');
               $("#results").html('');
               $("#history_table").html('');
               $("#confirm_mesg").html('');
-              $("#history_table").html('');
               $("#alt_results").html('');
               document.getElementById('switches').style.display = "none";
               document.getElementById('back_button').style.display = "none";
@@ -316,7 +297,7 @@
          <button type="button" id="confirm_button" onclick="confirm_purchase()" class="btn btn-success" style="display:none;">Confirm</button>
       </div>
       <div class="container" id="map" style="display:none">
-         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3tMF1nrRzpd0gJb769F9TecMJUGpcsHs&libraries=places&callback=initMap"></script>
+         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3tMF1nrRzpd0gJb769F9TecMJUGpcsHs&libraries=places&callback=initMap"></script>
       </div>
       <div class="container" style="display:none">
          <div id="filters"> Need help? Look at tutorial here </div>

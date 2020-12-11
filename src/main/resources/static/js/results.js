@@ -188,7 +188,7 @@ function redirect_state(task) {
 	   ori_list = task.initialItems;
 	   show_alt(-1, task.initialItem);
 	   
-	} else if (task.searchString != "" && task.searchString != null){
+	} else if (task.searchString != ""){
 	   // init search
 	   
 	   document.getElementById("ongoing").innerHTML='We detected your ongoing task on '+ date.toDateString() +
