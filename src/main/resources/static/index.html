@@ -94,9 +94,9 @@
              $("#user").html(data.name);
              $(".unauthenticated").hide()
              $(".authenticated").show()
-             $("#balance").html('Total Saving: $ '+ parseFloat(data.savings).toFixed(2));
+             $("#balance").html('Total Savings: $ '+ parseFloat(data.savings).toFixed(2));
              balance=document.getElementById('balance');
-             balance.innerHTML = 'Total Saving: $ '+ parseFloat(data.savings).toFixed(2)
+             balance.innerHTML = 'Total Savings: $ '+ parseFloat(data.savings).toFixed(2)
              $(".unauthenticated").hide()
              $(".authenticated").show()
              email=document.getElementById('email');
@@ -191,10 +191,10 @@
       </div>
       <div class="container text-danger error"></div>
       <div class="container" style="float:right;  padding-top: 20px; padding-bottom: 20px; margin-right: 7%; width:30%; ">
-         <div id="balance" >Total Savings: Login to see</div>
+         <div id="balance"></div>
          <br>
          <div class="btn-group btn-group-xs"  style="float:right">
-            <div id="email"> Login to receive news letters and view history</div>
+            <div id="email">Login to receive news letters and view history</div>
             <div id="history_button"  style="float:right"></div>
          </div>
          <br>
