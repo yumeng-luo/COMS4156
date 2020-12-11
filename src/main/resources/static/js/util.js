@@ -35,7 +35,7 @@ document.getElementById("tutorial").style.display="none";
 } 
 
 async function request_alternatives() {
-document.getElementById("tutorial").style.display="none";
+  document.getElementById("tutorial").style.display="none";
   document.getElementById("wait_mesg").style.display="block";
   document.getElementById("loader").style.display="block";
   const response = await fetch ("/alternatives", {
@@ -92,19 +92,18 @@ function select_alternative(upc,lat,lon,item_index) {
     show_confirm(item_index,"","",false);
 }
 
-function confirm_purchase() {
+async function confirm_purchase() {
     document.getElementById("tutorial").style.display="none";
-    var xhttp = new XMLHttpRequest(); 
-    xhttp.onreadystatechange = function() { 
-      if (this.readyState == 4 && this.status == 200) { 
-        alert("Success! Your purchase plan has been saved.")
+    const resposne = await fetch ("/confirm", {
+      method: "POST",
+      headers: {
+       'Content-Type': 'application/x-www-form-urlencoded'
       }
-    };
-    xhttp.open("POST", "/confirm", true);
-    xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhttp.send();
+    });
+
     document.getElementById("confirm_button").style.display="none";
     document.getElementById("back_button").style.display="none";
+    getBalance(); 
 } 
 
 function send_email() {
@@ -113,8 +112,6 @@ function send_email() {
 	    if (xhr.readyState == XMLHttpRequest.DONE) {
 	    	var data = JSON.parse(xhr.responseText);
 	    	alert(data.message);
-	    } else {
-        alert("Failed to send email. Please try again later.");
       }
 	}
 	xhr.open('GET', '/send_email', true);
@@ -154,7 +151,7 @@ async function reset() {
 }
 
 async function getBalance() {
-  const response = await fetch ("/balance", {
+  const response = await fetch ("/user", {
     method: "GET",
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'

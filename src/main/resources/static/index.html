@@ -14,12 +14,14 @@
 			position:fixed;
 		    padding:0;
 		    margin:0;
-		    top:0;
-		    left:0;
+		    top:0px;
+		    left:0px;
 		    width: 100%;
 		    height: 100%;
 		    background:rgba(255,255,255,0.5);
 		  	display: none;
+		  	z-index:1000;
+		  	opacity:0.8;
 		}
 
 		.loader-wheel {
@@ -28,25 +30,10 @@
 		  border-left: 4px solid #fff;
 		  border-radius: 50%;
 		  height: 50px;
-		  /*margin-bottom: 10px;*/
 		  width: 50px;
-		  margin-top: 40%;
+		  margin-top: 250px;
 		  margin-left: auto;
     	  margin-right: auto;
-		}
-
-		.loader-text {
-		  color: black;
-		  font-family: arial, sans-serif;
-		  font-size: 36px;
-		  margin-top: 40%;
-		  margin-left: auto;
-		  margin-right: auto;
-		}
-
-		.loader-text:after {
-		  content: 'Loading';
-		  animation: load 2s linear infinite;
 		}
 
 		@keyframes spin {
@@ -107,9 +94,9 @@
              $("#user").html(data.name);
              $(".unauthenticated").hide()
              $(".authenticated").show()
-             $("#balance").html('Total Saving: $ '+ parseFloat(data.savings).toFixed(2));
+             $("#balance").html('Total Savings: $ '+ parseFloat(data.savings).toFixed(2));
              balance=document.getElementById('balance');
-             balance.innerHTML = 'Total Saving: $ '+ parseFloat(data.savings).toFixed(2)
+             balance.innerHTML = 'Total Savings: $ '+ parseFloat(data.savings).toFixed(2)
              $(".unauthenticated").hide()
              $(".authenticated").show()
              email=document.getElementById('email');
@@ -195,18 +182,19 @@
          <button class="btn btn-primary unauthenticated" id="login-button" style="float:right; margin-top: 85px; margin-right: 100px" onclick="location.href = '/oauth2/authorization/google';">Google Login</button>
       </div>
       </div>
-      <div class="container authenticated" style="float:left; width:30%; margin-left: 5%; display:none">
-         Logged in as: <span id="user"></span>
+      <div class="container authenticated" style="padding-top: 20px; padding-bottom: 20px; float:left; width:30%; margin-left: 5%; display:none; font-size: 20px">
+         <strong>Logged in as: <span id="user"></span></span>
+         <br><br>
          <div>
             <button onClick="logout()" class="btn btn-primary">Logout</button>
          </div>
       </div>
       <div class="container text-danger error"></div>
-      <div class="container" style="float:right;  margin-right: 7%; width:30%; ">
-         <div id="balance" >Total Savings: Login to see</div>
+      <div class="container" style="float:right;  padding-top: 20px; padding-bottom: 20px; margin-right: 7%; width:30%; ">
+         <div id="balance"></div>
          <br>
          <div class="btn-group btn-group-xs"  style="float:right">
-            <div id="email"> Login to receive news letters and view history</div>
+            <div id="email">Login to receive news letters and view history</div>
             <div id="history_button"  style="float:right"></div>
          </div>
          <br>
@@ -304,7 +292,6 @@
       </div>
       <div id="loader">
 		<div class="loader-wheel"></div>
-		<div class="loader-text"></div>
 	  </div>
       <div class="container" id="switches" style="display:none">
          <!-- Default inline 1-->

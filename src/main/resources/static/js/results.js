@@ -353,6 +353,7 @@ function generate_history(records) {
 '	  </div>';
 }
 
-function updateBalance(bal){
-  
+function updateBalance(data){
+  console.log(data.savings);
+  document.getElementById('balance').innerHTML = 'Total Savings: $ '+ parseFloat(data.savings).toFixed(2);
 }
