@@ -1,15 +1,13 @@
 package savings.tracker.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -23,6 +21,8 @@ public class TargetApi {
 
   private static final int INITALSTORESIZE = 10;
   private static final int SECONDSTORESIZE = 20;
+  private static final String KEY = "";
+  private static final String KEY2 = "";
 
   /**
    * example main.
@@ -30,10 +30,6 @@ public class TargetApi {
    * @param args args
    */
   public static void main(String[] args) {
-
-    int locationId = 1263;
-    String validTcin = "54191097";
-    double price = 129.99;
 
     // Item item = TargetApi.getItem(locationId, validTcin);
 
@@ -95,7 +91,7 @@ public class TargetApi {
     String response = Unirest
         .get("https://target1.p.rapidapi.com/stores/list?zipcode=" + zipcode)
         .header("x-rapidapi-key",
-            "DIFFERENT KEY")
+            KEY)
         .header("x-rapidapi-host", "target1.p.rapidapi.com").asString()
         .getBody();
 
@@ -165,7 +161,7 @@ public class TargetApi {
     String response = Unirest
         .get("https://target1.p.rapidapi.com/stores/list?zipcode=" + zipcode)
         .header("x-rapidapi-key",
-            "DIFFERENT KEY")
+            KEY)
         .header("x-rapidapi-host", "target1.p.rapidapi.com").asString()
         .getBody();
 
@@ -242,7 +238,7 @@ public class TargetApi {
                   + String.valueOf(storeList.get(i).getNumber()) + "&keyword="
                   + name + "&sponsored=1&limit=50&offset=0")
           .header("x-rapidapi-key",
-              "KEEEEEEEY")
+              KEY2)
           .header("x-rapidapi-host",
               "target-com-store-product-reviews-locations-data.p.rapidapi.com")
           .asString();
@@ -295,8 +291,15 @@ public class TargetApi {
             .get("formatted_current_price").toString();
         item1.setStore("Target");
         String temp = price.replace("\"", "");
-        temp = temp.substring(1);
-        Double priceD = Double.valueOf(temp);
+        temp = temp.replace("$", "");
+        temp = temp.replaceAll(" .*", "");
+        Double priceD;
+        try {
+          priceD = Double.valueOf(temp);
+        } catch (NumberFormatException e) {
+          e.printStackTrace();
+          continue;
+        }
         item1.setPrice(Double.valueOf(priceD));
         item1.setLat(storeList.get(i).getLat());
         item1.setLon(storeList.get(i).getLon());
@@ -413,7 +416,7 @@ public class TargetApi {
    * to filter items not suitable for specific conditions.
    * 
    * @param zip     zipcode
-   * @param orgList original alternative list
+   * @param name original search string
    * @return list of items
    * @throws UnirestException        exception
    * @throws InvalUserInputException exception
@@ -437,7 +440,7 @@ public class TargetApi {
                   + String.valueOf(storeList.get(i).getNumber()) + "&keyword="
                   + name + "&sponsored=1&limit=50&offset=0")
           .header("x-rapidapi-key",
-              "KEEEEEEEY")
+              KEY2)
           .header("x-rapidapi-host",
               "target-com-store-product-reviews-locations-data.p.rapidapi.com")
           .asString();
@@ -465,13 +468,19 @@ public class TargetApi {
         continue;
       }
 
-      for (int j = 0; j < Math.min(results.size(), 10); j++) {
+      int count = 0;
+      for (int j = 0; j < results.size(); j++) {
         // get item name store and sku
         JsonElement itemJson = results.get(j);
         JsonElement itemName = itemJson.getAsJsonObject().get("title");
-        JsonElement itemTcin = itemJson.getAsJsonObject().get("tcin");
+        
         Item item1 = new Item();
         item1.setName(itemName.toString().replace("\"", ""));
+        if (item1.getName().toLowerCase().contains(name.toLowerCase())) {
+          continue;
+        }
+        count++;
+        JsonElement itemTcin = itemJson.getAsJsonObject().get("tcin");
         item1.setTcin(itemTcin.toString().replace("\"", ""));
         item1.setBarcode(itemTcin.toString().replace("\"", ""));
 
@@ -497,6 +506,9 @@ public class TargetApi {
         item1.setLon(storeList.get(i).getLon());
 
         list.add(new Item(item1));
+        if (count >= 10) {
+          break;
+        }
       }
 
     }
