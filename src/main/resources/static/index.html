@@ -182,14 +182,15 @@
          <button class="btn btn-primary unauthenticated" id="login-button" style="float:right; margin-top: 85px; margin-right: 100px" onclick="location.href = '/oauth2/authorization/google';">Google Login</button>
       </div>
       </div>
-      <div class="container authenticated" style="float:left; width:30%; margin-left: 5%; display:none">
-         Logged in as: <span id="user"></span>
+      <div class="container authenticated" style="padding-top: 20px; padding-bottom: 20px; float:left; width:30%; margin-left: 5%; display:none; font-size: 20px">
+         <strong>Logged in as: <span id="user"></span></span>
+         <br><br>
          <div>
             <button onClick="logout()" class="btn btn-primary">Logout</button>
          </div>
       </div>
       <div class="container text-danger error"></div>
-      <div class="container" style="float:right;  margin-right: 7%; width:30%; ">
+      <div class="container" style="float:right;  padding-top: 20px; padding-bottom: 20px; margin-right: 7%; width:30%; ">
          <div id="balance" >Total Savings: Login to see</div>
          <br>
          <div class="btn-group btn-group-xs"  style="float:right">
